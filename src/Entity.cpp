@@ -2,11 +2,11 @@
 #include "GridSystem.h"
 
 Entity::Entity(int gridX, int gridY, sf::Color color, GridSystem* grid) 
-    : m_gridX(gridX), m_gridY(gridY), m_color(color), m_gridSystem(grid) {
-    const float cellSize = m_gridSystem->getCellSize();
-    m_shape.setSize({cellSize - 2, cellSize - 2});
+    : m_gridX(gridX), m_gridY(gridY), m_grid(grid) {
+    float cellSize = grid->getCellSize();
+    m_shape.setSize({cellSize - 4, cellSize - 4});
     m_shape.setFillColor(color);
-    m_shape.setPosition(m_gridSystem->gridToWorld(m_gridX, m_gridY));
+    m_shape.setPosition(grid->gridToWorld(gridX, gridY));
 }
 
 void Entity::render(sf::RenderTarget& target) const {

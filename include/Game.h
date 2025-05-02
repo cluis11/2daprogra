@@ -8,33 +8,42 @@
 
 class Game {
 public:
-    Game();
-    void run();
+    Game(); //Constructor de SFML
+    void run(); //Funcion que ejecuta el juego
 
 private:
-    void processEvents();
-    void update(float deltaTime);
-    void render();
-    void spawnEnemy();
-    void updateUI();
+    void processEvents(); //Captura eventos para ejecutar comportamientos
+    void update(float deltaTime); //Ejecuta logica del objeto e interacciones
+    void render(); //Encargado de dibujar los objetos
+    void spawnEnemy(); //Funcion encargada de crear enemigos durante las waves
+    void updateUI(); //Funcion encargada de actualizar la interfaz
     
-    sf::RenderWindow m_window;
-    GridSystem m_grid;
+    sf::RenderWindow m_window; //main screen
+    GridSystem m_grid; //matriz
     
-    std::vector<std::unique_ptr<Tower>> m_towers;
-    std::vector<std::unique_ptr<Enemy>> m_enemies;
+    std::vector<std::unique_ptr<Tower>> m_towers; //lista de torres
+    std::vector<std::unique_ptr<Enemy>> m_enemies; //lista de enemigos
     
-    enum class GameState { Prep, Wave, Cooldown };
+    //Enum para patron state del comportamiento del juego
+    //Se pueden agregar states como pantalla inicial, registro de actividades, pantalla de perdedor etc
+    enum class GameState { Prep, Wave, Cooldown }; 
+
+    //Se inicia el juego en estado prep, se puede cambiar a pantalla inicial
     GameState m_currentState = GameState::Prep;
     
-    float m_stateTimer = 0.f;
-    int m_waveNumber = 1;
-    int m_towersPlaced = 0;
-    int m_leaks = 0;
+    float m_stateTimer = 0.f; //se reinicia en cada state dek juego
+    int m_waveNumber = 1; //variable que controla en numero de wave actual
+    int m_towersPlaced = 0; //variable que controla numero de torres, se tiene que agregr logica de economia
+    int m_leaks = 0; //controla cuantos enemigos que han llegado a la puerta para condicion game over
     
+    //Fuentes
     sf::Font m_font;
+    //Textos 
     sf::Text m_waveText;
     sf::Text m_timerText;
     sf::Text m_towersText;
     sf::Text m_leaksText;
+
+    //solo por ahora, variable que rota el tipo de torre que coloca
+    Tower::Type m_nextTowerType = Tower::Type::Archer;
 };
