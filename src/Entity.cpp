@@ -4,7 +4,8 @@
 Entity::Entity(int gridX, int gridY, sf::Color color, GridSystem* grid) 
     : m_gridX(gridX), m_gridY(gridY), m_grid(grid) {
     float cellSize = grid->getCellSize();
-    m_shape.setSize({cellSize - 4, cellSize - 4});
+    m_shape.setSize({cellSize - 2, cellSize - 2});
+    m_shape.setOrigin({(cellSize - 2)/2, (cellSize - 2)/2});
     m_shape.setFillColor(color);
     m_shape.setPosition(grid->gridToWorld(gridX, gridY));
 }
