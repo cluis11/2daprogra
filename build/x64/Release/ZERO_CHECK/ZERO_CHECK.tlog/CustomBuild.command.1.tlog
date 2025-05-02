@@ -1,0 +1,10 @@
+^C:\USERS\LUISC\DOCUMENTS\TEC\3 SEMESTRE\ALGORITMOS II\SFML\BUILD\CMAKEFILES\A68612F1EF689AC129DD8DDE2EC8EB84\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" "-SC:/Users/luisc/Documents/TEC/3 Semestre/Algoritmos II/SFML" "-BC:/Users/luisc/Documents/TEC/3 Semestre/Algoritmos II/SFML/build" --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file "C:/Users/luisc/Documents/TEC/3 Semestre/Algoritmos II/SFML/build/GeneticKingdom.sln"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

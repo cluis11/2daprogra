@@ -1,0 +1,3 @@
+C:/Users/luisc/Documents/TEC/3 Semestre/Algoritmos II/SFML/build/CMakeFiles/GeneticKingdom.dir
+C:/Users/luisc/Documents/TEC/3 Semestre/Algoritmos II/SFML/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/luisc/Documents/TEC/3 Semestre/Algoritmos II/SFML/build/CMakeFiles/ZERO_CHECK.dir

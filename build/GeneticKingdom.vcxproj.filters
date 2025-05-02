@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\luisc\Documents\TEC\3 Semestre\Algoritmos II\SFML\src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\luisc\Documents\TEC\3 Semestre\Algoritmos II\SFML\src\Game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\luisc\Documents\TEC\3 Semestre\Algoritmos II\SFML\src\GridSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\luisc\Documents\TEC\3 Semestre\Algoritmos II\SFML\src\Entity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\luisc\Documents\TEC\3 Semestre\Algoritmos II\SFML\src\Tower.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\luisc\Documents\TEC\3 Semestre\Algoritmos II\SFML\src\Enemy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\luisc\Documents\TEC\3 Semestre\Algoritmos II\SFML\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{C2C8DEAE-1050-31C4-BF80-37F9445E6798}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
