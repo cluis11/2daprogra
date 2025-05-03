@@ -36,6 +36,9 @@ private:
     int m_towersPlaced = 0; //variable que controla numero de torres, se tiene que agregr logica de economia
     int m_leaks = 0; //controla cuantos enemigos que han llegado a la puerta para condicion game over
     
+    //Para el spawn de enemigos
+    int m_lastSpawnSecond = -1;
+    
     //Fuentes
     sf::Font m_font;
     //Textos 

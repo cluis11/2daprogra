@@ -24,9 +24,9 @@ events:
       The output was:
       0
       MSBuild version 17.13.15+18b3035f6 for .NET Framework
-      Build started 5/2/2025 4:25:32 PM.
+      Build started 5/2/2025 7:25:51 PM.
       
-      Project "C:\\Users\\luisc\\Documents\\TEC\\3 Semestre\\Algoritmos II\\SFML\\build\\CMakeFiles\\3.31.6\\CompilerIdC\\CompilerIdC.vcxproj" on node 1 (default targets).
+      Project "C:\\Users\\luisc\\Documents\\GitHub\\2daprogra\\build\\CMakeFiles\\3.31.6\\CompilerIdC\\CompilerIdC.vcxproj" on node 1 (default targets).
       PrepareForBuild:
         Creating directory "Debug\\".
         Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
@@ -42,13 +42,13 @@ events:
         CMakeCCompilerId.c
       Link:
         C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.43.34808\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:".\\CompilerIdC.exe" /INCREMENTAL:NO /NOLOGO /LIBPATH:"C:\\vcpkg\\installed\\x64-windows\\lib" /LIBPATH:"C:\\vcpkg\\installed\\x64-windows\\lib\\manual-link" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib "C:\\vcpkg\\installed\\x64-windows\\lib\\*.lib" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\\CompilerIdC.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\\CompilerIdC.lib" /MACHINE:X64 Debug\\CMakeCCompilerId.obj
-        CompilerIdC.vcxproj -> C:\\Users\\luisc\\Documents\\TEC\\3 Semestre\\Algoritmos II\\SFML\\build\\CMakeFiles\\3.31.6\\CompilerIdC\\CompilerIdC.exe
+        CompilerIdC.vcxproj -> C:\\Users\\luisc\\Documents\\GitHub\\2daprogra\\build\\CMakeFiles\\3.31.6\\CompilerIdC\\CompilerIdC.exe
       AppLocalFromInstalled:
-        pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\luisc\\Documents\\TEC\\3 Semestre\\Algoritmos II\\SFML\\build\\CMakeFiles\\3.31.6\\CompilerIdC\\CompilerIdC.exe" "C:\\vcpkg\\installed\\x64-windows\\bin" "Debug\\CompilerIdC.tlog\\CompilerIdC.write.1u.tlog" "Debug\\vcpkg.applocal.log"
+        pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\luisc\\Documents\\GitHub\\2daprogra\\build\\CMakeFiles\\3.31.6\\CompilerIdC\\CompilerIdC.exe" "C:\\vcpkg\\installed\\x64-windows\\bin" "Debug\\CompilerIdC.tlog\\CompilerIdC.write.1u.tlog" "Debug\\vcpkg.applocal.log"
         'pwsh.exe' is not recognized as an internal or external command,
         operable program or batch file.
-        The command "pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\luisc\\Documents\\TEC\\3 Semestre\\Algoritmos II\\SFML\\build\\CMakeFiles\\3.31.6\\CompilerIdC\\CompilerIdC.exe" "C:\\vcpkg\\installed\\x64-windows\\bin" "Debug\\CompilerIdC.tlog\\CompilerIdC.write.1u.tlog" "Debug\\vcpkg.applocal.log"" exited with code 9009.
-        "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -ExecutionPolicy Bypass -noprofile -File "C:\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\luisc\\Documents\\TEC\\3 Semestre\\Algoritmos II\\SFML\\build\\CMakeFiles\\3.31.6\\CompilerIdC\\CompilerIdC.exe" "C:\\vcpkg\\installed\\x64-windows\\bin" "Debug\\CompilerIdC.tlog\\CompilerIdC.write.1u.tlog" "Debug\\vcpkg.applocal.log"
+        The command "pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\luisc\\Documents\\GitHub\\2daprogra\\build\\CMakeFiles\\3.31.6\\CompilerIdC\\CompilerIdC.exe" "C:\\vcpkg\\installed\\x64-windows\\bin" "Debug\\CompilerIdC.tlog\\CompilerIdC.write.1u.tlog" "Debug\\vcpkg.applocal.log"" exited with code 9009.
+        "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -ExecutionPolicy Bypass -noprofile -File "C:\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\luisc\\Documents\\GitHub\\2daprogra\\build\\CMakeFiles\\3.31.6\\CompilerIdC\\CompilerIdC.exe" "C:\\vcpkg\\installed\\x64-windows\\bin" "Debug\\CompilerIdC.tlog\\CompilerIdC.write.1u.tlog" "Debug\\vcpkg.applocal.log"
       PostBuildEvent:
         for %%i in (cl.exe) do @echo CMAKE_C_COMPILER=%%~$PATH:i
         :VCEnd
@@ -56,13 +56,13 @@ events:
       FinalizeBuildStatus:
         Deleting file "Debug\\CompilerIdC.tlog\\unsuccessfulbuild".
         Touching "Debug\\CompilerIdC.tlog\\CompilerIdC.lastbuildstate".
-      Done Building Project "C:\\Users\\luisc\\Documents\\TEC\\3 Semestre\\Algoritmos II\\SFML\\build\\CMakeFiles\\3.31.6\\CompilerIdC\\CompilerIdC.vcxproj" (default targets).
+      Done Building Project "C:\\Users\\luisc\\Documents\\GitHub\\2daprogra\\build\\CMakeFiles\\3.31.6\\CompilerIdC\\CompilerIdC.vcxproj" (default targets).
       
       Build succeeded.
           0 Warning(s)
           0 Error(s)
       
-      Time Elapsed 00:00:02.02
+      Time Elapsed 00:00:03.33
       
       
       Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.exe"
@@ -70,7 +70,7 @@ events:
       Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.vcxproj"
       
       The C compiler identification is MSVC, found in:
-        C:/Users/luisc/Documents/TEC/3 Semestre/Algoritmos II/SFML/build/CMakeFiles/3.31.6/CompilerIdC/CompilerIdC.exe
+        C:/Users/luisc/Documents/GitHub/2daprogra/build/CMakeFiles/3.31.6/CompilerIdC/CompilerIdC.exe
       
   -
     kind: "message-v1"
@@ -88,9 +88,9 @@ events:
       The output was:
       0
       MSBuild version 17.13.15+18b3035f6 for .NET Framework
-      Build started 5/2/2025 4:25:35 PM.
+      Build started 5/2/2025 7:25:56 PM.
       
-      Project "C:\\Users\\luisc\\Documents\\TEC\\3 Semestre\\Algoritmos II\\SFML\\build\\CMakeFiles\\3.31.6\\CompilerIdCXX\\CompilerIdCXX.vcxproj" on node 1 (default targets).
+      Project "C:\\Users\\luisc\\Documents\\GitHub\\2daprogra\\build\\CMakeFiles\\3.31.6\\CompilerIdCXX\\CompilerIdCXX.vcxproj" on node 1 (default targets).
       PrepareForBuild:
         Creating directory "Debug\\".
         Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
@@ -106,13 +106,13 @@ events:
         CMakeCXXCompilerId.cpp
       Link:
         C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.43.34808\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:".\\CompilerIdCXX.exe" /INCREMENTAL:NO /NOLOGO /LIBPATH:"C:\\vcpkg\\installed\\x64-windows\\lib" /LIBPATH:"C:\\vcpkg\\installed\\x64-windows\\lib\\manual-link" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib "C:\\vcpkg\\installed\\x64-windows\\lib\\*.lib" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\\CompilerIdCXX.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\\CompilerIdCXX.lib" /MACHINE:X64 Debug\\CMakeCXXCompilerId.obj
-        CompilerIdCXX.vcxproj -> C:\\Users\\luisc\\Documents\\TEC\\3 Semestre\\Algoritmos II\\SFML\\build\\CMakeFiles\\3.31.6\\CompilerIdCXX\\CompilerIdCXX.exe
+        CompilerIdCXX.vcxproj -> C:\\Users\\luisc\\Documents\\GitHub\\2daprogra\\build\\CMakeFiles\\3.31.6\\CompilerIdCXX\\CompilerIdCXX.exe
       AppLocalFromInstalled:
-        pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\luisc\\Documents\\TEC\\3 Semestre\\Algoritmos II\\SFML\\build\\CMakeFiles\\3.31.6\\CompilerIdCXX\\CompilerIdCXX.exe" "C:\\vcpkg\\installed\\x64-windows\\bin" "Debug\\CompilerIdCXX.tlog\\CompilerIdCXX.write.1u.tlog" "Debug\\vcpkg.applocal.log"
+        pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\luisc\\Documents\\GitHub\\2daprogra\\build\\CMakeFiles\\3.31.6\\CompilerIdCXX\\CompilerIdCXX.exe" "C:\\vcpkg\\installed\\x64-windows\\bin" "Debug\\CompilerIdCXX.tlog\\CompilerIdCXX.write.1u.tlog" "Debug\\vcpkg.applocal.log"
         'pwsh.exe' is not recognized as an internal or external command,
         operable program or batch file.
-        The command "pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\luisc\\Documents\\TEC\\3 Semestre\\Algoritmos II\\SFML\\build\\CMakeFiles\\3.31.6\\CompilerIdCXX\\CompilerIdCXX.exe" "C:\\vcpkg\\installed\\x64-windows\\bin" "Debug\\CompilerIdCXX.tlog\\CompilerIdCXX.write.1u.tlog" "Debug\\vcpkg.applocal.log"" exited with code 9009.
-        "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -ExecutionPolicy Bypass -noprofile -File "C:\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\luisc\\Documents\\TEC\\3 Semestre\\Algoritmos II\\SFML\\build\\CMakeFiles\\3.31.6\\CompilerIdCXX\\CompilerIdCXX.exe" "C:\\vcpkg\\installed\\x64-windows\\bin" "Debug\\CompilerIdCXX.tlog\\CompilerIdCXX.write.1u.tlog" "Debug\\vcpkg.applocal.log"
+        The command "pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\luisc\\Documents\\GitHub\\2daprogra\\build\\CMakeFiles\\3.31.6\\CompilerIdCXX\\CompilerIdCXX.exe" "C:\\vcpkg\\installed\\x64-windows\\bin" "Debug\\CompilerIdCXX.tlog\\CompilerIdCXX.write.1u.tlog" "Debug\\vcpkg.applocal.log"" exited with code 9009.
+        "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -ExecutionPolicy Bypass -noprofile -File "C:\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\luisc\\Documents\\GitHub\\2daprogra\\build\\CMakeFiles\\3.31.6\\CompilerIdCXX\\CompilerIdCXX.exe" "C:\\vcpkg\\installed\\x64-windows\\bin" "Debug\\CompilerIdCXX.tlog\\CompilerIdCXX.write.1u.tlog" "Debug\\vcpkg.applocal.log"
       PostBuildEvent:
         for %%i in (cl.exe) do @echo CMAKE_CXX_COMPILER=%%~$PATH:i
         :VCEnd
@@ -120,13 +120,13 @@ events:
       FinalizeBuildStatus:
         Deleting file "Debug\\CompilerIdCXX.tlog\\unsuccessfulbuild".
         Touching "Debug\\CompilerIdCXX.tlog\\CompilerIdCXX.lastbuildstate".
-      Done Building Project "C:\\Users\\luisc\\Documents\\TEC\\3 Semestre\\Algoritmos II\\SFML\\build\\CMakeFiles\\3.31.6\\CompilerIdCXX\\CompilerIdCXX.vcxproj" (default targets).
+      Done Building Project "C:\\Users\\luisc\\Documents\\GitHub\\2daprogra\\build\\CMakeFiles\\3.31.6\\CompilerIdCXX\\CompilerIdCXX.vcxproj" (default targets).
       
       Build succeeded.
           0 Warning(s)
           0 Error(s)
       
-      Time Elapsed 00:00:01.41
+      Time Elapsed 00:00:03.07
       
       
       Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.exe"
@@ -134,7 +134,7 @@ events:
       Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.vcxproj"
       
       The CXX compiler identification is MSVC, found in:
-        C:/Users/luisc/Documents/TEC/3 Semestre/Algoritmos II/SFML/build/CMakeFiles/3.31.6/CompilerIdCXX/CompilerIdCXX.exe
+        C:/Users/luisc/Documents/GitHub/2daprogra/build/CMakeFiles/3.31.6/CompilerIdCXX/CompilerIdCXX.exe
       
   -
     kind: "try_compile-v1"
@@ -145,8 +145,8 @@ events:
     checks:
       - "Detecting C compiler ABI info"
     directories:
-      source: "C:/Users/luisc/Documents/TEC/3 Semestre/Algoritmos II/SFML/build/CMakeFiles/CMakeScratch/TryCompile-47st2x"
-      binary: "C:/Users/luisc/Documents/TEC/3 Semestre/Algoritmos II/SFML/build/CMakeFiles/CMakeScratch/TryCompile-47st2x"
+      source: "C:/Users/luisc/Documents/GitHub/2daprogra/build/CMakeFiles/CMakeScratch/TryCompile-ybbn3l"
+      binary: "C:/Users/luisc/Documents/GitHub/2daprogra/build/CMakeFiles/CMakeScratch/TryCompile-ybbn3l"
     cmakeVariables:
       CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS"
       CMAKE_C_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
@@ -159,40 +159,40 @@ events:
       variable: "CMAKE_C_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: 'C:/Users/luisc/Documents/TEC/3 Semestre/Algoritmos II/SFML/build/CMakeFiles/CMakeScratch/TryCompile-47st2x'
+        Change Dir: 'C:/Users/luisc/Documents/GitHub/2daprogra/build/CMakeFiles/CMakeScratch/TryCompile-ybbn3l'
         
-        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_f816c.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_79530.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
         MSBuild version 17.13.15+18b3035f6 for .NET Framework
-        Build started 5/2/2025 4:25:37 PM.
+        Build started 5/2/2025 7:26:00 PM.
         
-        Project "C:\\Users\\luisc\\Documents\\TEC\\3 Semestre\\Algoritmos II\\SFML\\build\\CMakeFiles\\CMakeScratch\\TryCompile-47st2x\\cmTC_f816c.vcxproj" on node 1 (default targets).
+        Project "C:\\Users\\luisc\\Documents\\GitHub\\2daprogra\\build\\CMakeFiles\\CMakeScratch\\TryCompile-ybbn3l\\cmTC_79530.vcxproj" on node 1 (default targets).
         PrepareForBuild:
-          Creating directory "cmTC_f816c.dir\\Debug\\".
+          Creating directory "cmTC_79530.dir\\Debug\\".
           Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
-          Creating directory "C:\\Users\\luisc\\Documents\\TEC\\3 Semestre\\Algoritmos II\\SFML\\build\\CMakeFiles\\CMakeScratch\\TryCompile-47st2x\\Debug\\".
-          Creating directory "cmTC_f816c.dir\\Debug\\cmTC_f816c.tlog\\".
+          Creating directory "C:\\Users\\luisc\\Documents\\GitHub\\2daprogra\\build\\CMakeFiles\\CMakeScratch\\TryCompile-ybbn3l\\Debug\\".
+          Creating directory "cmTC_79530.dir\\Debug\\cmTC_79530.tlog\\".
         InitializeBuildStatus:
-          Creating "cmTC_f816c.dir\\Debug\\cmTC_f816c.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
-          Touching "cmTC_f816c.dir\\Debug\\cmTC_f816c.tlog\\unsuccessfulbuild".
+          Creating "cmTC_79530.dir\\Debug\\cmTC_79530.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+          Touching "cmTC_79530.dir\\Debug\\cmTC_79530.tlog\\unsuccessfulbuild".
         ClCompile:
-          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.43.34808\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_f816c.dir\\Debug\\\\" /Fd"cmTC_f816c.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.31\\Modules\\CMakeCCompilerABI.c"
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.43.34808\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_79530.dir\\Debug\\\\" /Fd"cmTC_79530.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.31\\Modules\\CMakeCCompilerABI.c"
           Microsoft (R) C/C++ Optimizing Compiler Version 19.43.34808 for x64
           Copyright (C) Microsoft Corporation.  All rights reserved.
-          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_f816c.dir\\Debug\\\\" /Fd"cmTC_f816c.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.31\\Modules\\CMakeCCompilerABI.c"
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_79530.dir\\Debug\\\\" /Fd"cmTC_79530.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.31\\Modules\\CMakeCCompilerABI.c"
           CMakeCCompilerABI.c
         Link:
-          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.43.34808\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\Users\\luisc\\Documents\\TEC\\3 Semestre\\Algoritmos II\\SFML\\build\\CMakeFiles\\CMakeScratch\\TryCompile-47st2x\\Debug\\cmTC_f816c.exe" /INCREMENTAL /ILK:"cmTC_f816c.dir\\Debug\\cmTC_f816c.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/luisc/Documents/TEC/3 Semestre/Algoritmos II/SFML/build/CMakeFiles/CMakeScratch/TryCompile-47st2x/Debug/cmTC_f816c.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/luisc/Documents/TEC/3 Semestre/Algoritmos II/SFML/build/CMakeFiles/CMakeScratch/TryCompile-47st2x/Debug/cmTC_f816c.lib" /MACHINE:X64  /machine:x64 cmTC_f816c.dir\\Debug\\CMakeCCompilerABI.obj
-          cmTC_f816c.vcxproj -> C:\\Users\\luisc\\Documents\\TEC\\3 Semestre\\Algoritmos II\\SFML\\build\\CMakeFiles\\CMakeScratch\\TryCompile-47st2x\\Debug\\cmTC_f816c.exe
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.43.34808\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\Users\\luisc\\Documents\\GitHub\\2daprogra\\build\\CMakeFiles\\CMakeScratch\\TryCompile-ybbn3l\\Debug\\cmTC_79530.exe" /INCREMENTAL /ILK:"cmTC_79530.dir\\Debug\\cmTC_79530.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/luisc/Documents/GitHub/2daprogra/build/CMakeFiles/CMakeScratch/TryCompile-ybbn3l/Debug/cmTC_79530.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/luisc/Documents/GitHub/2daprogra/build/CMakeFiles/CMakeScratch/TryCompile-ybbn3l/Debug/cmTC_79530.lib" /MACHINE:X64  /machine:x64 cmTC_79530.dir\\Debug\\CMakeCCompilerABI.obj
+          cmTC_79530.vcxproj -> C:\\Users\\luisc\\Documents\\GitHub\\2daprogra\\build\\CMakeFiles\\CMakeScratch\\TryCompile-ybbn3l\\Debug\\cmTC_79530.exe
         FinalizeBuildStatus:
-          Deleting file "cmTC_f816c.dir\\Debug\\cmTC_f816c.tlog\\unsuccessfulbuild".
-          Touching "cmTC_f816c.dir\\Debug\\cmTC_f816c.tlog\\cmTC_f816c.lastbuildstate".
-        Done Building Project "C:\\Users\\luisc\\Documents\\TEC\\3 Semestre\\Algoritmos II\\SFML\\build\\CMakeFiles\\CMakeScratch\\TryCompile-47st2x\\cmTC_f816c.vcxproj" (default targets).
+          Deleting file "cmTC_79530.dir\\Debug\\cmTC_79530.tlog\\unsuccessfulbuild".
+          Touching "cmTC_79530.dir\\Debug\\cmTC_79530.tlog\\cmTC_79530.lastbuildstate".
+        Done Building Project "C:\\Users\\luisc\\Documents\\GitHub\\2daprogra\\build\\CMakeFiles\\CMakeScratch\\TryCompile-ybbn3l\\cmTC_79530.vcxproj" (default targets).
         
         Build succeeded.
             0 Warning(s)
             0 Error(s)
         
-        Time Elapsed 00:00:00.82
+        Time Elapsed 00:00:02.20
         
       exitCode: 0
   -
@@ -232,8 +232,8 @@ events:
     checks:
       - "Detecting CXX compiler ABI info"
     directories:
-      source: "C:/Users/luisc/Documents/TEC/3 Semestre/Algoritmos II/SFML/build/CMakeFiles/CMakeScratch/TryCompile-5y9uyz"
-      binary: "C:/Users/luisc/Documents/TEC/3 Semestre/Algoritmos II/SFML/build/CMakeFiles/CMakeScratch/TryCompile-5y9uyz"
+      source: "C:/Users/luisc/Documents/GitHub/2daprogra/build/CMakeFiles/CMakeScratch/TryCompile-yorkz4"
+      binary: "C:/Users/luisc/Documents/GitHub/2daprogra/build/CMakeFiles/CMakeScratch/TryCompile-yorkz4"
     cmakeVariables:
       CMAKE_CXX_FLAGS: "/DWIN32 /D_WINDOWS /GR /EHsc"
       CMAKE_CXX_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
@@ -247,40 +247,40 @@ events:
       variable: "CMAKE_CXX_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: 'C:/Users/luisc/Documents/TEC/3 Semestre/Algoritmos II/SFML/build/CMakeFiles/CMakeScratch/TryCompile-5y9uyz'
+        Change Dir: 'C:/Users/luisc/Documents/GitHub/2daprogra/build/CMakeFiles/CMakeScratch/TryCompile-yorkz4'
         
-        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_ec0f3.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_56d29.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
         MSBuild version 17.13.15+18b3035f6 for .NET Framework
-        Build started 5/2/2025 4:25:39 PM.
+        Build started 5/2/2025 7:26:04 PM.
         
-        Project "C:\\Users\\luisc\\Documents\\TEC\\3 Semestre\\Algoritmos II\\SFML\\build\\CMakeFiles\\CMakeScratch\\TryCompile-5y9uyz\\cmTC_ec0f3.vcxproj" on node 1 (default targets).
+        Project "C:\\Users\\luisc\\Documents\\GitHub\\2daprogra\\build\\CMakeFiles\\CMakeScratch\\TryCompile-yorkz4\\cmTC_56d29.vcxproj" on node 1 (default targets).
         PrepareForBuild:
-          Creating directory "cmTC_ec0f3.dir\\Debug\\".
+          Creating directory "cmTC_56d29.dir\\Debug\\".
           Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
-          Creating directory "C:\\Users\\luisc\\Documents\\TEC\\3 Semestre\\Algoritmos II\\SFML\\build\\CMakeFiles\\CMakeScratch\\TryCompile-5y9uyz\\Debug\\".
-          Creating directory "cmTC_ec0f3.dir\\Debug\\cmTC_ec0f3.tlog\\".
+          Creating directory "C:\\Users\\luisc\\Documents\\GitHub\\2daprogra\\build\\CMakeFiles\\CMakeScratch\\TryCompile-yorkz4\\Debug\\".
+          Creating directory "cmTC_56d29.dir\\Debug\\cmTC_56d29.tlog\\".
         InitializeBuildStatus:
-          Creating "cmTC_ec0f3.dir\\Debug\\cmTC_ec0f3.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
-          Touching "cmTC_ec0f3.dir\\Debug\\cmTC_ec0f3.tlog\\unsuccessfulbuild".
+          Creating "cmTC_56d29.dir\\Debug\\cmTC_56d29.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+          Touching "cmTC_56d29.dir\\Debug\\cmTC_56d29.tlog\\unsuccessfulbuild".
         ClCompile:
-          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.43.34808\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_ec0f3.dir\\Debug\\\\" /Fd"cmTC_ec0f3.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.31\\Modules\\CMakeCXXCompilerABI.cpp"
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.43.34808\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_56d29.dir\\Debug\\\\" /Fd"cmTC_56d29.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.31\\Modules\\CMakeCXXCompilerABI.cpp"
           Microsoft (R) C/C++ Optimizing Compiler Version 19.43.34808 for x64
           Copyright (C) Microsoft Corporation.  All rights reserved.
-          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_ec0f3.dir\\Debug\\\\" /Fd"cmTC_ec0f3.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.31\\Modules\\CMakeCXXCompilerABI.cpp"
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_56d29.dir\\Debug\\\\" /Fd"cmTC_56d29.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.31\\Modules\\CMakeCXXCompilerABI.cpp"
           CMakeCXXCompilerABI.cpp
         Link:
-          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.43.34808\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\Users\\luisc\\Documents\\TEC\\3 Semestre\\Algoritmos II\\SFML\\build\\CMakeFiles\\CMakeScratch\\TryCompile-5y9uyz\\Debug\\cmTC_ec0f3.exe" /INCREMENTAL /ILK:"cmTC_ec0f3.dir\\Debug\\cmTC_ec0f3.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/luisc/Documents/TEC/3 Semestre/Algoritmos II/SFML/build/CMakeFiles/CMakeScratch/TryCompile-5y9uyz/Debug/cmTC_ec0f3.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/luisc/Documents/TEC/3 Semestre/Algoritmos II/SFML/build/CMakeFiles/CMakeScratch/TryCompile-5y9uyz/Debug/cmTC_ec0f3.lib" /MACHINE:X64  /machine:x64 cmTC_ec0f3.dir\\Debug\\CMakeCXXCompilerABI.obj
-          cmTC_ec0f3.vcxproj -> C:\\Users\\luisc\\Documents\\TEC\\3 Semestre\\Algoritmos II\\SFML\\build\\CMakeFiles\\CMakeScratch\\TryCompile-5y9uyz\\Debug\\cmTC_ec0f3.exe
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.43.34808\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\Users\\luisc\\Documents\\GitHub\\2daprogra\\build\\CMakeFiles\\CMakeScratch\\TryCompile-yorkz4\\Debug\\cmTC_56d29.exe" /INCREMENTAL /ILK:"cmTC_56d29.dir\\Debug\\cmTC_56d29.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/luisc/Documents/GitHub/2daprogra/build/CMakeFiles/CMakeScratch/TryCompile-yorkz4/Debug/cmTC_56d29.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/luisc/Documents/GitHub/2daprogra/build/CMakeFiles/CMakeScratch/TryCompile-yorkz4/Debug/cmTC_56d29.lib" /MACHINE:X64  /machine:x64 cmTC_56d29.dir\\Debug\\CMakeCXXCompilerABI.obj
+          cmTC_56d29.vcxproj -> C:\\Users\\luisc\\Documents\\GitHub\\2daprogra\\build\\CMakeFiles\\CMakeScratch\\TryCompile-yorkz4\\Debug\\cmTC_56d29.exe
         FinalizeBuildStatus:
-          Deleting file "cmTC_ec0f3.dir\\Debug\\cmTC_ec0f3.tlog\\unsuccessfulbuild".
-          Touching "cmTC_ec0f3.dir\\Debug\\cmTC_ec0f3.tlog\\cmTC_ec0f3.lastbuildstate".
-        Done Building Project "C:\\Users\\luisc\\Documents\\TEC\\3 Semestre\\Algoritmos II\\SFML\\build\\CMakeFiles\\CMakeScratch\\TryCompile-5y9uyz\\cmTC_ec0f3.vcxproj" (default targets).
+          Deleting file "cmTC_56d29.dir\\Debug\\cmTC_56d29.tlog\\unsuccessfulbuild".
+          Touching "cmTC_56d29.dir\\Debug\\cmTC_56d29.tlog\\cmTC_56d29.lastbuildstate".
+        Done Building Project "C:\\Users\\luisc\\Documents\\GitHub\\2daprogra\\build\\CMakeFiles\\CMakeScratch\\TryCompile-yorkz4\\cmTC_56d29.vcxproj" (default targets).
         
         Build succeeded.
             0 Warning(s)
             0 Error(s)
         
-        Time Elapsed 00:00:00.77
+        Time Elapsed 00:00:01.37
         
       exitCode: 0
   -

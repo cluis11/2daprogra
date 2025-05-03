@@ -2,10 +2,10 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\Users\luisc\Documents\TEC\3 Semestre\Algoritmos II\SFML\build\x64\Release\ZERO_CHECK</FullPath>
+      <FullPath>C:\Users\luisc\Documents\GitHub\2daprogra\build\x64\Release\ZERO_CHECK</FullPath>
     </ProjectOutput>
     <ProjectOutput>
-      <FullPath>C:\Users\luisc\Documents\TEC\3 Semestre\Algoritmos II\SFML\build\Release\GeneticKingdom.exe</FullPath>
+      <FullPath>C:\Users\luisc\Documents\GitHub\2daprogra\build\Release\GeneticKingdom.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

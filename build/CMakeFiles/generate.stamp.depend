@@ -105,11 +105,11 @@ C:/Program Files/CMake/share/cmake-3.31/Modules/Platform/Windows-MSVC-CXX.cmake
 C:/Program Files/CMake/share/cmake-3.31/Modules/Platform/Windows-MSVC.cmake
 C:/Program Files/CMake/share/cmake-3.31/Modules/Platform/Windows.cmake
 C:/Program Files/CMake/share/cmake-3.31/Modules/Platform/WindowsPaths.cmake
-C:/Users/luisc/Documents/TEC/3 Semestre/Algoritmos II/SFML/CMakeLists.txt
-C:/Users/luisc/Documents/TEC/3 Semestre/Algoritmos II/SFML/build/CMakeFiles/3.31.6/CMakeCCompiler.cmake
-C:/Users/luisc/Documents/TEC/3 Semestre/Algoritmos II/SFML/build/CMakeFiles/3.31.6/CMakeCXXCompiler.cmake
-C:/Users/luisc/Documents/TEC/3 Semestre/Algoritmos II/SFML/build/CMakeFiles/3.31.6/CMakeRCCompiler.cmake
-C:/Users/luisc/Documents/TEC/3 Semestre/Algoritmos II/SFML/build/CMakeFiles/3.31.6/CMakeSystem.cmake
+C:/Users/luisc/Documents/GitHub/2daprogra/CMakeLists.txt
+C:/Users/luisc/Documents/GitHub/2daprogra/build/CMakeFiles/3.31.6/CMakeCCompiler.cmake
+C:/Users/luisc/Documents/GitHub/2daprogra/build/CMakeFiles/3.31.6/CMakeCXXCompiler.cmake
+C:/Users/luisc/Documents/GitHub/2daprogra/build/CMakeFiles/3.31.6/CMakeRCCompiler.cmake
+C:/Users/luisc/Documents/GitHub/2daprogra/build/CMakeFiles/3.31.6/CMakeSystem.cmake
 C:/vcpkg/installed/x64-windows/share/sfml/SFMLConfig.cmake
 C:/vcpkg/installed/x64-windows/share/sfml/SFMLConfigVersion.cmake
 C:/vcpkg/installed/x64-windows/share/sfml/SFMLGraphicsSharedTargets-debug.cmake

@@ -1,6 +1,6 @@
-^C:\USERS\LUISC\DOCUMENTS\TEC\3 SEMESTRE\ALGORITMOS II\SFML\CMAKELISTS.TXT
+^C:\USERS\LUISC\DOCUMENTS\GITHUB\2DAPROGRA\CMAKELISTS.TXT
 setlocal
-"C:\Program Files\CMake\bin\cmake.exe" "-SC:/Users/luisc/Documents/TEC/3 Semestre/Algoritmos II/SFML" "-BC:/Users/luisc/Documents/TEC/3 Semestre/Algoritmos II/SFML/build" --check-stamp-file "C:/Users/luisc/Documents/TEC/3 Semestre/Algoritmos II/SFML/build/CMakeFiles/generate.stamp"
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/luisc/Documents/GitHub/2daprogra -BC:/Users/luisc/Documents/GitHub/2daprogra/build --check-stamp-file C:/Users/luisc/Documents/GitHub/2daprogra/build/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone

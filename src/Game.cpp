@@ -98,9 +98,11 @@ void Game::update(float deltaTime) {
             m_waveNumber++;
         }
         
+        int currentSecond = static_cast<int>(m_stateTimer);
         //Mientras stase = Wave crea enemigos cada 10 segundos
-        if (static_cast<int>(m_stateTimer) % 10 == 0) {
+        if (currentSecond % 10 == 0 && currentSecond != m_lastSpawnSecond) {
             spawnEnemy();
+            m_lastSpawnSecond = currentSecond;
         }
         //Mas comportamientos del wave irian aqui tambien
     }
