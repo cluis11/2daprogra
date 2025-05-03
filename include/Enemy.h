@@ -9,6 +9,7 @@ public:
     Enemy(Type type, int gridX, int gridY, GridSystem* grid);
     void update(float deltaTime) override;
     void takeDamage(float amount); //para futura implementacion de ataque de torres
+    void updateMovement(float deltaTime); //mueve al enemigo
 
     //Getters
     Type getType() const { return m_type; }
@@ -28,4 +29,5 @@ private:
     float m_health;
     float m_speed;
     //faltan resistencias
+    float m_moveTimer = 0; //timer para movimiento
 };

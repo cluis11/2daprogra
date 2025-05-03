@@ -77,7 +77,6 @@ void Game::processEvents() {
 
 //Funcion que se encarga de lo que pasa en el juego
 //Aqui se cambian los state y se determina que hacer segun estos
-//Cada objeto tiene su propio update
 void Game::update(float deltaTime) {
     //Inicia el timer del juego, se reinicia en cada cambio de estado
     m_stateTimer += deltaTime; 
@@ -97,7 +96,9 @@ void Game::update(float deltaTime) {
             m_stateTimer = 0.f;
             m_waveNumber++;
         }
-        
+        for (auto& enemy : m_enemies) {
+            enemy->update(deltaTime);
+        }
         int currentSecond = static_cast<int>(m_stateTimer);
         //Mientras stase = Wave crea enemigos cada 10 segundos
         if (currentSecond % 10 == 0 && currentSecond != m_lastSpawnSecond) {

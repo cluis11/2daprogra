@@ -1,4 +1,6 @@
 #include "Enemy.h"
+#include "GridSystem.h"
+#include <iostream>
 
 //Constructor de enemigo, varia atributos segun tipo
 Enemy::Enemy(Type type, int gridX, int gridY, GridSystem* grid)
@@ -10,14 +12,38 @@ Enemy::Enemy(Type type, int gridX, int gridY, GridSystem* grid)
     m_speed(getDefaultSpeed(type)) {}
 
 void Enemy::update(float deltaTime) {
-    (void)deltaTime; //lplace holder para evitar warning
-    //Agregar logica de movimiento
+    updateMovement(deltaTime);
 }
 
 void Enemy::takeDamage(float amount) {
     //falta agregar resistencias y tipo de daño o torre de la que proviene
     m_health -= amount;
     if (m_health < 0) m_health = 0;
+}
+
+//hace que el enemigo se mueva
+//por ahora solo lo mueve hacia abajo, con pathfinder se elije donde
+void Enemy::updateMovement(float deltaTime) {
+    m_moveTimer += deltaTime;
+    //cuando el timer sea el valor de la velocidad del enemigo
+    if (m_moveTimer >= m_speed) {
+        //test mover hacia abajo
+        int newY = m_gridY + 1;
+        std::cout << "[updatemovement]" << std::endl;
+        //valida si la celda a moverse es valida
+        if (m_grid->getCell(m_gridX, newY) == CellType::Empty) {
+            // Hace la pos actual Empty en la matriz
+            m_grid->setCell(m_gridX, m_gridY, CellType::Empty);
+            
+            // Mueve al enemigo en la matriz
+            m_gridY = newY;
+            m_grid->setCell(m_gridX, m_gridY, CellType::Enemy);
+            //mueve el enemigo en la pantalla
+            m_shape.setPosition(m_grid->gridToWorld(m_gridX, m_gridY));
+        }
+        
+        m_moveTimer = 0; // hace reset al contador de tiempo
+    }
 }
 
 //Funciones para obtener valores de cada tipo espeficico en el constructor
@@ -44,10 +70,10 @@ float Enemy::getDefaultHealth(Type type) {
 
 float Enemy::getDefaultSpeed(Type type) {
     switch(type) {
-        case Type::Ogre: return 45.f;
-        case Type::DarkElf: return 130.f;
-        case Type::Harpy: return 95.f;
-        case Type::Mercenary: return 60.f;
+        case Type::Ogre: return 1.2f;
+        case Type::DarkElf: return 0.7f;
+        case Type::Harpy: return 0.5f;
+        case Type::Mercenary: return 1.f;
         default: return 0.f;
     }
 }
