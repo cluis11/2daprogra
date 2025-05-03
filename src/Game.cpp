@@ -84,7 +84,7 @@ void Game::update(float deltaTime) {
 
     //Transisiones de state
     //Transicion de state Prep a Wave despues de 30 segundos
-    if (m_currentState == GameState::Prep && m_stateTimer >= 30.f) {
+    if (m_currentState == GameState::Prep && m_stateTimer >= 8.f) {
         m_currentState = GameState::Wave;
         m_stateTimer = 0.f;
     }
@@ -149,19 +149,27 @@ void Game::render() {
 //Hay que agregar el algoritmo genetico en la clase enemy
 //Segun el numero de wave se puede modificar
 void Game::spawnEnemy() {
-    auto spawnPos = m_grid.getRandomSpawnPoint(); //obtiene {x,y} de la matriz
-    //validacion pos correcta
-    if (spawnPos.x != -1) {
-        std::uniform_int_distribution<int> dist(0, 99);
-        int roll = dist(m_grid.getRNG()); //Para determinar que enemigo crear
-        Enemy::Type type;
-        //usa roll para crear un enemigo especifico
-        if (roll < 40) type = Enemy::Type::Ogre;
-        else if (roll < 70) type = Enemy::Type::DarkElf;
-        else if (roll < 90) type = Enemy::Type::Harpy;
-        else type = Enemy::Type::Mercenary;
-        //Crea el enemigo y lo agrega a la lista
-        m_enemies.emplace_back(std::make_unique<Enemy>(type, spawnPos.x, spawnPos.y, &m_grid));
+    auto spawnPoints = m_grid.getSpawnPoints(); //obtiene lista {x,y} de spawn area
+
+    for (const auto& spawnPos : spawnPoints) {
+        // Verificar si la celda está vacía
+        if (m_grid.getCell(spawnPos.x, spawnPos.y) == CellType::Empty) {
+            // Lógica de probabilidad para tipo de enemigo 
+            std::uniform_int_distribution<int> dist(0, 99);
+            int roll = dist(m_grid.getRNG());
+            Enemy::Type type;
+            
+            if (roll < 40) type = Enemy::Type::Ogre;
+            else if (roll < 70) type = Enemy::Type::DarkElf;
+            else if (roll < 90) type = Enemy::Type::Harpy;
+            else type = Enemy::Type::Mercenary;
+
+            // Crear enemigo 
+            m_enemies.emplace_back(std::make_unique<Enemy>(type, spawnPos.x, spawnPos.y, &m_grid));
+            m_grid.setCell(spawnPos.x, spawnPos.y, CellType::Enemy); 
+            
+            break; // Salir después de spawnear 1 enemigo
+        }
     }
 }
 

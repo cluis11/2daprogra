@@ -8,7 +8,7 @@ enum class CellType {
     Empty,       // 0 - Gris oscuro
     Obstacle,    // 1 - Gris claro
     Tower,       // 2 - Colores variados
-    SpawnArea,   // 3 - Verde
+    Enemy,       // 3 - Colores variados
     ExitPoint    // 4 - Rojo
 };
 
@@ -26,8 +26,7 @@ public:
     sf::Vector2i worldToGrid(float x, float y) const;
 
     //areas de spawn
-    sf::Vector2i getRandomSpawnPoint() const;
-    std::vector<sf::Vector2i> getAllSpawnPoints() const;
+    const std::vector<sf::Vector2i>& getSpawnPoints() const { return m_spawnPoints; }
     
     void render(sf::RenderTarget& target) const;
 
@@ -47,4 +46,5 @@ private:
     float m_cellSize;
     std::vector<std::vector<CellType>> m_grid;
     mutable std::mt19937 m_rng; 
+    std::vector<sf::Vector2i> m_spawnPoints; // Puntos fijos de spawn
 };
