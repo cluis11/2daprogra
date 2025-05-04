@@ -5,11 +5,13 @@
 #include "GridSystem.h"
 #include "Tower.h"
 #include "Enemy.h"
+#include "Wave.h"
 
 class Game {
 public:
     Game(); //Constructor de SFML
     void run(); //Funcion que ejecuta el juego
+    GridSystem& getGrid() { return m_grid; }
 
 private:
     void processEvents(); //Captura eventos para ejecutar comportamientos
@@ -23,6 +25,8 @@ private:
     
     std::vector<std::unique_ptr<Tower>> m_towers; //lista de torres
     std::vector<std::unique_ptr<Enemy>> m_enemies; //lista de enemigos
+
+    std::unique_ptr<Wave> m_currentWave;
     
     //Enum para patron state del comportamiento del juego
     //Se pueden agregar states como pantalla inicial, registro de actividades, pantalla de perdedor etc
@@ -35,9 +39,6 @@ private:
     int m_waveNumber = 1; //variable que controla en numero de wave actual
     int m_towersPlaced = 0; //variable que controla numero de torres, se tiene que agregr logica de economia
     int m_leaks = 0; //controla cuantos enemigos que han llegado a la puerta para condicion game over
-    
-    //Para el spawn de enemigos
-    int m_lastSpawnSecond = -1;
     
     //Fuentes
     sf::Font m_font;

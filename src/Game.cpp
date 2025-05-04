@@ -91,19 +91,24 @@ void Game::update(float deltaTime) {
     //Aumenta el numero de wave
     //Hay que implementar logica de gameover por leaks
     else if (m_currentState == GameState::Wave) {
-        if (m_stateTimer >= 60.f) {
+        if (!m_currentWave) {
+            // Inicializa la wave con parámetros configurables
+            m_currentWave = std::make_unique<Wave>(
+                m_waveNumber, 
+                m_grid.getSpawnPoints(),
+                Wave::Config{}, // Configuración default
+                &m_grid
+            );
+        }
+        m_currentWave->update(deltaTime, m_enemies);
+
+        if (m_currentWave->isCompleted()) {
             m_currentState = GameState::Cooldown;
-            m_stateTimer = 0.f;
+            m_currentWave.reset();
             m_waveNumber++;
         }
         for (auto& enemy : m_enemies) {
             enemy->update(deltaTime);
-        }
-        int currentSecond = static_cast<int>(m_stateTimer);
-        //Mientras stase = Wave crea enemigos cada 10 segundos
-        if (currentSecond % 10 == 0 && currentSecond != m_lastSpawnSecond) {
-            spawnEnemy();
-            m_lastSpawnSecond = currentSecond;
         }
         //Mas comportamientos del wave irian aqui tambien
     }
