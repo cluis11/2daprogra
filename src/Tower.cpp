@@ -1,4 +1,6 @@
 #include "Tower.h"
+#include "Enemy.h"
+#include <iostream>
 
 //Constructor de torre, varia atributos segun tipo
 Tower::Tower(Type type, int gridX, int gridY, GridSystem* grid)
@@ -9,11 +11,17 @@ Tower::Tower(Type type, int gridX, int gridY, GridSystem* grid)
     m_damage(getDefaultDamage(type)),
     m_attackSpeed(getDefaultAttackSpeed(type)) {}
 
+std::string Tower::typeToString(Type type) {
+    static const std::string names[] = {"archer", "mage", "artillery"};
+    return names[static_cast<int>(type)];
+}
+
 void Tower::update(float deltaTime) {
-    if (m_attackCooldown > 0) {
-        m_attackCooldown -= deltaTime;
+    m_attackTimer += deltaTime;
+    if (m_attackTimer >= m_attackSpeed) {
+        attackEnemy();
+        m_attackTimer = 0.f;
     }
-    // logica de ataque
 }
 
 
@@ -57,3 +65,16 @@ float Tower::getDefaultAttackSpeed(Type type) {
         default: return 0.f;
     }
 }
+
+
+void Tower::attackEnemy() {
+    auto enemies = m_grid->getEnemiesInRadius(m_gridX, m_gridY, static_cast<int>(m_range));
+    if (!enemies.empty()) {
+        // Por ahora ataca al primer enemigo de la lista
+        enemies[0]->takeDamage(m_damage, typeToString(m_type));
+        std::cout << "enemigo atacado";
+    }
+}
+
+
+

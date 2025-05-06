@@ -102,15 +102,30 @@ void Game::update(float deltaTime) {
         }
         m_currentWave->update(deltaTime, m_enemies);
 
+        // ACTUALIZACIÓN OPTIMIZADA DE ENEMIGOS
+        auto it = m_enemies.begin();
+        while (it != m_enemies.end()) {
+            (*it)->update(deltaTime);
+            
+            // Eliminar enemigos muertos
+            if (!(*it)->isAlive()) {
+                // La limpieza del grid se hace automáticamente en el destructor de Enemy
+                it = m_enemies.erase(it);
+            } else {
+                ++it;
+            }
+        }
+
+        for (auto& tower : m_towers) {
+            tower->update(deltaTime); 
+        }
+        //Mas comportamientos del wave irian aqui tambien
+
         if (m_currentWave->isCompleted()) {
             m_currentState = GameState::Cooldown;
             m_currentWave.reset();
             m_waveNumber++;
         }
-        for (auto& enemy : m_enemies) {
-            enemy->update(deltaTime);
-        }
-        //Mas comportamientos del wave irian aqui tambien
     }
     //Transicion de state Cooldown a Prep despues de 10 segundos
     else if (m_currentState == GameState::Cooldown && m_stateTimer >= 10.f) {

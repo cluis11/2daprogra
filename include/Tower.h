@@ -1,5 +1,6 @@
 #pragma once
 #include "Entity.h"
+#include <string>
 
 class Tower : public Entity {
 public:
@@ -7,7 +8,10 @@ public:
     enum class Type { Archer, Mage, Artillery };
 
     Tower(Type type, int gridX, int gridY, GridSystem* grid);
-    void update(float deltaTime) override;
+    void update(float deltaTime);
+    static std::string typeToString(Type type);
+    void attackEnemy();
+    
 
     //Getters
     Type getType() const { return m_type; }
@@ -29,4 +33,5 @@ public:
         float m_damage;
         float m_attackSpeed;
         float m_attackCooldown = 0.f;
+        float m_attackTimer = 0.f;
 };

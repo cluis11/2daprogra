@@ -1,5 +1,6 @@
 #include "GridSystem.h"
 #include <algorithm>
+#include "Enemy.h"
 
 GridSystem::GridSystem(unsigned width, unsigned height, float cellSize)
     : m_width(width), m_height(height), m_cellSize(cellSize), m_rng(std::random_device{}()) {
@@ -10,9 +11,10 @@ GridSystem::GridSystem(unsigned width, unsigned height, float cellSize)
 void GridSystem::initializeGrid() {
     //asigna todos los valores de la matriz a libres
     m_grid.resize(m_width, std::vector<CellType>(m_height, CellType::Empty));
+    m_enemyGrid.resize(m_width, std::vector<Enemy*>(m_height, nullptr)); //matriz de punteros a enemigos para buscar y atacar
 
     //definir donde se originan enemigos
-    m_spawnPoints = {{0, 0}, {0, 1}, {1, 0}, {1, 1}};
+    m_spawnPoints = {{0, 0}, {0, 1}, {1, 0}, {1, 1}, {0, 25}, {0, 26}};
 
     //asigna la puerta del castillo en el borde derecho
     m_grid[m_width-1][m_height-1] = CellType::ExitPoint;
@@ -21,6 +23,36 @@ void GridSystem::initializeGrid() {
     addObstacleCluster(10, 10, 3);
     addObstacleCluster(30, 20, 2);
     addObstacleCluster(15, 35, 4);
+}
+
+//guarda un enemy en la matriz y un puntero a este en la matriz de punteros
+void GridSystem::registerEnemy(Enemy* enemy, int gridX, int gridY) {
+    if (gridX >= 0 && gridY >= 0 && gridX < static_cast<int>(m_width) && gridY < static_cast<int>(m_height)) {
+        m_enemyGrid[gridX][gridY] = enemy;
+        m_grid[gridX][gridY] = CellType::Enemy;
+    }
+}
+
+//hace la casilla vacia al moverse o matar al enemigo
+void GridSystem::unregisterEnemy(int gridX, int gridY) {
+    if (gridX >= 0 && gridY >= 0 && gridX < static_cast<int>(m_width) && gridY < static_cast<int>(m_height)) {
+        m_enemyGrid[gridX][gridY] = nullptr;
+        m_grid[gridX][gridY] = CellType::Empty;
+    }
+}
+
+std::vector<Enemy*> GridSystem::getEnemiesInRadius(int centerX, int centerY, int radius) const {
+    std::vector<Enemy*> enemies;
+    for (int x = centerX - radius; x <= centerX + radius; ++x) {
+        for (int y = centerY - radius; y <= centerY + radius; ++y) {
+            if (x >= 0 && y >= 0 && x < static_cast<int>(m_width) && y < static_cast<int>(m_height)) {
+                if (m_enemyGrid[x][y] != nullptr) {
+                    enemies.push_back(m_enemyGrid[x][y]);
+                }
+            }
+        }
+    }
+    return enemies;
 }
 
 //funcion para crear obstaculos

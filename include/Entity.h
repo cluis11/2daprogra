@@ -16,6 +16,7 @@ public:
     int getGridX() const { return m_gridX; }
     int getGridY() const { return m_gridY; }
     sf::FloatRect getBounds() const;
+    sf::Vector2f getPosition() const;
 
 protected:
     int m_gridX, m_gridY;

@@ -14,6 +14,11 @@ void Entity::render(sf::RenderTarget& target) const {
     target.draw(m_shape);
 }
 
+sf::Vector2f Entity::getPosition() const {
+    // Calcula la posición exacta basada en el grid
+    return m_grid->gridToWorld(m_gridX, m_gridY);
+}
+
 sf::FloatRect Entity::getBounds() const {
     return m_shape.getGlobalBounds();
 }

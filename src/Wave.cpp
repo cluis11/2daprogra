@@ -44,7 +44,6 @@ void Wave::spawnEnemy(std::vector<std::unique_ptr<Enemy>>& enemies) {
                 point.y, 
                 m_grid
             ));
-            m_grid->setCell(point.x, point.y, CellType::Enemy);
             m_enemiesSpawned++;
         }
     }
