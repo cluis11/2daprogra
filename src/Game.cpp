@@ -1,6 +1,7 @@
 #include "Game.h"
 #include <sstream>
 #include <stdexcept>
+#include <iostream>
 
 //Constructor del juego
 Game::Game() 
@@ -10,7 +11,9 @@ Game::Game()
       m_waveText(m_font, "Wave: 0/3",    20), //Se define el texto aqui por cambio en 3.0
       m_timerText(m_font, "Time: 0s",     20), //Se define la texto aqui por cambio en 3.0
       m_towersText(m_font, "Towers: 0/10",20), //Se define la texto aqui por cambio en 3.0
-      m_leaksText(m_font, "Leaks: 0/5",   20) //Se define la texto aqui por cambio en 3.0
+      m_leaksText(m_font, "Leaks: 0/5",   20), m_geneticManager() // Inicializa el GeneticManager //Se define la texto aqui por cambio en 3.0
+
+
 {
     //Limite de framerates
     m_window.setFramerateLimit(60);
@@ -22,11 +25,14 @@ Game::Game()
         throw std::runtime_error("Failed to load font file 'arial.ttf'");
     }
     
-    // Posiciona los textos
+    //Posiciona los textos
     m_waveText.setPosition(sf::Vector2f(10.f, 10.f));
     m_timerText.setPosition(sf::Vector2f(350.f, 10.f));
     m_towersText.setPosition(sf::Vector2f(650.f, 10.f));
     m_leaksText.setPosition(sf::Vector2f(10.f, 750.f));
+
+    //Inicializa primera generacion de genomas
+    m_geneticManager.initializeFirstGeneration();
 
     //como se asignaron los textos se actualiza la interfaz
     updateUI();
@@ -75,56 +81,61 @@ void Game::processEvents() {
     }  
 }
 
-//Funcion que se encarga de lo que pasa en el juego
-//Aqui se cambian los state y se determina que hacer segun estos
 void Game::update(float deltaTime) {
-    //Inicia el timer del juego, se reinicia en cada cambio de estado
-    m_stateTimer += deltaTime; 
+    m_stateTimer += deltaTime;
 
-    //Transisiones de state
-    //Transicion de state Prep a Wave despues de 30 segundos
     if (m_currentState == GameState::Prep && m_stateTimer >= 8.f) {
         m_currentState = GameState::Wave;
         m_stateTimer = 0.f;
+        std::cout << "\n=== INICIANDO OLEADA " << m_waveNumber << " ===" << std::endl;
     }
-    //Transicion de state Wave a Cooldown despues de 60 segundos
-    //Aumenta el numero de wave
-    //Hay que implementar logica de gameover por leaks
     else if (m_currentState == GameState::Wave) {
         if (!m_currentWave) {
-            // Inicializa la wave con parámetros configurables
             m_currentWave = std::make_unique<Wave>(
-                m_waveNumber, 
-                m_grid.getSpawnPoints(),
-                Wave::Config{}, // Configuración default
-                &m_grid
-            );
+                m_waveNumber, m_grid.getSpawnPoints(), Wave::Config{}, &m_grid,
+                m_geneticManager.getCurrentGenomes());
         }
-        m_currentWave->update(deltaTime, m_enemies);
+
+        m_currentWave->update(deltaTime);
+
+        // Spawn rápido para pruebas
+        static float spawnAccumulator = 0;
+        spawnAccumulator += deltaTime;
+        if (spawnAccumulator >= 1.0f) { // Spawn cada 1 segundo
+            spawnAccumulator = 0;
+            auto genomes = m_currentWave->getGenomesForNextSpawn();
+            for (const auto& genome : genomes) {
+                spawnEnemy(genome);
+            }
+        }
+
+        // Actualizar enemigos (muerte manejada internamente)
+        for (auto it = m_enemies.begin(); it != m_enemies.end(); ) {
+            (*it)->update(deltaTime);
+            if (!(*it)->isAlive()) {
+                std::cout << "Enemigo murio - Tipo: " << static_cast<int>((*it)->getType())
+                          << " Pasos: " << (*it)->getStepsTaken() << std::endl;
+                it = m_enemies.erase(it);
+            } else {
+                ++it;
+            }
+        }
 
         if (m_currentWave->isCompleted()) {
+            m_geneticManager.evaluateGeneration(m_enemies);
+            m_geneticManager.createNextGeneration();
             m_currentState = GameState::Cooldown;
             m_currentWave.reset();
             m_waveNumber++;
+            m_enemies.clear();
         }
-        for (auto& enemy : m_enemies) {
-            enemy->update(deltaTime);
-        }
-        //Mas comportamientos del wave irian aqui tambien
     }
-    //Transicion de state Cooldown a Prep despues de 10 segundos
-    else if (m_currentState == GameState::Cooldown && m_stateTimer >= 10.f) {
-        //Logica de ganar si completa 3 waves
-        if (m_waveNumber > 3) {
-            // Cierra la ventana pero hay que implementar un stade de victory
-            //stade victory muestra datos de la partida y permite cerrar o volver a jugar
-            m_window.close();
-        }
-        //si no ha completado waves para a prep para la siguiente
+    else if (m_currentState == GameState::Cooldown && m_stateTimer >= 5.f) {
+        if (m_waveNumber > 3) m_window.close();
         m_currentState = GameState::Prep;
         m_stateTimer = 0.f;
     }
-    //actualiza UI, ver como cambiar lo que se muestra segun state
+
     updateUI();
 }
 
@@ -154,30 +165,22 @@ void Game::render() {
 //Funcion encargada de crear enemigos durante el wave
 //Hay que agregar el algoritmo genetico en la clase enemy
 //Segun el numero de wave se puede modificar
-void Game::spawnEnemy() {
-    auto spawnPoints = m_grid.getSpawnPoints(); //obtiene lista {x,y} de spawn area
-
+void Game::spawnEnemy(const EnemyGenome& genome) {
+    auto spawnPoints = m_grid.getSpawnPoints();
     for (const auto& spawnPos : spawnPoints) {
-        // Verificar si la celda está vacía
         if (m_grid.getCell(spawnPos.x, spawnPos.y) == CellType::Empty) {
-            // Lógica de probabilidad para tipo de enemigo 
-            std::uniform_int_distribution<int> dist(0, 99);
-            int roll = dist(m_grid.getRNG());
-            Enemy::Type type;
-            
-            if (roll < 40) type = Enemy::Type::Ogre;
-            else if (roll < 70) type = Enemy::Type::DarkElf;
-            else if (roll < 90) type = Enemy::Type::Harpy;
-            else type = Enemy::Type::Mercenary;
+            auto enemy = std::make_unique<Enemy>(genome.getType(), spawnPos.x, spawnPos.y, &m_grid);
+            enemy->setGenome(genome); //Aquí se asigna el genoma al enemigo
+            m_enemies.emplace_back(std::move(enemy));
 
-            // Crear enemigo 
-            m_enemies.emplace_back(std::make_unique<Enemy>(type, spawnPos.x, spawnPos.y, &m_grid));
-            m_grid.setCell(spawnPos.x, spawnPos.y, CellType::Enemy); 
-            
-            break; // Salir después de spawnear 1 enemigo
+            std::cout << "Spawned enemy - Type: " << static_cast<int>(genome.getType())
+                      << " at (" << spawnPos.x << "," << spawnPos.y << ")" << std::endl;
+
+            break;
         }
     }
 }
+
 
 //Funcion encargada de actualizar la interfaz cuando para un evento de usuario u objetos
 void Game::updateUI() {
@@ -195,7 +198,7 @@ void Game::updateUI() {
     m_leaksText.setString("Leaks: "  + std::to_string(m_leaks)         + "/5");
 }
 
-//Funcion responsable de todo lo que pasa en el juego
+//Funcion responsable de tod0 lo que pasa en el juego
 //Llama a las funciones basicas de SFML 
 void Game::run() {
     sf::Clock clock;

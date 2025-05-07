@@ -5,6 +5,7 @@
 #include "GridSystem.h"
 #include "Tower.h"
 #include "Enemy.h"
+#include "GeneticManager.h"
 #include "Wave.h"
 
 class Game {
@@ -17,7 +18,7 @@ private:
     void processEvents(); //Captura eventos para ejecutar comportamientos
     void update(float deltaTime); //Ejecuta logica del objeto e interacciones
     void render(); //Encargado de dibujar los objetos
-    void spawnEnemy(); //Funcion encargada de crear enemigos durante las waves
+    void spawnEnemy(const EnemyGenome& genome); //Funcion encargada de crear enemigos durante las waves
     void updateUI(); //Funcion encargada de actualizar la interfaz
     
     sf::RenderWindow m_window; //main screen
@@ -27,6 +28,8 @@ private:
     std::vector<std::unique_ptr<Enemy>> m_enemies; //lista de enemigos
 
     std::unique_ptr<Wave> m_currentWave;
+    GeneticManager m_geneticManager;
+    int m_totalEnemiesDefeated = 0;
     
     //Enum para patron state del comportamiento del juego
     //Se pueden agregar states como pantalla inicial, registro de actividades, pantalla de perdedor etc

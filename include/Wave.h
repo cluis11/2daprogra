@@ -3,7 +3,10 @@
 #include "GridSystem.h"
 #include <vector>
 #include <memory>
+#include "EnemyGenome.h"
 
+class Game;
+class GridSystem;
 
 class Wave {
 public:
@@ -17,25 +20,29 @@ public:
 
     //constructor
     //Recibe el numero de wave, y los puntos de spawn definidos en game, la congif y referencia al grid
-    Wave(int waveNumber, const std::vector<sf::Vector2i>& spawnPoints, const Config& config, GridSystem* grid);
-
+    Wave(int waveNumber, const std::vector<sf::Vector2i>& spawnPoints,
+         const Config& config, GridSystem* grid,
+         const std::vector<EnemyGenome>& genomes);
     //funciones
-    void update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& enemies);
+    void update(float deltaTime);
     bool isCompleted() const;
     int getEnemiesSpawned() const { return m_enemiesSpawned; }
     int getTotalEnemies() const { return m_totalEnemies; }
 
-private:
-    Enemy::Type getEnemyType() const;
-    void spawnEnemy(std::vector<std::unique_ptr<Enemy>>& enemies);
+    // Nueva funcion para obtener genomas a spawnear
+    std::vector<EnemyGenome> getGenomesForNextSpawn();
 
+private:
     const Config m_config;
     const std::vector<sf::Vector2i>& m_spawnPoints;
     GridSystem* m_grid;
+    const std::vector<EnemyGenome>& m_genomes;
+
     int m_waveNumber;
     float m_timeElapsed = 0.f;
     float m_spawnTimer = 0.f;
     int m_enemiesSpawned = 0;
     int m_totalEnemies = 0;
     int m_activeSpawnPoints = 0;
+
 };

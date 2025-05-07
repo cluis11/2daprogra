@@ -28,6 +28,8 @@ add_executable(GeneticKingdom
     src/Entity.cpp
     src/Tower.cpp
     src/Enemy.cpp
+    src/GeneticManager.cpp
+    src/EnemyGenome.cpp
 )
 
 # Copy assets to build directory

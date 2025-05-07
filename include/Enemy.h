@@ -1,15 +1,25 @@
 #pragma once
 #include "Entity.h"
+#include "EnemyGenome.h"
+#include "EnemyTypes.h"
 
 class Enemy : public Entity {
 public:
-    //enum para tipo de enemigo
-    enum class Type { Ogre, DarkElf, Harpy, Mercenary };
 
+    // Se usa el mismo enum que EnemyGenome para mantener consistencia en los tipos
+    using Type = EnemyType;
+
+    // Constructor que recibe tipo, posición inicial y referencia al grid
     Enemy(Type type, int gridX, int gridY, GridSystem* grid);
+
+    //Actualización del enemigo cada frame (heredado de Entity)
     void update(float deltaTime) override;
     void takeDamage(float amount); //para futura implementacion de ataque de torres
     void updateMovement(float deltaTime); //mueve al enemigo
+
+    //Asigna un genoma al enemigo y aplica sus atributos
+    void setGenome(const EnemyGenome& genome);
+    int getStepsTaken() const { return m_stepsTaken; } //Para calculo de fitness
 
     //Getters
     Type getType() const { return m_type; }
@@ -22,6 +32,10 @@ public:
     static float getDefaultHealth(Type type);
     static float getDefaultSpeed(Type type);
 
+    void setRandomDeath(); // Nuevo método para muerte aleatoria
+private:
+    bool m_shouldDie = false; // Nuevo miembro
+
 private:
     //Atributos
     Type m_type;
@@ -30,4 +44,7 @@ private:
     float m_speed;
     //faltan resistencias
     float m_moveTimer = 0; //timer para movimiento
+
+    int m_stepsTaken = 0; //Nuevo contador de pasos para calculo de fitness
+    EnemyGenome m_genome; //Nuevo miembro
 };
