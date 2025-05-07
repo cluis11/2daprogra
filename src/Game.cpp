@@ -5,14 +5,15 @@
 
 //Constructor del juego
 Game::Game() 
-    : m_window(sf::VideoMode( sf::Vector2u(800u, 800u) ), "Genetic Kingdom"), //diferente en 3.0
+    : m_window(sf::VideoMode( sf::Vector2u(1000u, 800u) ), "Genetic Kingdom"), //diferente en 3.0
       m_grid(50, 50, 16.f), //crea la matriz mxm y asigna el cellSize
       m_font(), //Se define la fuente aqui por cambio en 3.0
       m_waveText(m_font, "Wave: 0/3",    20), //Se define el texto aqui por cambio en 3.0
       m_timerText(m_font, "Time: 0s",     20), //Se define la texto aqui por cambio en 3.0
       m_towersText(m_font, "Towers: 0/10",20), //Se define la texto aqui por cambio en 3.0
       m_leaksText(m_font, "Leaks: 0/5",   20), //Se define la texto aqui por cambio en 3.0
-      m_coinsText(m_font, "Coins: ", 20)
+      m_coinsText(m_font, "Coins: ", 20),
+      m_isPlacingTower(false)
 {
     //Limite de framerates
     m_window.setFramerateLimit(60);
@@ -29,9 +30,9 @@ Game::Game()
     m_timerText.setPosition(sf::Vector2f(350.f, 10.f));
     m_towersText.setPosition(sf::Vector2f(650.f, 10.f));
     m_leaksText.setPosition(sf::Vector2f(10.f, 750.f));
-    m_coinsText.setPosition(sf::Vector2f(350.f, 750.f));
 
     //como se asignaron los textos se actualiza la interfaz
+    initUI();
     updateUI();
 }
 
@@ -76,28 +77,27 @@ void Game::processEvents() {
             }
         }
         else if (mb && m_currentState == GameState::Wave) {
-            int cost = Tower::getCost(m_nextTowerType);
-            auto gridPos = m_grid.worldToGrid(
-                static_cast<float>(mb->position.x),
-                static_cast<float>(mb->position.y)
-            );
-            if (m_economy.canAfford(cost)) {
-                m_economy.spend(cost);
-                if (m_grid.getCell(gridPos.x, gridPos.y) == CellType::Empty) {
+            sf::Vector2i mousePos(mb->position.x, mb->position.y);
+            if (mousePos.x >= 800) { // UI panel click
+                handleTowerSelection(mousePos);
+            }
+
+            else if (m_isPlacingTower) { // Grid click
+                auto gridPos = m_grid.worldToGrid(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
+                int cost = Tower::getCost(m_selectedTowerType);
+                
+                if (m_grid.getCell(gridPos.x, gridPos.y) == CellType::Empty && 
+                    m_economy.canAfford(cost)) {
+                    m_economy.spend(cost);
                     m_towers.emplace_back(
-                        std::make_unique<Tower>(m_nextTowerType, gridPos.x, gridPos.y, &m_grid)
+                        std::make_unique<Tower>(m_selectedTowerType, gridPos.x, gridPos.y, &m_grid)
                     );
                     m_grid.setCell(gridPos.x, gridPos.y, CellType::Tower);
                     m_towersPlaced++;
-    
-                    // Rota el tipo de torre, solo de momento se cambia por seleccion en pantalla y economia
-                    m_nextTowerType = static_cast<Tower::Type>((static_cast<int>(m_nextTowerType) + 1) % 3);
-                    
-                    //Actualiza la interfaz para mostrar torre
                     updateUI();
                 }
-            } 
-            else { std::cout << "Not enough coins! Need " << cost << std::endl; }
+                m_isPlacingTower = false;
+            }
         }
     }  
 }
@@ -183,6 +183,11 @@ void Game::render() {
     //render se maneja a nivel de Entity
     for (const auto& tower : m_towers) tower->render(m_window);
     for (const auto& enemy : m_enemies) enemy->render(m_window);
+
+    // Draw UI panel
+    m_window.draw(m_uiPanel);
+    for (const auto& button : m_towerButtons) m_window.draw(button);
+    for (const auto& text : m_towerButtonTexts) m_window.draw(text);
     
     //Dibuja textos
     m_window.draw(m_waveText);
@@ -190,6 +195,10 @@ void Game::render() {
     m_window.draw(m_towersText);
     m_window.draw(m_leaksText);
     m_window.draw(m_coinsText);
+
+    if (m_isPlacingTower) {
+        m_window.draw(m_towerGhost);
+    }
     
     //Abre la pantalla
     m_window.display();
@@ -219,6 +228,64 @@ void Game::spawnEnemy() {
             m_grid.setCell(spawnPos.x, spawnPos.y, CellType::Enemy); 
             
             break; // Salir después de spawnear 1 enemigo
+        }
+    }
+}
+
+//inicializa el panel de la derecha
+void Game::initUI() {
+    //Panel de la derecha
+    m_uiPanel.setSize({200.f, 800.f});
+    m_uiPanel.setPosition({800.f,0.f});
+    m_uiPanel.setFillColor(sf::Color(50,50,70));
+
+    //Opcion para seleccion de torres
+    const std::vector<Tower::Type> towerTypes = {
+        Tower::Type::Archer, Tower::Type::Mage, Tower::Type::Artillery
+    };
+
+    //crea rectagulo y lo configura segun tipo de torre
+    for (size_t i = 0; i < towerTypes.size(); i++){
+        sf::RectangleShape button({20.f, 20.f});
+        button.setPosition({810.f, 20.f + static_cast<float>(i) * 50.f}); //pos inicial y baja con cada repeticion
+        button.setFillColor(Tower::getColorForType(towerTypes[i]));
+        m_towerButtons.push_back(button);
+        sf::Text text(m_font);
+        text.setCharacterSize(16);
+        text.setString(Tower::typeToString(towerTypes[i]) + " (" + 
+                      std::to_string(Tower::getCost(towerTypes[i])) + ")");
+        text.setPosition({840.f, 20.f + static_cast<float>(i) * 50.f});
+        m_towerButtonTexts.push_back(text);
+    }
+    m_coinsText.setFont(m_font);
+    m_coinsText.setCharacterSize(20);
+    m_coinsText.setPosition({810.f, 200.f});
+    
+    // Tower ghost (for placement preview)
+    m_towerGhost.setSize({16.f, 16.f});
+    m_towerGhost.setOrigin({8.f, 8.f});
+    m_towerGhost.setFillColor(sf::Color(255, 255, 255, 150));
+}
+
+void Game::updateTowerGhost(const sf::Vector2i& mousePos) {
+    sf::Vector2f pos{static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)};
+    if (mousePos.x < 800) { // Only show in game area
+        m_towerGhost.setPosition(pos);
+    }
+}
+
+void Game::handleTowerSelection(const sf::Vector2i& mousePos) {
+    sf::Vector2f pos{static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)};
+    for (size_t i = 0; i < m_towerButtons.size(); ++i) {
+        if (m_towerButtons[i].getGlobalBounds().contains(pos)) {
+            int cost = Tower::getCost(static_cast<Tower::Type>(i));
+            if (m_economy.canAfford(cost)) {
+                m_selectedTowerType = static_cast<Tower::Type>(i);
+                m_isPlacingTower = true;
+                m_towerGhost.setFillColor(Tower::getColorForType(m_selectedTowerType));
+                m_towerGhost.setFillColor(sf::Color(255, 255, 255, 150));
+            }
+            break;
         }
     }
 }

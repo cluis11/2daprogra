@@ -54,6 +54,17 @@ private:
     sf::Text m_leaksText;
     sf::Text m_coinsText;
 
-    //solo por ahora, variable que rota el tipo de torre que coloca
+    //elementos de ui de seleccion de torres
+    sf::RectangleShape m_uiPanel;
+    std::vector<sf::RectangleShape> m_towerButtons;
+    std::vector<sf::Text> m_towerButtonTexts;
+    Tower::Type m_selectedTowerType;
+    bool m_isPlacingTower;
+    sf::RectangleShape m_towerGhost;
+    //funciones seleccion de torres
+    void initUI();
+    void handleTowerSelection(const sf::Vector2i& mousePos);
+    void updateTowerGhost(const sf::Vector2i& mousePos);
+
     Tower::Type m_nextTowerType = Tower::Type::Archer;
 };
