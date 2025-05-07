@@ -1,4 +1,5 @@
 #include "Game.h"
+#include <iostream>
 #include <sstream>
 #include <stdexcept>
 
@@ -10,7 +11,8 @@ Game::Game()
       m_waveText(m_font, "Wave: 0/3",    20), //Se define el texto aqui por cambio en 3.0
       m_timerText(m_font, "Time: 0s",     20), //Se define la texto aqui por cambio en 3.0
       m_towersText(m_font, "Towers: 0/10",20), //Se define la texto aqui por cambio en 3.0
-      m_leaksText(m_font, "Leaks: 0/5",   20) //Se define la texto aqui por cambio en 3.0
+      m_leaksText(m_font, "Leaks: 0/5",   20), //Se define la texto aqui por cambio en 3.0
+      m_coinsText(m_font, "Coins: ", 20)
 {
     //Limite de framerates
     m_window.setFramerateLimit(60);
@@ -27,6 +29,7 @@ Game::Game()
     m_timerText.setPosition(sf::Vector2f(350.f, 10.f));
     m_towersText.setPosition(sf::Vector2f(650.f, 10.f));
     m_leaksText.setPosition(sf::Vector2f(10.f, 750.f));
+    m_coinsText.setPosition(sf::Vector2f(350.f, 750.f));
 
     //como se asignaron los textos se actualiza la interfaz
     updateUI();
@@ -72,6 +75,30 @@ void Game::processEvents() {
                 updateUI();
             }
         }
+        else if (mb && m_currentState == GameState::Wave) {
+            int cost = Tower::getCost(m_nextTowerType);
+            auto gridPos = m_grid.worldToGrid(
+                static_cast<float>(mb->position.x),
+                static_cast<float>(mb->position.y)
+            );
+            if (m_economy.canAfford(cost)) {
+                m_economy.spend(cost);
+                if (m_grid.getCell(gridPos.x, gridPos.y) == CellType::Empty) {
+                    m_towers.emplace_back(
+                        std::make_unique<Tower>(m_nextTowerType, gridPos.x, gridPos.y, &m_grid)
+                    );
+                    m_grid.setCell(gridPos.x, gridPos.y, CellType::Tower);
+                    m_towersPlaced++;
+    
+                    // Rota el tipo de torre, solo de momento se cambia por seleccion en pantalla y economia
+                    m_nextTowerType = static_cast<Tower::Type>((static_cast<int>(m_nextTowerType) + 1) % 3);
+                    
+                    //Actualiza la interfaz para mostrar torre
+                    updateUI();
+                }
+            } 
+            else { std::cout << "Not enough coins! Need " << cost << std::endl; }
+        }
     }  
 }
 
@@ -106,9 +133,10 @@ void Game::update(float deltaTime) {
         auto it = m_enemies.begin();
         while (it != m_enemies.end()) {
             (*it)->update(deltaTime);
-            
             // Eliminar enemigos muertos
             if (!(*it)->isAlive()) {
+                //suma el oro ganado
+                m_economy.earn((*it)->getBounty());
                 // La limpieza del grid se hace automáticamente en el destructor de Enemy
                 it = m_enemies.erase(it);
             } else {
@@ -161,6 +189,7 @@ void Game::render() {
     m_window.draw(m_timerText);
     m_window.draw(m_towersText);
     m_window.draw(m_leaksText);
+    m_window.draw(m_coinsText);
     
     //Abre la pantalla
     m_window.display();
@@ -208,6 +237,7 @@ void Game::updateUI() {
     m_timerText.setString(stateStr + ": " + std::to_string(int(m_stateTimer)) + "s");
     m_towersText.setString("Towers: " + std::to_string(m_towersPlaced) + "/10");
     m_leaksText.setString("Leaks: "  + std::to_string(m_leaks)         + "/5");
+    m_coinsText.setString("Coins: " + std::to_string(m_economy.getCoins()));
 }
 
 //Funcion responsable de todo lo que pasa en el juego

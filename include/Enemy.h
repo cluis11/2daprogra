@@ -1,6 +1,7 @@
 #pragma once
 #include "Entity.h"
 #include "GridSystem.h"
+#include <map>
 
 
 
@@ -18,6 +19,16 @@ public:
 
     Enemy(Type type, int gridX, int gridY, GridSystem* grid);
     ~Enemy();
+
+    int getBounty() const { 
+        static const std::map<Type, int> bounties = {
+            {Type::Ogre, 10},
+            {Type::DarkElf, 15},
+            {Type::Harpy, 20},
+            {Type::Mercenary, 25}
+        };
+        return bounties.at(m_type);
+    }
 
     void update(float deltaTime) override;
     void takeDamage(float amount, const std::string& damageType); //para futura implementacion de ataque de torres

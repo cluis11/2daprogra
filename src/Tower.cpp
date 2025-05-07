@@ -39,9 +39,9 @@ sf::Color Tower::getColorForType(Type type) {
 //Asigna el alcance de ataque de la torre
 float Tower::getDefaultRange(Type type) {
     switch(type) {
-        case Type::Archer: return 5.0f;
-        case Type::Mage: return 3.5f;
-        case Type::Artillery: return 2.5f;
+        case Type::Archer: return 7.0f;
+        case Type::Mage: return 5.f;
+        case Type::Artillery: return 3.f;
         default: return 0.f;
     }
 }
@@ -59,9 +59,9 @@ float Tower::getDefaultDamage(Type type) {
 //Asigna la velocidad de ataque
 float Tower::getDefaultAttackSpeed(Type type) {
     switch(type) {
-        case Type::Archer: return 1.5f;
+        case Type::Archer: return 0.7f;
         case Type::Mage: return 1.0f;
-        case Type::Artillery: return 0.5f;
+        case Type::Artillery: return 1.5f;
         default: return 0.f;
     }
 }

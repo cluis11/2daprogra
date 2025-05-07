@@ -1,6 +1,7 @@
 #pragma once
 #include "Entity.h"
 #include <string>
+#include <map>
 
 class Tower : public Entity {
 public:
@@ -8,6 +9,17 @@ public:
     enum class Type { Archer, Mage, Artillery };
 
     Tower(Type type, int gridX, int gridY, GridSystem* grid);
+
+    static int getCost(Type type) {
+        static const std::map<Type, int> costs = {
+            {Type::Archer, 50},
+            {Type::Mage, 75},
+            {Type::Artillery, 100}
+        };
+        return costs.at(type);
+    }
+
+
     void update(float deltaTime);
     static std::string typeToString(Type type);
     void attackEnemy();

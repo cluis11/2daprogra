@@ -6,12 +6,14 @@
 #include "Tower.h"
 #include "Enemy.h"
 #include "Wave.h"
+#include "Economy.h"
 
 class Game {
 public:
     Game(); //Constructor de SFML
     void run(); //Funcion que ejecuta el juego
     GridSystem& getGrid() { return m_grid; }
+    Economy& getEconomy() { return m_economy; }
 
 private:
     void processEvents(); //Captura eventos para ejecutar comportamientos
@@ -40,6 +42,9 @@ private:
     int m_towersPlaced = 0; //variable que controla numero de torres, se tiene que agregr logica de economia
     int m_leaks = 0; //controla cuantos enemigos que han llegado a la puerta para condicion game over
     
+    //economia
+    Economy m_economy;
+
     //Fuentes
     sf::Font m_font;
     //Textos 
@@ -47,6 +52,7 @@ private:
     sf::Text m_timerText;
     sf::Text m_towersText;
     sf::Text m_leaksText;
+    sf::Text m_coinsText;
 
     //solo por ahora, variable que rota el tipo de torre que coloca
     Tower::Type m_nextTowerType = Tower::Type::Archer;
