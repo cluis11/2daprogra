@@ -27,12 +27,12 @@ public:
 
     //Getters
     Type getType() const { return m_type; }
-    float getRange() const { return m_range; }
+    int getRange() const { return m_range; }
     float getDamage() const { return m_damage; }
     float getAttackSpeed() const { return m_attackSpeed; }
     //Getters para obtener valores de tipo especifico
     static sf::Color getColorForType(Type type);
-    static float getDefaultRange(Type type);
+    static int getDefaultRange(Type type);
     static float getDefaultDamage(Type type);
     static float getDefaultAttackSpeed(Type type);
 
@@ -41,7 +41,7 @@ public:
     private:
         //Atributos
         Type m_type;
-        float m_range;
+        int m_range;
         float m_damage;
         float m_attackSpeed;
         float m_attackCooldown = 0.f;

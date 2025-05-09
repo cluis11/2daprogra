@@ -7,7 +7,7 @@ Tower::Tower(Type type, int gridX, int gridY, GridSystem* grid)
     : Entity(gridX, gridY, getColorForType(type), grid), 
     //asignacion valores segun tipo
     m_type(type),
-    m_range(getDefaultDamage(type)),
+    m_range(getDefaultRange(type)),
     m_damage(getDefaultDamage(type)),
     m_attackSpeed(getDefaultAttackSpeed(type)) {}
 
@@ -37,12 +37,12 @@ sf::Color Tower::getColorForType(Type type) {
 }
 
 //Asigna el alcance de ataque de la torre
-float Tower::getDefaultRange(Type type) {
+int Tower::getDefaultRange(Type type) {
     switch(type) {
-        case Type::Archer: return 7.0f;
-        case Type::Mage: return 5.f;
-        case Type::Artillery: return 3.f;
-        default: return 0.f;
+        case Type::Archer: return 1;
+        case Type::Mage: return 5;
+        case Type::Artillery: return 3;
+        default: return 0;
     }
 }
 
@@ -59,7 +59,7 @@ float Tower::getDefaultDamage(Type type) {
 //Asigna la velocidad de ataque
 float Tower::getDefaultAttackSpeed(Type type) {
     switch(type) {
-        case Type::Archer: return 0.7f;
+        case Type::Archer: return 2.f;
         case Type::Mage: return 1.0f;
         case Type::Artillery: return 1.5f;
         default: return 0.f;
@@ -68,11 +68,14 @@ float Tower::getDefaultAttackSpeed(Type type) {
 
 
 void Tower::attackEnemy() {
-    auto enemies = m_grid->getEnemiesInRadius(m_gridX, m_gridY, static_cast<int>(m_range));
+    auto enemies = m_grid->getEnemiesInRadius(m_gridX, m_gridY, m_range);
     if (!enemies.empty()) {
-        // Por ahora ataca al primer enemigo de la lista
+        // Ordenar enemigos por vida (ascendente: el de menor vida primero)
+        std::sort(enemies.begin(), enemies.end(), [](Enemy* a, Enemy* b) {
+            return a->getHealth() < b->getHealth();
+        });
+        // Atacar al primero (menor vida)
         enemies[0]->takeDamage(m_damage, typeToString(m_type));
-        std::cout << "enemigo atacado";
     }
 }
 

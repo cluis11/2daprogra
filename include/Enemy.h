@@ -58,4 +58,7 @@ private:
     Resistances m_resistances;
     float m_moveTimer = 0; //timer para movimiento
     int m_prevGridX, m_prevGridY; //coordenadas anteriores para facilitar actualizaciones a matrices
+
+    sf::Clock m_damageClock;  // Temporizador para el efecto
+    bool m_isDamaged = false; // Estado de "recibiendo daño"
 };

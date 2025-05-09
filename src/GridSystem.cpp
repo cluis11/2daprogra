@@ -1,6 +1,7 @@
 #include "GridSystem.h"
 #include <algorithm>
 #include "Enemy.h"
+#include <iostream>
 
 GridSystem::GridSystem(unsigned width, unsigned height, float cellSize)
     : m_width(width), m_height(height), m_cellSize(cellSize), m_rng(std::random_device{}()) {
@@ -41,11 +42,14 @@ void GridSystem::unregisterEnemy(int gridX, int gridY) {
     }
 }
 
-std::vector<Enemy*> GridSystem::getEnemiesInRadius(int centerX, int centerY, int radius) const {
+std::vector<Enemy*> GridSystem::getEnemiesInRadius(int gridX, int gridY, int radius) const {
     std::vector<Enemy*> enemies;
-    for (int x = centerX - radius; x <= centerX + radius; ++x) {
-        for (int y = centerY - radius; y <= centerY + radius; ++y) {
-            if (x >= 0 && y >= 0 && x < static_cast<int>(m_width) && y < static_cast<int>(m_height)) {
+    std::cout << "=== Tower at [" << gridX << "," << gridY << "] checking radius " << radius << " ===" << std::endl;
+    std::cout << "Search area: X[" << gridX-radius << " to " << gridX+radius 
+              << "], Y[" << gridY-radius << " to " << gridY+radius << "]" << std::endl;
+    for (int x = gridX - radius; x <= gridX + radius; ++x) {
+        for (int y = gridY - radius; y <= gridY + radius; ++y) {
+            if (x >= 0 && y >= 0 && x < 50 && y < 50) {
                 if (m_enemyGrid[x][y] != nullptr) {
                     enemies.push_back(m_enemyGrid[x][y]);
                 }
