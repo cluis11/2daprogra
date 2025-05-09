@@ -36,36 +36,44 @@ void Enemy::setGenome(const EnemyGenome& genome) {
 void Enemy::setRandomDeath() {
     static std::random_device rd;
     static std::mt19937 gen(rd());
-    std::bernoulli_distribution dist(0.1); // 10% de chance
+    std::bernoulli_distribution dist(0.05); // 10% de probabilidad
 
-    m_shouldDie = dist(gen);
+    m_shouldDie = dist(gen); // Asigna true/false aleatoriamente
 }
 
 void Enemy::updateMovement(float deltaTime) {
     m_moveTimer += deltaTime;
 
-    if (m_moveTimer >= m_speed) {
-        setRandomDeath(); // Verificar muerte en cada paso
+    if (m_moveTimer >= 1.0f/m_speed) {
+        setRandomDeath();
 
         if (m_shouldDie) {
-            m_health = 0; // Marcar para morir
+            m_health = 0;
             return;
         }
 
-        int newY = m_gridY + 1;
-        if (m_grid->getCell(m_gridX, newY) == CellType::Empty) {
+        // Movimiento en eje X+
+        int newX = m_gridX + 1;
+
+        //Verifica si la nueva pos es valida
+        if (newX < static_cast<int>(m_grid->getWidth()) && m_grid->getCell(newX, m_gridY) == CellType::Empty) {
+            // Limpia la celda anterior
             m_grid->setCell(m_gridX, m_gridY, CellType::Empty);
-            m_gridY = newY;
+
+            // Actualiza la pos
+            m_gridX = newX;
             m_grid->setCell(m_gridX, m_gridY, CellType::Enemy);
+
+            // Actualizar la posicion visualmente
             m_shape.setPosition(m_grid->gridToWorld(m_gridX, m_gridY));
             m_stepsTaken++;
         }
+
         m_moveTimer = 0;
     }
 }
 
 // Funciones para obtener valores de cada tipo específico
-
 sf::Color Enemy::getColorForType(EnemyType type) {
     switch(type) {
         case EnemyType::Ogre:      return sf::Color(128, 0, 128);    // Morado Oscuro
@@ -75,7 +83,7 @@ sf::Color Enemy::getColorForType(EnemyType type) {
         default:                   return sf::Color::White;
     }
 }
-
+//Esto no se esta usando.
 float Enemy::getDefaultHealth(EnemyType type) {
     switch(type) {
         case EnemyType::Ogre:      return 120.f;

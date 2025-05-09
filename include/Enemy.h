@@ -9,13 +9,14 @@ public:
     // Se usa el mismo enum que EnemyGenome para mantener consistencia en los tipos
     using Type = EnemyType;
 
-    // Constructor que recibe tipo, posición inicial y referencia al grid
+    // Constructor que recibe tipo, posicion inicial y referencia al grid
     Enemy(Type type, int gridX, int gridY, GridSystem* grid);
 
-    //Actualización del enemigo cada frame (heredado de Entity)
+    //Actualizacion del enemigo cada frame (heredado de Entity)
     void update(float deltaTime) override;
     void takeDamage(float amount); //para futura implementacion de ataque de torres
     void updateMovement(float deltaTime); //mueve al enemigo
+
 
     //Asigna un genoma al enemigo y aplica sus atributos
     void setGenome(const EnemyGenome& genome);
@@ -32,11 +33,10 @@ public:
     static float getDefaultHealth(Type type);
     static float getDefaultSpeed(Type type);
 
-    void setRandomDeath(); // Nuevo método para muerte aleatoria
+    void setRandomDeath(); //Metodo para determinar muerte aleatoria
 private:
-    bool m_shouldDie = false; // Nuevo miembro
+    bool m_shouldDie = false; //Flag para muerte aleatoria
 
-private:
     //Atributos
     Type m_type;
     float m_maxHealth;

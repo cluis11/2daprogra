@@ -1,5 +1,7 @@
 #pragma once
 #include "EnemyTypes.h"
+#include <string>
+#include <sstream>
 
 class EnemyGenome {
 public:
@@ -9,21 +11,27 @@ public:
         float armor;
         float magicResist;
         int stepsTaken;
-    };
 
+    };
+    // Constructor que crea un genoma con tipo y atributos especificos
     EnemyGenome(EnemyType type, Attributes attrs);
 
+    // Realiza cruce uniforme entre dos genomas padres
     static EnemyGenome crossoverUniform(const EnemyGenome& parent1, const EnemyGenome& parent2);
-    void mutate(float mutationChance);
+    void mutate(float mutationChance); // Aplica mutaciones aleatorias al genoma
 
+    // Getters
     EnemyType getType() const { return m_type; }
     const Attributes& getAttributes() const { return m_attributes; }
     float getFitness() const { return m_fitness; }
+
+    // Setters
     void setFitness(float fitness) { m_fitness = fitness; }
+    void setStepsTaken(int steps) { m_attributes.stepsTaken = steps; }
 
 
 private:
     EnemyType m_type;
-    Attributes m_attributes;
-    float m_fitness = 0.0f;
+    Attributes m_attributes; // Atributos geneticos
+    float m_fitness = 0.0f; // Valor de aptitud para seleccion natural
 };

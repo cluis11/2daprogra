@@ -5,31 +5,33 @@
 #include <iostream>
 
 GeneticManager::GeneticManager() {
-    // Inicialización básica
+    // Inicializacion básica
 }
+
+// Crea la primera generacion de genomas con atributos aleatorios
 void GeneticManager::initializeFirstGeneration() {
     m_currentGenomes.clear();
 
-    // Crear genomas iniciales aleatorios para cada tipo de enemigo
+    //Genera 5 individuos por cada tipo de enemigo (4 tipos)
     for (int i = 0; i < 4; ++i) { // 4 tipos de enemigos
         EnemyType type = static_cast<EnemyType>(i);
-        for (int j = 0; j < 5; ++j) { // 5 individuos por tipo todo cambiar a 10 en el juego final
+        for (int j = 0; j < 5; ++j) { // 5 individuos por tipo todo : cambiar a 10 en el juego final
 
             //Genera atributos aleatorios segun  tipo
             auto attrs = getRandomAttributesForType(type);
             m_currentGenomes.emplace_back(type, attrs);
 
-            // Mostrar stats iniciales
+            // depurar stats iniciales
             std::cout << "Genoma inicial - Raza: " << static_cast<int>(type)
                       << " Salud: " << attrs.health
                       << " Velocidad: " << attrs.speed
                       << " Armadura: " << attrs.armor
-                      << " Resistencia mágica: " << attrs.magicResist << std::endl;
+                      << " Resistencia magica: " << attrs.magicResist << std::endl;
         }
     }
 }
 
-
+// Evalua la generación actual basandose en el desempeño de los enemigos
 void GeneticManager::evaluateGeneration(const std::vector<std::unique_ptr<Enemy>>& enemies) {
     std::cout << "\n=== EVALUANDO GENERACION ===" << std::endl;
 
@@ -42,11 +44,11 @@ void GeneticManager::evaluateGeneration(const std::vector<std::unique_ptr<Enemy>
     for (const auto& enemy : enemies) {
         for (auto& genome : m_currentGenomes) {
             if (genome.getType() == enemy->getType()) {
-                // Solo sumamos pasos si el enemigo murió (isAlive() == false)
+                // Solo suma pasos si el enemigo murio (isAlive() == false)
                 if (!enemy->isAlive()) {
                     genome.setFitness(genome.getFitness() + enemy->getStepsTaken());
                 }
-                break; // Salimos del loop interno al encontrar el genoma
+                break; // Rompe el loop interno al encontrar el genoma
             }
         }
     }
@@ -55,6 +57,7 @@ void GeneticManager::evaluateGeneration(const std::vector<std::unique_ptr<Enemy>
     std::vector<float> raceFitness(4, 0.0f);
     std::vector<int> raceCount(4, 0);
 
+    // Acumula fitness y cuenta individuos por tipo
     for (const auto& genome : m_currentGenomes) {
         int typeIdx = static_cast<int>(genome.getType());
         raceFitness[typeIdx] += genome.getFitness();
@@ -73,8 +76,9 @@ void GeneticManager::evaluateGeneration(const std::vector<std::unique_ptr<Enemy>
         }
     }
 }
+// Crea una nueva generacion mediante seleccion, cruce y mutacion
 void GeneticManager::createNextGeneration() {
-    std::cout << "\n=== Creando nueva generación ===" << std::endl;
+    std::cout << "\n=== Creando nueva generacion ===" << std::endl;
     m_nextGenomes.clear();
 
     // 1. Primero agrupamos los genomas por su tipo (raza)
@@ -142,6 +146,7 @@ void GeneticManager::createNextGeneration() {
     m_currentGenomes = std::move(m_nextGenomes);
 }
 
+// Genera atributos aleatorios para un tipo específico de enemigo
 EnemyGenome::Attributes GeneticManager::getRandomAttributesForType(EnemyType type) const {
     static std::random_device rd;
     static std::mt19937 gen(rd());
@@ -150,19 +155,19 @@ EnemyGenome::Attributes GeneticManager::getRandomAttributesForType(EnemyType typ
     float healthMin, healthMax, speedMin, speedMax;
 
     switch(type) {
-        case EnemyType::Ogre:
+        case EnemyType::Ogre: // Ogros: alta salud, baja velocidad
             healthMin = 100.0f; healthMax = 200.0f;
         speedMin = 0.5f; speedMax = 1.2f;
         break;
-        case EnemyType::DarkElf:
+        case EnemyType::DarkElf: // Elfos: salud media, alta velocidad
             healthMin = 60.0f; healthMax = 120.0f;
         speedMin = 1.0f; speedMax = 2.0f;
         break;
-        case EnemyType::Harpy:
+        case EnemyType::Harpy: // Arpías: salud media-alta, muy alta velocidad
             healthMin = 80.0f; healthMax = 150.0f;
         speedMin = 1.5f; speedMax = 2.5f;
         break;
-        case EnemyType::Mercenary:
+        case EnemyType::Mercenary: // Mercenarios: alta salud, velocidad media
             healthMin = 120.0f; healthMax = 180.0f;
         speedMin = 0.8f; speedMax = 1.5f;
         break;
@@ -171,16 +176,17 @@ EnemyGenome::Attributes GeneticManager::getRandomAttributesForType(EnemyType typ
         speedMin = 0.5f; speedMax = 2.0f;
     }
 
+    // Distribuciones para cada atributo
     std::uniform_real_distribution<float> healthDist(healthMin, healthMax);
     std::uniform_real_distribution<float> speedDist(speedMin, speedMax);
-    std::uniform_real_distribution<float> resistDist(0.0f, 0.5f);
+    std::uniform_real_distribution<float> resistDist(0.0f, 0.5f); // Resistencias bajas
 
     EnemyGenome::Attributes attrs;
     attrs.health = healthDist(gen);
     attrs.speed = speedDist(gen);
     attrs.armor = resistDist(gen);
     attrs.magicResist = resistDist(gen);
-    attrs.stepsTaken = 0;
+    attrs.stepsTaken = 0; // Inicializar pasos
 
     return attrs;
 }

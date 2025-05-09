@@ -12,7 +12,7 @@ void GridSystem::initializeGrid() {
     m_grid.resize(m_width, std::vector<CellType>(m_height, CellType::Empty));
 
     //definir donde se originan enemigos
-    m_spawnPoints = {{0, 0}, {0, 1}, {1, 0}, {1, 1}};
+    m_spawnPoints = {{0, 0}, {0, 24}, {0, 49}};
 
     //asigna la puerta del castillo en el borde derecho
     m_grid[m_width-1][m_height-1] = CellType::ExitPoint;
