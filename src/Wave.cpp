@@ -40,17 +40,17 @@ void Wave::spawnEnemy(std::vector<std::unique_ptr<Enemy>>& enemies) {
         const auto& point = m_spawnPoints[i % m_spawnPoints.size()];
         if (m_grid->getCell(point.x, point.y) == CellType::Empty) {
             std::cout << "Se creo el enemigo y esta es la posicion: ( " << point.x << ", " << point.y << " )" << std::endl;
-            auto it = m_grid->m_precomputedPaths.find(point);
-            if (it != m_grid->m_precomputedPaths.end()) {
-                std::cout << "si se encontro el camino" << std::endl;
-                enemies.emplace_back(std::make_unique<Enemy>(
-                                getEnemyType(), 
-                                point.x, 
-                                point.y, 
-                                m_grid,
-                                it->second
-                            ));
-                            m_enemiesSpawned++;
+                auto it = m_grid->m_precomputedPaths.find(point);
+                if (it != m_grid->m_precomputedPaths.end()) {
+                    std::cout << "si se encontro el camino" << std::endl;
+                    enemies.emplace_back(std::make_unique<Enemy>(
+                        getEnemyType(),
+                        point.x,
+                        point.y,
+                        m_grid,
+                        it->second
+                    ));
+                    m_enemiesSpawned++;
             } else { continue; }
         }
     }

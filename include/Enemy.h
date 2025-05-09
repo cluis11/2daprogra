@@ -1,6 +1,7 @@
 #pragma once
 #include "Entity.h"
 #include "GridSystem.h"
+#include "PathFinding.h"
 
 
 
@@ -51,4 +52,5 @@ private:
     float m_moveTimer = 0; //timer para movimiento
     int m_prevGridX, m_prevGridY; //coordenadas anteriores para facilitar actualizaciones a matrices
     std::vector<sf::Vector2i> m_currentPath; //Camino del enemigo
+    PathFinding m_pathfinder;
 };

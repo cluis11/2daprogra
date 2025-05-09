@@ -27,12 +27,14 @@ public:
     int getTotalEnemies() const { return m_totalEnemies; }
 
 private:
+
     Enemy::Type getEnemyType() const;
     void spawnEnemy(std::vector<std::unique_ptr<Enemy>>& enemies);
 
     const Config m_config;
     const std::vector<sf::Vector2i>& m_spawnPoints;
     GridSystem* m_grid;
+    
     int m_waveNumber;
     float m_timeElapsed = 0.f;
     float m_spawnTimer = 0.f;

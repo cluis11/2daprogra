@@ -69,7 +69,7 @@ void Game::processEvents() {
                 m_towersPlaced++;
 
                 //Recalcula el PathFinding A*
-                recalculatePaths();
+                //recalculatePaths();
 
                 // Rota el tipo de torre, solo de momento se cambia por seleccion en pantalla y economia
                 m_nextTowerType = static_cast<Tower::Type>((static_cast<int>(m_nextTowerType) + 1) % 3);
@@ -99,6 +99,7 @@ void Game::update(float deltaTime) {
     else if (m_currentState == GameState::Wave) {
         if (!m_currentWave) {
             // Inicializa la wave con parámetros configurables
+            recalculatePaths();
             m_currentWave = std::make_unique<Wave>(
                 m_waveNumber, 
                 m_grid.getSpawnPoints(),
@@ -216,13 +217,13 @@ void Game::recalculatePaths() {
     }
 
     // Reasigna caminos a enemigos existentes si los hay
-    if (!m_enemies.empty()) {
+    /*if (!m_enemies.empty()) {
         for (const auto& enemy : m_enemies) {
             sf::Vector2i pos = { enemy->getGridX(), enemy->getGridY() };
             auto path = m_pathfinder.findPath(pos);
             enemy->setPath(path);
         }
-    }
+    }*/
 
 
 }

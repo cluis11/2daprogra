@@ -13,6 +13,7 @@ Enemy::Enemy(Type type, int gridX, int gridY, GridSystem* grid, std::vector<sf::
     m_speed(getDefaultSpeed(type)),
     m_resistances(getDefaultResistances(type)),
     m_currentPath(path),
+    m_pathfinder(grid),
     m_prevGridX(gridX),
     m_prevGridY(gridY)  {
         m_grid->registerEnemy(this, gridX, gridY);
@@ -62,6 +63,9 @@ void Enemy::updateMovement(float deltaTime) {
             } else {
                 //Camino bloqueado, limpiar para recalcular
                 m_currentPath.clear();
+                std::cout << "Choco contra una torre u obstaculo" << std::endl;
+                auto path = m_pathfinder.findPath({ m_gridX, m_gridY });
+                setPath(path);
             }
         } else {
             //Movimiento de emergencia
