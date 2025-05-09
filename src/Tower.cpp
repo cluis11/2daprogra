@@ -24,6 +24,67 @@ void Tower::update(float deltaTime) {
     }
 }
 
+void Tower::upgrade() {
+    if (m_level >= 3) return;
+    
+    m_level++;
+    
+    switch(m_type) {
+        case Type::Archer: upgradeArcher(); break;
+        case Type::Mage: upgradeMage(); break;
+        case Type::Artillery: upgradeArtillery(); break;
+    }
+}
+
+
+void Tower::upgradeArcher() {
+    switch(m_level) {
+        case 1:  // Nivel 1
+            m_damage += 10;
+            break;
+        case 2:  // Nivel 2
+            m_damage += 5;
+            m_attackSpeed *= 0.9f;  // 10% más rápido
+            break;
+        case 3:  // Nivel 3 (máximo)
+            m_damage += 10;
+            m_attackSpeed *= 0.9f; 
+            m_range += 1;
+            break;
+    }
+}
+
+void Tower::upgradeMage() {
+    switch(m_level) {
+        case 1:
+            m_damage += 10;
+            m_attackSpeed *= 0.9f; 
+            break;
+        case 2:
+            m_damage += 15;
+            m_attackSpeed *= 0.9f; 
+            break;
+        case 3:
+            m_damage += 20;
+            m_range += 1;
+            break;
+    }
+}
+
+void Tower::upgradeArtillery() {
+    switch(m_level) {
+        case 1:
+            m_damage += 15;
+            break;
+        case 2:
+            m_damage += 25;
+            m_range += 1.0f;
+            break;
+        case 3:
+            m_damage += 40;
+            break;
+    }
+}
 
 //Funciones para obtener valores de cada tipo espeficico en el constructor
 

@@ -261,6 +261,7 @@ void Game::initUI() {
     m_coinsText.setCharacterSize(20);
     m_coinsText.setPosition({810.f, 200.f});
     
+
     // Tower ghost (for placement preview)
     m_towerGhost.setSize({16.f, 16.f});
     m_towerGhost.setOrigin({8.f, 8.f});
@@ -286,6 +287,24 @@ void Game::handleTowerSelection(const sf::Vector2i& mousePos) {
                 m_towerGhost.setFillColor(sf::Color(255, 255, 255, 150));
             }
             break;
+        }
+    }
+}
+
+
+void Game::handleTowerUpgrade(const sf::Vector2i& mousePos) {
+    auto gridPos = m_grid.worldToGrid(mousePos.x, mousePos.y);
+    
+    for (auto& tower : m_towers) {
+        if (tower->getGridX() == gridPos.x && tower->getGridY() == gridPos.y) {
+            int cost = tower->getUpgradeCost(tower->getLevel());
+            
+            if (m_economy.canAfford(cost) && tower->getLevel() < 3) {
+                m_economy.spend(cost);
+                tower->upgrade();
+                updateUI();
+            }
+            return;
         }
     }
 }
