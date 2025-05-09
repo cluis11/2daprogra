@@ -1,34 +1,37 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="C:\Users\luisc\Documents\GitHub\2daprogra\src\main.cpp">
+    <ClCompile Include="C:\Users\sotol\OneDrive\Documentos\Tareas TEC\Tercer semestre\Datos II\2daprogra\src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\luisc\Documents\GitHub\2daprogra\src\Game.cpp">
+    <ClCompile Include="C:\Users\sotol\OneDrive\Documentos\Tareas TEC\Tercer semestre\Datos II\2daprogra\src\Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\luisc\Documents\GitHub\2daprogra\src\Wave.cpp">
+    <ClCompile Include="C:\Users\sotol\OneDrive\Documentos\Tareas TEC\Tercer semestre\Datos II\2daprogra\src\Wave.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\luisc\Documents\GitHub\2daprogra\src\GridSystem.cpp">
+    <ClCompile Include="C:\Users\sotol\OneDrive\Documentos\Tareas TEC\Tercer semestre\Datos II\2daprogra\src\GridSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\luisc\Documents\GitHub\2daprogra\src\Entity.cpp">
+    <ClCompile Include="C:\Users\sotol\OneDrive\Documentos\Tareas TEC\Tercer semestre\Datos II\2daprogra\src\PathFinding.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\luisc\Documents\GitHub\2daprogra\src\Tower.cpp">
+    <ClCompile Include="C:\Users\sotol\OneDrive\Documentos\Tareas TEC\Tercer semestre\Datos II\2daprogra\src\Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\luisc\Documents\GitHub\2daprogra\src\Enemy.cpp">
+    <ClCompile Include="C:\Users\sotol\OneDrive\Documentos\Tareas TEC\Tercer semestre\Datos II\2daprogra\src\Tower.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\sotol\OneDrive\Documentos\Tareas TEC\Tercer semestre\Datos II\2daprogra\src\Enemy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="C:\Users\luisc\Documents\GitHub\2daprogra\CMakeLists.txt" />
+    <CustomBuild Include="C:\Users\sotol\OneDrive\Documentos\Tareas TEC\Tercer semestre\Datos II\2daprogra\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{18F0170A-0E5F-3678-BAF3-6F49EA39F0FF}</UniqueIdentifier>
+      <UniqueIdentifier>{610A3C32-5FBB-3544-95DE-2454177EDC9E}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

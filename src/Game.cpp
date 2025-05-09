@@ -68,6 +68,7 @@ void Game::processEvents() {
                 m_grid.setCell(gridPos.x, gridPos.y, CellType::Tower);
                 m_towersPlaced++;
 
+                //Recalcula el PathFinding A*
                 recalculatePaths();
 
                 // Rota el tipo de torre, solo de momento se cambia por seleccion en pantalla y economia
@@ -203,21 +204,21 @@ void Game::spawnEnemy() {
     }
 }
 
+// Función que recalcula los caminos del PathFinding
 void Game::recalculatePaths() {
     m_grid.m_precomputedPaths.clear();
     auto spawnPoints = m_grid.getSpawnPoints();
-
+    
+    // Calcula y guarda el camino desde cada punto de aparición
     for (const auto& spawn : spawnPoints) {
         auto path = m_pathfinder.findPath(spawn);
         m_grid.m_precomputedPaths[spawn] = path;
-        //m_grid.setEnemyPath(path);
     }
 
+    // Reasigna caminos a enemigos existentes si los hay
     if (!m_enemies.empty()) {
         for (const auto& enemy : m_enemies) {
-            auto posx = enemy->getGridX();
-            auto posy = enemy->getGridY();
-            sf::Vector2i pos = { posx, posy };
+            sf::Vector2i pos = { enemy->getGridX(), enemy->getGridY() };
             auto path = m_pathfinder.findPath(pos);
             enemy->setPath(path);
         }

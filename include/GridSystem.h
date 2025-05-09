@@ -6,6 +6,7 @@
 
 class Enemy; 
 
+//Hash para usar sf::Vector2i en unordered_map
 struct Vector2iHash {
     std::size_t operator()(const sf::Vector2i& v) const {
         return std::hash<int>()(v.x) ^ (std::hash<int>()(v.y) << 1);
@@ -49,10 +50,8 @@ public:
     unsigned getHeight() const { return m_height; }
     float getCellSize() const { return m_cellSize; }
     std::mt19937& getRNG() { return m_rng; }
-    const std::vector<std::vector<Enemy*>>& getEnemyGrid() const { return m_enemyGrid; }
 
-    std::unordered_map<sf::Vector2i, std::vector<sf::Vector2i>, Vector2iHash> m_precomputedPaths;
-
+    std::unordered_map<sf::Vector2i, std::vector<sf::Vector2i>, Vector2iHash> m_precomputedPaths;  //Rutas precalculadas desde cada spawn o de enemigo
 private:
     //funciones
     void initializeGrid();
@@ -61,7 +60,7 @@ private:
     //atributos
     unsigned m_width, m_height;
     float m_cellSize;
-    std::vector<std::vector<CellType>> m_grid;
+    std::vector<std::vector<CellType>> m_grid;   
     mutable std::mt19937 m_rng; 
     std::vector<sf::Vector2i> m_spawnPoints; // Puntos fijos de spawn
     std::vector<std::vector<Enemy*>> m_enemyGrid; //matriz de punteros para referencias enemigos en el grid

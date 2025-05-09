@@ -39,8 +39,6 @@ void Wave::spawnEnemy(std::vector<std::unique_ptr<Enemy>>& enemies) {
     for (int i = 0; i < m_activeSpawnPoints && m_enemiesSpawned < m_totalEnemies; ++i) {
         const auto& point = m_spawnPoints[i % m_spawnPoints.size()];
         if (m_grid->getCell(point.x, point.y) == CellType::Empty) {
-            
-            
             std::cout << "Se creo el enemigo y esta es la posicion: ( " << point.x << ", " << point.y << " )" << std::endl;
             auto it = m_grid->m_precomputedPaths.find(point);
             if (it != m_grid->m_precomputedPaths.end()) {
@@ -53,10 +51,7 @@ void Wave::spawnEnemy(std::vector<std::unique_ptr<Enemy>>& enemies) {
                                 it->second
                             ));
                             m_enemiesSpawned++;
-            }
-            else {
-                std::cout << "Error esa vara no sirvio" << std::endl;
-            }   
+            } else { continue; }
         }
     }
 }

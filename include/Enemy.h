@@ -38,7 +38,7 @@ public:
     static Resistances getDefaultResistances(Type type);
     //getters colision
     const sf::FloatRect& getGlobalBounds() const { return m_shape.getGlobalBounds(); }
-    
+    //Set para otorgar un nuevo Path
     void setPath(std::vector<sf::Vector2i> path) { m_currentPath = path; };
 
 private:

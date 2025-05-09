@@ -12,7 +12,6 @@ class Game {
 public:
     Game(); //Constructor de SFML
     void run(); //Funcion que ejecuta el juego
-    GridSystem& getGrid() { return m_grid; }
 
 private:
     void processEvents(); //Captura eventos para ejecutar comportamientos
@@ -20,11 +19,11 @@ private:
     void render(); //Encargado de dibujar los objetos
     void spawnEnemy(); //Funcion encargada de crear enemigos durante las waves
     void updateUI(); //Funcion encargada de actualizar la interfaz
-    void recalculatePaths();
+    void recalculatePaths(); //Recalcula los caminos
 
     sf::RenderWindow m_window; //main screen
     GridSystem m_grid; //matriz
-    PathFinding m_pathfinder;
+    PathFinding m_pathfinder; //pathfinding
     
     std::vector<std::unique_ptr<Tower>> m_towers; //lista de torres
     std::vector<std::unique_ptr<Enemy>> m_enemies; //lista de enemigos

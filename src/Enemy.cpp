@@ -38,15 +38,14 @@ void Enemy::takeDamage(float amount, const std::string& damageType) {
 }
 
 //hace que el enemigo se mueva
-//por ahora solo lo mueve hacia abajo, con pathfinder se elije donde
 void Enemy::updateMovement(float deltaTime) {
     m_moveTimer += deltaTime;
     
     if (m_moveTimer >= m_speed) {
         if (!m_currentPath.empty()) {
-            //std::cout << "Si hay camino hacia la meta" << std::endl;
             sf::Vector2i nextPos = m_currentPath.front();
 
+            //Verificar que la celda de destino sea valida
             if (m_grid->getCell(nextPos.x, nextPos.y) == CellType::Empty ||
                 m_grid->getCell(nextPos.x, nextPos.y) == CellType::ExitPoint ||
                 m_grid->getCell(nextPos.x, nextPos.y) == CellType::Enemy) {
@@ -58,27 +57,26 @@ void Enemy::updateMovement(float deltaTime) {
                 m_grid->registerEnemy(this, m_gridX, m_gridY);
                 m_shape.setPosition(m_grid->gridToWorld(m_gridX, m_gridY));
 
-                //Eliminar la posicion alcanzada del camino
+                // Avanzar al siguiente paso del camino
                 m_currentPath.erase(m_currentPath.begin());
             } else {
                 //Camino bloqueado, limpiar para recalcular
                 m_currentPath.clear();
             }
         } else {
-            //std::cout << "No hay camino" << std::endl;
             //Movimiento de emergencia
             int newX = m_gridX;
             int newY = m_gridY + 1;
-            //std::cout << "[updatemovement]" << std::endl;
+
             if (m_grid->getCell(newX, newY) == CellType::Empty) {
                 m_grid->unregisterEnemy(m_gridX, m_gridY);
                 m_gridX = newX;
                 m_gridY = newY;
                 m_grid->registerEnemy(this, m_gridX, m_gridY);
-                //mueve el enemigo en la pantalla
                 m_shape.setPosition(m_grid->gridToWorld(m_gridX, m_gridY));
             }
         }
+        // Reiniciar el temporizador de movimiento
         m_moveTimer = 0;
     }
 }

@@ -3,31 +3,34 @@
 #include <vector>
 #include <SFML/Graphics.hpp>
 
-
+// Clase encargada de realizar el pathfinding utilizando el algoritmo A*
 class PathFinding {
-	public:
-		PathFinding(GridSystem* grid);
-		std::vector<sf::Vector2i> findPath(const sf::Vector2i& start);
+public: 
+    PathFinding(GridSystem* grid);
+    std::vector<sf::Vector2i> findPath(const sf::Vector2i& start);
 
-	private:
-		GridSystem* m_grid; // Referencia a la matriz
+private:
+    GridSystem* m_grid; // Referencia a la grid del mapa (matriz de celdas)
 
-		struct Node {
-			float gCost = INFINITY; //Costo desde inicio
-			float fCost = INFINITY; //Costo total (g+ h)
-			sf::Vector2i parent = { -1, -1 };
-			bool closed = false;
-		};
+    // Estructura interna para representar un nodo del algoritmo A*
+    struct Node {
+        float gCost = INFINITY; // Costo desde el nodo inicial hasta este nodo
+        float fCost = INFINITY; // Costo total estimado (gCost + heurística)
+        sf::Vector2i parent = { -1, -1 }; // Coordenadas del nodo padre en el camino
+        bool closed = false; // Indica si este nodo ya fue procesado
+    };
+  
+    std::vector<std::vector<Node>> m_nodes;  // Matriz de nodos que representan el estado del mapa durante la ejecución de A* 
+    std::vector<std::vector<float>> m_heuristics;  // Matriz de heurísticas precalculadas (distancia estimada hasta el objetivo)
+  
+    // Funciones
+    void initializeNodes(); 
+    void precomputerHeuristics(); 
+    sf::Vector2i findExitPosition() const;
+    std::vector<sf::Vector2i> reconstructPath(const sf::Vector2i& start, const sf::Vector2i& end) const;
 
-		// Estructuras para A*
-		std::vector<std::vector<Node>> m_nodes;
-		std::vector<std::vector<float>> m_heuristics;
+    // Get
+    std::vector<sf::Vector2i> getNeighbors(const sf::Vector2i& pos) const;
 
-		void initializeNodes();
-		void precomputerHeuristics();
-		sf::Vector2i findExitPosition() const;
-
-		//Helpers para A*
-		std::vector<sf::Vector2i> getNeighbors(const sf::Vector2i& pos) const;
-		std::vector<sf::Vector2i> reconstructPath(const sf::Vector2i& start, const sf::Vector2i& end) const;
+    
 };
