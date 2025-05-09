@@ -14,7 +14,7 @@ public:
         int totalWaves = 3; //total de waves
         float waveDuration = 60.f; //duracion de cada una
         float spawnInterval = 10.f; //intervalo spawn
-        int maxSpawnPoints = 6; // Puntos de spawn, lista en game
+        int maxSpawnPoints = 3; // Puntos de spawn, lista en game
     };
     //constructor
     //Recibe el numero de wave, y los puntos de spawn definidos en game, la congif y referencia al grid

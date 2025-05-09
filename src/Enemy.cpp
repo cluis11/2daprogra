@@ -4,7 +4,7 @@
 
 //Constructor de enemigo, varia atributos segun tipo
 //registra al enemigo en el grid
-Enemy::Enemy(Type type, int gridX, int gridY, GridSystem* grid)
+Enemy::Enemy(Type type, int gridX, int gridY, GridSystem* grid, std::vector<sf::Vector2i> path)
     : Entity(gridX, gridY, getColorForType(type), grid),
     //asignacion valores segun tipo
     m_type(type),
@@ -12,6 +12,7 @@ Enemy::Enemy(Type type, int gridX, int gridY, GridSystem* grid)
     m_health(m_maxHealth),
     m_speed(getDefaultSpeed(type)),
     m_resistances(getDefaultResistances(type)),
+    m_currentPath(path),
     m_prevGridX(gridX),
     m_prevGridY(gridY)  {
         m_grid->registerEnemy(this, gridX, gridY);
@@ -40,23 +41,45 @@ void Enemy::takeDamage(float amount, const std::string& damageType) {
 //por ahora solo lo mueve hacia abajo, con pathfinder se elije donde
 void Enemy::updateMovement(float deltaTime) {
     m_moveTimer += deltaTime;
-    //cuando el timer sea el valor de la velocidad del enemigo
+    
     if (m_moveTimer >= m_speed) {
-        int newX = m_gridX;
-        //test mover hacia abajo
-        int newY = m_gridY + 1;
-        //valida si la celda a moverse es valida
-        if (m_grid->getCell(newX, newY) == CellType::Empty) {
-            // Hace la pos actual Empty en la matriz
-            m_grid->unregisterEnemy(m_gridX, m_gridY);
-            m_gridX = newX;
-            m_gridY = newY;
-            m_grid->registerEnemy(this, m_gridX, m_gridY);
-            //mueve el enemigo en la pantalla
-            m_shape.setPosition(m_grid->gridToWorld(m_gridX, m_gridY));
+        if (!m_currentPath.empty()) {
+            //std::cout << "Si hay camino hacia la meta" << std::endl;
+            sf::Vector2i nextPos = m_currentPath.front();
+
+            if (m_grid->getCell(nextPos.x, nextPos.y) == CellType::Empty ||
+                m_grid->getCell(nextPos.x, nextPos.y) == CellType::ExitPoint ||
+                m_grid->getCell(nextPos.x, nextPos.y) == CellType::Enemy) {
+                
+                //Actualizar posicion
+                m_grid->unregisterEnemy(m_gridX, m_gridY);
+                m_gridX = nextPos.x;
+                m_gridY = nextPos.y;
+                m_grid->registerEnemy(this, m_gridX, m_gridY);
+                m_shape.setPosition(m_grid->gridToWorld(m_gridX, m_gridY));
+
+                //Eliminar la posicion alcanzada del camino
+                m_currentPath.erase(m_currentPath.begin());
+            } else {
+                //Camino bloqueado, limpiar para recalcular
+                m_currentPath.clear();
+            }
+        } else {
+            //std::cout << "No hay camino" << std::endl;
+            //Movimiento de emergencia
+            int newX = m_gridX;
+            int newY = m_gridY + 1;
+            //std::cout << "[updatemovement]" << std::endl;
+            if (m_grid->getCell(newX, newY) == CellType::Empty) {
+                m_grid->unregisterEnemy(m_gridX, m_gridY);
+                m_gridX = newX;
+                m_gridY = newY;
+                m_grid->registerEnemy(this, m_gridX, m_gridY);
+                //mueve el enemigo en la pantalla
+                m_shape.setPosition(m_grid->gridToWorld(m_gridX, m_gridY));
+            }
         }
-        
-        m_moveTimer = 0; // hace reset al contador de tiempo
+        m_moveTimer = 0;
     }
 }
 

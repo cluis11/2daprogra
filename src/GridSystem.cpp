@@ -3,7 +3,7 @@
 #include "Enemy.h"
 
 GridSystem::GridSystem(unsigned width, unsigned height, float cellSize)
-    : m_width(width), m_height(height), m_cellSize(cellSize), m_rng(std::random_device{}()) {
+    : m_width(width), m_height(height), m_cellSize(cellSize), m_rng(std::random_device{}()){
     initializeGrid();
 }
 
@@ -14,7 +14,7 @@ void GridSystem::initializeGrid() {
     m_enemyGrid.resize(m_width, std::vector<Enemy*>(m_height, nullptr)); //matriz de punteros a enemigos para buscar y atacar
 
     //definir donde se originan enemigos
-    m_spawnPoints = {{0, 0}, {0, 1}, {1, 0}, {1, 1}, {0, 25}, {0, 26}};
+    m_spawnPoints = {{0, 0}, {15, 0}, {12, 0}};
 
     //asigna la puerta del castillo en el borde derecho
     m_grid[m_width-1][m_height-1] = CellType::ExitPoint;

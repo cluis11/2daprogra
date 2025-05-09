@@ -1,11 +1,13 @@
 #include "Game.h"
 #include <sstream>
 #include <stdexcept>
+#include <iostream>
 
 //Constructor del juego
-Game::Game() 
-    : m_window(sf::VideoMode( sf::Vector2u(800u, 800u) ), "Genetic Kingdom"), //diferente en 3.0
+Game::Game()
+    : m_window(sf::VideoMode(sf::Vector2u(800u, 800u)), "Genetic Kingdom"), //diferente en 3.0
       m_grid(50, 50, 16.f), //crea la matriz mxm y asigna el cellSize
+      m_pathfinder(&m_grid),
       m_font(), //Se define la fuente aqui por cambio en 3.0
       m_waveText(m_font, "Wave: 0/3",    20), //Se define el texto aqui por cambio en 3.0
       m_timerText(m_font, "Time: 0s",     20), //Se define la texto aqui por cambio en 3.0
@@ -62,8 +64,11 @@ void Game::processEvents() {
                 m_towers.emplace_back(
                     std::make_unique<Tower>(m_nextTowerType, gridPos.x, gridPos.y, &m_grid)
                 );
+                std::cout << "Se creo una torre" << std::endl;
                 m_grid.setCell(gridPos.x, gridPos.y, CellType::Tower);
                 m_towersPlaced++;
+
+                recalculatePaths();
 
                 // Rota el tipo de torre, solo de momento se cambia por seleccion en pantalla y economia
                 m_nextTowerType = static_cast<Tower::Type>((static_cast<int>(m_nextTowerType) + 1) % 3);
@@ -171,7 +176,7 @@ void Game::render() {
 //Segun el numero de wave se puede modificar
 void Game::spawnEnemy() {
     auto spawnPoints = m_grid.getSpawnPoints(); //obtiene lista {x,y} de spawn area
-
+    //std::cout << "Se creo el enemigo" << std::endl;
     for (const auto& spawnPos : spawnPoints) {
         // Verificar si la celda está vacía
         if (m_grid.getCell(spawnPos.x, spawnPos.y) == CellType::Empty) {
@@ -185,13 +190,40 @@ void Game::spawnEnemy() {
             else if (roll < 90) type = Enemy::Type::Harpy;
             else type = Enemy::Type::Mercenary;
 
-            // Crear enemigo 
-            m_enemies.emplace_back(std::make_unique<Enemy>(type, spawnPos.x, spawnPos.y, &m_grid));
-            m_grid.setCell(spawnPos.x, spawnPos.y, CellType::Enemy); 
+            // Crear enemigo
+            auto it = m_grid.m_precomputedPaths.find(spawnPos);
+            if (it != m_grid.m_precomputedPaths.end()) {
+                m_enemies.emplace_back(std::make_unique<Enemy>(type, spawnPos.x, spawnPos.y, &m_grid, it->second));
+            }
             
+            m_grid.setCell(spawnPos.x, spawnPos.y, CellType::Enemy); 
+           
             break; // Salir después de spawnear 1 enemigo
         }
     }
+}
+
+void Game::recalculatePaths() {
+    m_grid.m_precomputedPaths.clear();
+    auto spawnPoints = m_grid.getSpawnPoints();
+
+    for (const auto& spawn : spawnPoints) {
+        auto path = m_pathfinder.findPath(spawn);
+        m_grid.m_precomputedPaths[spawn] = path;
+        //m_grid.setEnemyPath(path);
+    }
+
+    if (!m_enemies.empty()) {
+        for (const auto& enemy : m_enemies) {
+            auto posx = enemy->getGridX();
+            auto posy = enemy->getGridY();
+            sf::Vector2i pos = { posx, posy };
+            auto path = m_pathfinder.findPath(pos);
+            enemy->setPath(path);
+        }
+    }
+
+
 }
 
 //Funcion encargada de actualizar la interfaz cuando para un evento de usuario u objetos
@@ -210,9 +242,12 @@ void Game::updateUI() {
     m_leaksText.setString("Leaks: "  + std::to_string(m_leaks)         + "/5");
 }
 
+
+
 //Funcion responsable de todo lo que pasa en el juego
 //Llama a las funciones basicas de SFML 
 void Game::run() {
+    
     sf::Clock clock;
     while (m_window.isOpen()) {
         float deltaTime = clock.restart().asSeconds();
@@ -221,3 +256,5 @@ void Game::run() {
         render();
     }
 }
+
+

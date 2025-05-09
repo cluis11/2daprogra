@@ -6,6 +6,7 @@
 #include "Tower.h"
 #include "Enemy.h"
 #include "Wave.h"
+#include "PathFinding.h"
 
 class Game {
 public:
@@ -19,9 +20,11 @@ private:
     void render(); //Encargado de dibujar los objetos
     void spawnEnemy(); //Funcion encargada de crear enemigos durante las waves
     void updateUI(); //Funcion encargada de actualizar la interfaz
-    
+    void recalculatePaths();
+
     sf::RenderWindow m_window; //main screen
     GridSystem m_grid; //matriz
+    PathFinding m_pathfinder;
     
     std::vector<std::unique_ptr<Tower>> m_towers; //lista de torres
     std::vector<std::unique_ptr<Enemy>> m_enemies; //lista de enemigos

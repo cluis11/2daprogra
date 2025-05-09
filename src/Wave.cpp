@@ -1,4 +1,5 @@
 #include "Wave.h"
+#include <iostream>
 
 //constructor
 Wave::Wave(int waveNumber, const std::vector<sf::Vector2i>& spawnPoints, const Config& config, GridSystem* grid)
@@ -38,13 +39,24 @@ void Wave::spawnEnemy(std::vector<std::unique_ptr<Enemy>>& enemies) {
     for (int i = 0; i < m_activeSpawnPoints && m_enemiesSpawned < m_totalEnemies; ++i) {
         const auto& point = m_spawnPoints[i % m_spawnPoints.size()];
         if (m_grid->getCell(point.x, point.y) == CellType::Empty) {
-            enemies.emplace_back(std::make_unique<Enemy>(
-                getEnemyType(), 
-                point.x, 
-                point.y, 
-                m_grid
-            ));
-            m_enemiesSpawned++;
+            
+            
+            std::cout << "Se creo el enemigo y esta es la posicion: ( " << point.x << ", " << point.y << " )" << std::endl;
+            auto it = m_grid->m_precomputedPaths.find(point);
+            if (it != m_grid->m_precomputedPaths.end()) {
+                std::cout << "si se encontro el camino" << std::endl;
+                enemies.emplace_back(std::make_unique<Enemy>(
+                                getEnemyType(), 
+                                point.x, 
+                                point.y, 
+                                m_grid,
+                                it->second
+                            ));
+                            m_enemiesSpawned++;
+            }
+            else {
+                std::cout << "Error esa vara no sirvio" << std::endl;
+            }   
         }
     }
 }

@@ -6,6 +6,12 @@
 
 class Enemy; 
 
+struct Vector2iHash {
+    std::size_t operator()(const sf::Vector2i& v) const {
+        return std::hash<int>()(v.x) ^ (std::hash<int>()(v.y) << 1);
+    }
+};
+
 //Numero en la matriz
 enum class CellType { 
     Empty,       // 0 - Gris oscuro
@@ -43,8 +49,9 @@ public:
     unsigned getHeight() const { return m_height; }
     float getCellSize() const { return m_cellSize; }
     std::mt19937& getRNG() { return m_rng; }
+    const std::vector<std::vector<Enemy*>>& getEnemyGrid() const { return m_enemyGrid; }
 
-
+    std::unordered_map<sf::Vector2i, std::vector<sf::Vector2i>, Vector2iHash> m_precomputedPaths;
 
 private:
     //funciones
