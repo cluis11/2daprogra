@@ -7,6 +7,7 @@
 #include "Enemy.h"
 #include "Wave.h"
 #include "Economy.h"
+#include "PathFinding.h"
 
 class Game {
 public:
@@ -20,11 +21,13 @@ private:
     void update(float deltaTime); //Ejecuta logica del objeto e interacciones
     void render(); //Encargado de dibujar los objetos
     void spawnEnemy(); //Funcion encargada de crear enemigos durante las waves
+    void recalculatePaths(); //Recalcula los caminos
     void updateUI(); //Funcion encargada de actualizar la interfaz
     void updateTowerInfo();
 
     sf::RenderWindow m_window; //main screen
     GridSystem m_grid; //matriz
+    PathFinding m_pathfinder; //pathfinding
     
     std::vector<std::unique_ptr<Tower>> m_towers; //lista de torres
     std::vector<std::unique_ptr<Enemy>> m_enemies; //lista de enemigos
@@ -67,8 +70,6 @@ private:
     void handleTowerSelection(const sf::Vector2i& mousePos);
     void handleTowerUpgrade();
     void updateTowerGhost(const sf::Vector2i& mousePos);
-
-    Tower::Type m_nextTowerType = Tower::Type::Archer; //borrar mas adelante
 
     sf::RectangleShape m_towerInfoPanel;
     sf::Text m_towerInfoText;

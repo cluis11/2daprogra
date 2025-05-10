@@ -6,6 +6,13 @@
 
 class Enemy; 
 
+//Hash para usar sf::Vector2i en unordered_map
+struct Vector2iHash {
+    std::size_t operator()(const sf::Vector2i& v) const {
+        return std::hash<int>()(v.x) ^ (std::hash<int>()(v.y) << 1);
+    }
+};
+
 //Numero en la matriz
 enum class CellType { 
     Empty,       // 0 - Gris oscuro
@@ -44,7 +51,7 @@ public:
     float getCellSize() const { return m_cellSize; }
     std::mt19937& getRNG() { return m_rng; }
 
-
+    std::unordered_map<sf::Vector2i, std::vector<sf::Vector2i>, Vector2iHash> m_precomputedPaths;  //Rutas precalculadas desde cada spawn o de enemigo
 
 private:
     //funciones

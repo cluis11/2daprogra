@@ -22,6 +22,9 @@
     <ClCompile Include="C:\Users\luisc\Documents\GitHub\2daprogra\src\Enemy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="C:\Users\luisc\Documents\GitHub\2daprogra\src\PathFinding.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="C:\Users\luisc\Documents\GitHub\2daprogra\CMakeLists.txt" />

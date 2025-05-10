@@ -7,6 +7,7 @@
 Game::Game() 
     : m_window(sf::VideoMode( sf::Vector2u(1000u, 800u) ), "Genetic Kingdom"), //diferente en 3.0
       m_grid(50, 50, 16.f), //crea la matriz mxm y asigna el cellSize
+      m_pathfinder(&m_grid),
       m_font(), //Se define la fuente aqui por cambio en 3.0
       m_waveText(m_font, "Wave: 0/3",    20), //Se define el texto aqui por cambio en 3.0
       m_timerText(m_font, "Time: 0s",     20), //Se define la texto aqui por cambio en 3.0
@@ -109,8 +110,8 @@ void Game::update(float deltaTime) {
     m_stateTimer += deltaTime; 
 
     //Transisiones de state
-    //Transicion de state Prep a Wave despues de 30 segundos
-    if (m_currentState == GameState::Prep && m_stateTimer >= 8.f) {
+    //Transicion de state Prep a Wave despues de 10 segundos
+    if (m_currentState == GameState::Prep && m_stateTimer >= 10.f) {
         m_currentState = GameState::Wave;
         m_stateTimer = 0.f;
     }
@@ -120,6 +121,7 @@ void Game::update(float deltaTime) {
     else if (m_currentState == GameState::Wave) {
         if (!m_currentWave) {
             // Inicializa la wave con parámetros configurables
+            recalculatePaths();
             m_currentWave = std::make_unique<Wave>(
                 m_waveNumber, 
                 m_grid.getSpawnPoints(),
@@ -231,12 +233,39 @@ void Game::spawnEnemy() {
             else type = Enemy::Type::Mercenary;
 
             // Crear enemigo 
-            m_enemies.emplace_back(std::make_unique<Enemy>(type, spawnPos.x, spawnPos.y, &m_grid));
-            m_grid.setCell(spawnPos.x, spawnPos.y, CellType::Enemy); 
+            auto it = m_grid.m_precomputedPaths.find(spawnPos);
+            if (it != m_grid.m_precomputedPaths.end()) {
+                m_enemies.emplace_back(std::make_unique<Enemy>(type, spawnPos.x, spawnPos.y, &m_grid, it->second));
+            }
             
-            break; // Salir después de spawnear 1 enemigo
+            m_grid.setCell(spawnPos.x, spawnPos.y, CellType::Enemy); 
+           
+            break; 
         }
     }
+}
+
+
+// Función que recalcula los caminos del PathFinding
+void Game::recalculatePaths() {
+    m_grid.m_precomputedPaths.clear();
+    auto spawnPoints = m_grid.getSpawnPoints();
+    
+    // Calcula y guarda el camino desde cada punto de aparición
+    for (const auto& spawn : spawnPoints) {
+        auto path = m_pathfinder.findPath(spawn);
+        m_grid.m_precomputedPaths[spawn] = path;
+    }
+
+    // Reasigna caminos a enemigos existentes si los hay
+    /*if (!m_enemies.empty()) {
+        for (const auto& enemy : m_enemies) {
+            sf::Vector2i pos = { enemy->getGridX(), enemy->getGridY() };
+            auto path = m_pathfinder.findPath(pos);
+            enemy->setPath(path);
+        }
+    }*/
+
 }
 
 //inicializa el panel de la derecha
