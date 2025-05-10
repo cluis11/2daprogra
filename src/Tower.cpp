@@ -78,7 +78,7 @@ void Tower::upgradeArtillery() {
             break;
         case 2:
             m_damage += 25;
-            m_range += 1.0f;
+            m_range += 1;
             break;
         case 3:
             m_damage += 40;
@@ -100,8 +100,8 @@ sf::Color Tower::getColorForType(Type type) {
 //Asigna el alcance de ataque de la torre
 int Tower::getDefaultRange(Type type) {
     switch(type) {
-        case Type::Archer: return 1;
-        case Type::Mage: return 5;
+        case Type::Archer: return 5;
+        case Type::Mage: return 4;
         case Type::Artillery: return 3;
         default: return 0;
     }
@@ -120,7 +120,7 @@ float Tower::getDefaultDamage(Type type) {
 //Asigna la velocidad de ataque
 float Tower::getDefaultAttackSpeed(Type type) {
     switch(type) {
-        case Type::Archer: return 2.f;
+        case Type::Archer: return 0.7f;
         case Type::Mage: return 1.0f;
         case Type::Artillery: return 1.5f;
         default: return 0.f;

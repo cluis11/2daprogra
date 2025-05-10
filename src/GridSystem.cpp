@@ -44,9 +44,6 @@ void GridSystem::unregisterEnemy(int gridX, int gridY) {
 
 std::vector<Enemy*> GridSystem::getEnemiesInRadius(int gridX, int gridY, int radius) const {
     std::vector<Enemy*> enemies;
-    std::cout << "=== Tower at [" << gridX << "," << gridY << "] checking radius " << radius << " ===" << std::endl;
-    std::cout << "Search area: X[" << gridX-radius << " to " << gridX+radius 
-              << "], Y[" << gridY-radius << " to " << gridY+radius << "]" << std::endl;
     for (int x = gridX - radius; x <= gridX + radius; ++x) {
         for (int y = gridY - radius; y <= gridY + radius; ++y) {
             if (x >= 0 && y >= 0 && x < 50 && y < 50) {

@@ -13,6 +13,9 @@ Game::Game()
       m_towersText(m_font, "Towers: 0/10",20), //Se define la texto aqui por cambio en 3.0
       m_leaksText(m_font, "Leaks: 0/5",   20), //Se define la texto aqui por cambio en 3.0
       m_coinsText(m_font, "Coins: ", 20),
+      m_towerInfoText(m_font, "No tower selected", 16),
+      m_towerLevelText(m_font, "Level: 0/3", 16),
+      m_upgradeButtonText(m_font, "Upgrade (100)", 16),
       m_isPlacingTower(false)
 {
     //Limite de framerates
@@ -39,67 +42,65 @@ Game::Game()
 //Funcion encargada de procesar los inputs del usuario
 //Eventos cambiaron un poco en 3.0
 void Game::processEvents() {
-    while (const auto event = m_window.pollEvent()) { //Diferente en 3.0
-        //Cerrar ventana
-        if (event->is<sf::Event::Closed>()) { //Diferente en 3.0
+    while (const auto event = m_window.pollEvent()) {
+        // Close window
+        if (event->is<sf::Event::Closed>()) {
             m_window.close();
         }
 
-        //Permite colocar torres solo en el stage Prep y si son menos de 10
-        //Esto es solo para probar version final se colocan torres durante el wave con la logica de econimia
-        if (const auto* mb = event->getIf<sf::Event::MouseButtonPressed>();
-            mb
-         && m_currentState == GameState::Prep
-         && m_towersPlaced  < 10) //aqui se tiene que agregar la logica para comprar
-        {
-            // Convertir posición de click a matriz
-            //diferente en 3.0
-            auto gridPos = m_grid.worldToGrid(
-                static_cast<float>(mb->position.x),
-                static_cast<float>(mb->position.y)
-            );
-
-            //Revisiones de la posicion de la matriz donde se dio click
-            //Si la celda esta vacia permite colocar una torre
-            //crea la torre y la agrega a la lista de torres
-            if (m_grid.getCell(gridPos.x, gridPos.y) == CellType::Empty) {
-                m_towers.emplace_back(
-                    std::make_unique<Tower>(m_nextTowerType, gridPos.x, gridPos.y, &m_grid)
-                );
-                m_grid.setCell(gridPos.x, gridPos.y, CellType::Tower);
-                m_towersPlaced++;
-
-                // Rota el tipo de torre, solo de momento se cambia por seleccion en pantalla y economia
-                m_nextTowerType = static_cast<Tower::Type>((static_cast<int>(m_nextTowerType) + 1) % 3);
-                
-                //Actualiza la interfaz para mostrar torre
-                updateUI();
-            }
-        }
-        else if (mb && m_currentState == GameState::Wave) {
+        if (const auto* mb = event->getIf<sf::Event::MouseButtonPressed>()) {
             sf::Vector2i mousePos(mb->position.x, mb->position.y);
-            if (mousePos.x >= 800) { // UI panel click
-                handleTowerSelection(mousePos);
-            }
 
-            else if (m_isPlacingTower) { // Grid click
-                auto gridPos = m_grid.worldToGrid(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
-                int cost = Tower::getCost(m_selectedTowerType);
-                
-                if (m_grid.getCell(gridPos.x, gridPos.y) == CellType::Empty && 
-                    m_economy.canAfford(cost)) {
-                    m_economy.spend(cost);
-                    m_towers.emplace_back(
-                        std::make_unique<Tower>(m_selectedTowerType, gridPos.x, gridPos.y, &m_grid)
-                    );
-                    m_grid.setCell(gridPos.x, gridPos.y, CellType::Tower);
-                    m_towersPlaced++;
-                    updateUI();
+            // Common behavior for both PREP and WAVE
+            if (m_currentState == GameState::Prep || m_currentState == GameState::Wave) {
+                // Click in UI panel (right side)
+                if (mousePos.x >= 800) {
+                    // Check if clicking upgrade button
+                    if (m_selectedTower && 
+                        m_upgradeButton.getGlobalBounds().contains(sf::Vector2f(mousePos))) {
+                        handleTowerUpgrade(mousePos);
+                    }
+                    // Otherwise handle tower selection
+                    else {
+                        handleTowerSelection(mousePos);
+                    }
                 }
-                m_isPlacingTower = false;
+                // Click in game grid
+                else {
+                    auto gridPos = m_grid.worldToGrid(static_cast<float>(mousePos.x), 
+                                                     static_cast<float>(mousePos.y));
+
+                    // Unified tower placement for both states
+                    if (m_isPlacingTower) {
+                        int cost = Tower::getCost(m_selectedTowerType);
+                        if (m_grid.getCell(gridPos.x, gridPos.y) == CellType::Empty && 
+                            m_economy.canAfford(cost) && 
+                            m_towersPlaced < 10) {
+                            m_economy.spend(cost);
+                            m_towers.emplace_back(
+                                std::make_unique<Tower>(m_selectedTowerType, gridPos.x, gridPos.y, &m_grid)
+                            );
+                            m_grid.setCell(gridPos.x, gridPos.y, CellType::Tower);
+                            m_towersPlaced++;
+                            updateUI();
+                        }
+                        m_isPlacingTower = false;
+                    }
+                    // Tower selection (common for both states)
+                    else {
+                        m_selectedTower = nullptr;
+                        for (auto& tower : m_towers) {
+                            if (tower->getGridX() == gridPos.x && tower->getGridY() == gridPos.y) {
+                                m_selectedTower = tower.get();
+                                break;
+                            }
+                        }
+                        updateTowerInfo();
+                    }
+                }
             }
         }
-    }  
+    }
 }
 
 //Funcion que se encarga de lo que pasa en el juego
@@ -199,6 +200,13 @@ void Game::render() {
     if (m_isPlacingTower) {
         m_window.draw(m_towerGhost);
     }
+
+    // Draw tower info panel
+    m_window.draw(m_towerInfoPanel);
+    m_window.draw(m_towerInfoText);
+    m_window.draw(m_towerLevelText);
+    m_window.draw(m_upgradeButton);
+    m_window.draw(m_upgradeButtonText);
     
     //Abre la pantalla
     m_window.display();
@@ -257,15 +265,33 @@ void Game::initUI() {
         text.setPosition({840.f, 20.f + static_cast<float>(i) * 50.f});
         m_towerButtonTexts.push_back(text);
     }
-    m_coinsText.setFont(m_font);
-    m_coinsText.setCharacterSize(20);
-    m_coinsText.setPosition({810.f, 200.f});
+    m_coinsText.setPosition({810.f, 180.f});
     
 
     // Tower ghost (for placement preview)
     m_towerGhost.setSize({16.f, 16.f});
     m_towerGhost.setOrigin({8.f, 8.f});
     m_towerGhost.setFillColor(sf::Color(255, 255, 255, 150));
+
+
+    // Panel de información de torre (debajo de coins)
+    m_towerInfoPanel.setSize({180.f, 120.f});
+    m_towerInfoPanel.setPosition({810.f, 230.f});
+    m_towerInfoPanel.setFillColor(sf::Color(70, 70, 90));
+    m_towerInfoPanel.setOutlineThickness(1.f);
+    m_towerInfoPanel.setOutlineColor(sf::Color::White);
+
+    m_towerInfoText.setPosition({820.f, 240.f});
+    m_towerLevelText.setPosition({820.f, 260.f});
+
+    // Botón de upgrade
+    m_upgradeButton.setSize({160.f, 30.f});
+    m_upgradeButton.setPosition({820.f, 300.f});
+    m_upgradeButton.setFillColor(sf::Color(100, 100, 150));
+    m_upgradeButton.setOutlineThickness(1.f);
+    m_upgradeButton.setOutlineColor(sf::Color::White);
+
+    m_upgradeButtonText.setPosition({830.f, 305.f});
 }
 
 void Game::updateTowerGhost(const sf::Vector2i& mousePos) {
@@ -293,7 +319,8 @@ void Game::handleTowerSelection(const sf::Vector2i& mousePos) {
 
 
 void Game::handleTowerUpgrade(const sf::Vector2i& mousePos) {
-    auto gridPos = m_grid.worldToGrid(mousePos.x, mousePos.y);
+    sf::Vector2f pos{static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)};
+    auto gridPos = m_grid.worldToGrid(pos.x, pos.y);
     
     for (auto& tower : m_towers) {
         if (tower->getGridX() == gridPos.x && tower->getGridY() == gridPos.y) {
@@ -324,6 +351,33 @@ void Game::updateUI() {
     m_towersText.setString("Towers: " + std::to_string(m_towersPlaced) + "/10");
     m_leaksText.setString("Leaks: "  + std::to_string(m_leaks)         + "/5");
     m_coinsText.setString("Coins: " + std::to_string(m_economy.getCoins()));
+
+    if (m_selectedTower) {
+        updateTowerInfo();
+    }
+}
+
+void Game::updateTowerInfo() {
+    if (m_selectedTower) {
+        m_towerInfoText.setString("Tower: " + Tower::typeToString(m_selectedTower->getType()));
+        m_towerLevelText.setString("Level: " + std::to_string(m_selectedTower->getLevel()) + "/3");
+        
+        // Actualizar texto del botón de upgrade
+        if (m_selectedTower->getLevel() < 3) {
+            int cost = Tower::getUpgradeCost(m_selectedTower->getLevel() + 1);
+            m_upgradeButtonText.setString("Upgrade (" + std::to_string(cost) + ")");
+            m_upgradeButton.setFillColor(m_economy.canAfford(cost) ? 
+                sf::Color(100, 200, 100) : sf::Color(200, 100, 100));
+        } else {
+            m_upgradeButtonText.setString("MAX LEVEL");
+            m_upgradeButton.setFillColor(sf::Color(150, 150, 150));
+        }
+    } else {
+        m_towerInfoText.setString("No tower selected");
+        m_towerLevelText.setString("Level: 0/3");
+        m_upgradeButtonText.setString("Upgrade (---)");
+        m_upgradeButton.setFillColor(sf::Color(150, 150, 150));
+    }
 }
 
 //Funcion responsable de todo lo que pasa en el juego

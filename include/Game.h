@@ -21,7 +21,8 @@ private:
     void render(); //Encargado de dibujar los objetos
     void spawnEnemy(); //Funcion encargada de crear enemigos durante las waves
     void updateUI(); //Funcion encargada de actualizar la interfaz
-    
+    void updateTowerInfo();
+
     sf::RenderWindow m_window; //main screen
     GridSystem m_grid; //matriz
     
