@@ -65,7 +65,7 @@ private:
     //funciones seleccion de torres
     void initUI();
     void handleTowerSelection(const sf::Vector2i& mousePos);
-    void handleTowerUpgrade(const sf::Vector2i& mousePos);
+    void handleTowerUpgrade();
     void updateTowerGhost(const sf::Vector2i& mousePos);
 
     Tower::Type m_nextTowerType = Tower::Type::Archer; //borrar mas adelante

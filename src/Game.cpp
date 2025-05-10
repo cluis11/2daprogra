@@ -56,9 +56,8 @@ void Game::processEvents() {
                 // Click in UI panel (right side)
                 if (mousePos.x >= 800) {
                     // Check if clicking upgrade button
-                    if (m_selectedTower && 
-                        m_upgradeButton.getGlobalBounds().contains(sf::Vector2f(mousePos))) {
-                        handleTowerUpgrade(mousePos);
+                    if (m_upgradeButton.getGlobalBounds().contains(sf::Vector2f(mousePos))) {
+                        handleTowerUpgrade();
                     }
                     // Otherwise handle tower selection
                     else {
@@ -318,21 +317,18 @@ void Game::handleTowerSelection(const sf::Vector2i& mousePos) {
 }
 
 
-void Game::handleTowerUpgrade(const sf::Vector2i& mousePos) {
-    sf::Vector2f pos{static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)};
-    auto gridPos = m_grid.worldToGrid(pos.x, pos.y);
+void Game::handleTowerUpgrade() {
+    if (!m_selectedTower) return;
     
-    for (auto& tower : m_towers) {
-        if (tower->getGridX() == gridPos.x && tower->getGridY() == gridPos.y) {
-            int cost = tower->getUpgradeCost(tower->getLevel());
-            
-            if (m_economy.canAfford(cost) && tower->getLevel() < 3) {
-                m_economy.spend(cost);
-                tower->upgrade();
-                updateUI();
-            }
-            return;
-        }
+    int nextLevel = m_selectedTower->getLevel() + 1;
+    if (nextLevel > 3) return;
+    
+    int cost = Tower::getUpgradeCost(nextLevel);
+    if (m_economy.canAfford(cost)) {
+        m_economy.spend(cost);
+        m_selectedTower->upgrade();
+        updateTowerInfo();
+        updateUI();
     }
 }
 
