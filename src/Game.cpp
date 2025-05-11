@@ -4,7 +4,7 @@
 #include <iostream>
 
 //Constructor del juego
-Game::Game() 
+Game::Game()
     : m_window(sf::VideoMode( sf::Vector2u(800u, 800u) ), "Genetic Kingdom"), //diferente en 3.0
       m_grid(50, 50, 16.f), //crea la matriz mxm y asigna el cellSize
       m_font(), //Se define la fuente aqui por cambio en 3.0
@@ -17,22 +17,20 @@ Game::Game()
 {
     //Limite de framerates
     m_window.setFramerateLimit(60);
-    
+
     //busca la fuente y la asigna a m_font
     //La fuente se copia a la carpeta build cuando se ejecuta el cmakelist
     //nombre de la funcion cambio en 3.0
     if (!m_font.openFromFile("assets/fonts/arial.ttf")) {
         throw std::runtime_error("Failed to load font file 'arial.ttf'");
     }
-    
+
     //Posiciona los textos
     m_waveText.setPosition(sf::Vector2f(10.f, 10.f));
     m_timerText.setPosition(sf::Vector2f(350.f, 10.f));
     m_towersText.setPosition(sf::Vector2f(650.f, 10.f));
     m_leaksText.setPosition(sf::Vector2f(10.f, 750.f));
 
-    //Inicializa primera generacion de genomas
-    m_geneticManager.initializeFirstGeneration();
 
     //como se asignaron los textos se actualiza la interfaz
     updateUI();
@@ -81,6 +79,13 @@ void Game::processEvents() {
     }  
 }
 
+/*
+ * Actualiza la lógica del juego cada frame
+ * Maneja las transiciones entre estados del juego:
+ * - Prep -> Wave después de 8 segundos
+ * - Wave -> Cooldown cuando termina la oleada
+ * - Cooldown -> Prep despues de 5 segundos
+ */
 void Game::update(float deltaTime) {
     m_stateTimer += deltaTime;
 
@@ -97,117 +102,130 @@ void Game::update(float deltaTime) {
     updateUI();
 }
 
+/*
+ * Inicia una nueva oleada de enemigos
+ * Configura los parametros de la oleada basados en el numero de wave actual
+ */
 void Game::startNewWave() {
     m_currentState = GameState::Wave;
     m_stateTimer = 0.f;
 
-    // Configuracion de la oleada
     Wave::Config config;
-    config.spawnInterval = 5.0f;  // Cada 5 segundos
-    config.enemiesPerSpawn = 1;   // 1 enemigo por spawn
-    config.maxEnemies = 20 + (20 * (m_waveNumber - 1)); // 20, 40, 60
-    config.waveDuration = 60.0f;
-    config.maxSpawnPoints = std::min(3 + m_waveNumber, 6);
+    config.spawnInterval = 1.0f; // Enemigos cada 1 segundo
+    config.enemiesPerSpawn = 1;  // 1 enemigo por spawn
+    config.maxEnemies = 20 + (20 * (m_waveNumber - 1)); // Aumenta en 20 por wave
+    config.waveDuration = 60.0f; // 60 segundos dura cada wave
+    config.maxSpawnPoints = std::min(3 + m_waveNumber, 6); // Hasta 6 spawn points
 
-    // Obtiene spawn points del grid
-    const auto& spawnPoints = m_grid.getSpawnPoints();
-
-    std::cout << "\n=== OLEADA " << m_waveNumber << " ===" << std::endl;
-    std::cout << "Max enemigos: " << config.maxEnemies
-              << " | Spawn cada: " << config.spawnInterval << "s"
-              << " | Puntos de spawn: " << config.maxSpawnPoints << "\n";
-
+    // Crea la nueva oleada con la configuracion y puntos de spawn
     m_currentWave = std::make_unique<Wave>(
         m_waveNumber,
-        spawnPoints,
+        m_grid.getSpawnPoints(),
         config,
         &m_grid,
-        m_geneticManager.getCurrentGenomes());
+        &m_geneticManager);
 }
 
+/*
+ * Actualiza el estado de la oleada actual
+ * Genera nuevos enemigos y actualiza los existentes
+ */
 void Game::updateWaveState(float deltaTime) {
     m_currentWave->update(deltaTime);
 
-    // Intenta spawnear enemigos
-    auto genomes = m_currentWave->getGenomesForNextSpawn();
+    // Obtiene genomas para nuevos enemigos y los spawnea
+    auto genomes = m_currentWave->getGenomesForNextSpawn(); // Ahora devuelve Ptr
     for (const auto& genome : genomes) {
-        spawnEnemy(genome);
+        spawnEnemy(genome); // genome ya es Ptr
     }
 
     updateEnemies(deltaTime);
 
+    // Verifica si la oleada ha terminado
     if (m_currentWave->isCompleted()) {
         endCurrentWave();
     }
 }
+/*
+ * Finaliza la oleada actual
+ * Evalua la generacion de enemigos, crea nueva generación
+ * y elimina los enemigos existentes
+ */
+void Game::endCurrentWave() {
+    m_geneticManager.evaluateGeneration(m_enemies);
+    m_geneticManager.createNextGeneration();
+    m_currentState = GameState::Cooldown;
+    m_currentWave.reset();  // Resetea la oleada actual
+    m_waveNumber++;         // Incrementa el contador de waves
+    m_enemies.clear();      // elimina los enemigos
+}
 
-void Game::spawnEnemy(const EnemyGenome& genome) {
-    // Obtiene puntos de spawn activos
-    const auto& spawnPoints = m_currentWave->getSpawnPoints();
+/*
+ * Crea un nuevo enemigo en un punto de spawn aleatorio
+ * Recibe Genoma compartido que define los atributos del enemigo
+ */
+void Game::spawnEnemy(const EnemyGenome::Ptr& genome) {
+    auto spawnPoints = m_currentWave->getSpawnPoints();
     if (spawnPoints.empty()) return;
 
-    // Selecciona punto de spawn rota entre cada punto
+    // Selecciona punto de spawn de forma rotativa
     static size_t spawnIndex = 0;
     spawnIndex = (spawnIndex + 1) % spawnPoints.size();
     const auto& spawnPos = spawnPoints[spawnIndex];
 
-    // Verifica si la celda esta disponible
-    if (m_grid.getCell(spawnPos.x, spawnPos.y) != CellType::Empty) {
-        return;
-    }
-
-    // Crea el enemigo
-    auto enemy = std::make_unique<Enemy>(genome.getType(), spawnPos.x, spawnPos.y, &m_grid);
-    enemy->setGenome(genome);
+    // Crea el enemigo con el genoma proporcionado
+    auto enemy = std::make_unique<Enemy>(genome, spawnPos.x, spawnPos.y, &m_grid);
     m_enemies.emplace_back(std::move(enemy));
 
-    // Depurar
-    const auto& attrs = genome.getAttributes();
-    std::cout << "--> Spawned enemy at (" << spawnPos.x << "," << spawnPos.y << ")"
-              << " | Type: " << static_cast<int>(genome.getType())
-              << " | Health: " << attrs.health
-              << " | Speed: " << attrs.speed << "\n";
+    // Log de spawn para debugging
+    const auto& attrs = genome->getAttributes();
+    std::cout << "--> Spawn en (" << spawnPos.x << "," << spawnPos.y << ")"
+              << " Tipo: " << static_cast<int>(genome->getType())
+              << " H:" << attrs.health
+              << " S:" << attrs.speed
+              << " A:" << attrs.armor
+              << " MR:" << attrs.magicResist << "\n";
 }
 
 
+//Genera enemigos para la oleada actual ,Solo genera un enemigo por llamado, usando el primer genoma disponible
 void Game::spawnWaveEnemies() {
+    // Obtiene genomas para el siguiente spawn
     auto genomes = m_currentWave->getGenomesForNextSpawn();
     if (!genomes.empty()) {
+        // Obtiene puntos de spawn disponibles
         auto spawnPoints = m_currentWave->getSpawnPoints();
         if (!spawnPoints.empty()) {
+            // Selecciona punto de spawn de forma rotativa
             static size_t spawnIndex = 0;
             spawnIndex = (spawnIndex + 1) % spawnPoints.size();
+            // Crea un enemigo con el primer genoma disponible
             spawnEnemy(genomes[0]);
         }
     }
 }
+
+//Actualiza todos los enemigos activos y Eliimina los enemigos que han muerto
 void Game::updateEnemies(float deltaTime) {
     for (auto it = m_enemies.begin(); it != m_enemies.end(); ) {
         (*it)->update(deltaTime);
         if (!(*it)->isAlive()) {
-            logEnemyDeath(*it);
-            it = m_enemies.erase(it);
+            logEnemyDeath(*it); // Registra la muerte
+            it = m_enemies.erase(it); // Elimina el enemigo
         } else {
             ++it;
         }
     }
 }
-
+//Para registrar informacion de enemigos muertos
 void Game::logEnemyDeath(const std::unique_ptr<Enemy>& enemy) {
     std::cout << "Enemigo murio - Tipo: " << static_cast<int>(enemy->getType())
               << " Pasos: " << enemy->getStepsTaken()
-              << " Pos: (" << enemy->getGridX() << "," << enemy->getGridY() << ")"
-              << std::endl;
+              << " Fitness: " << enemy->getGenome()->getFitness()
+              << " Pos: (" << enemy->getGridX() << "," << enemy->getGridY() << ")\n";
 }
 
-void Game::endCurrentWave() {
-    m_geneticManager.evaluateGeneration(m_enemies);
-    m_geneticManager.createNextGeneration();
-    m_currentState = GameState::Cooldown;
-    m_currentWave.reset();
-    m_waveNumber++;
-    m_enemies.clear();
-}
+
 
 void Game::handleCooldownEnd() {
     if (m_waveNumber > 3) {

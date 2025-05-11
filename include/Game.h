@@ -30,7 +30,7 @@ private:
     void handleCooldownEnd();
 
     //Metodos de manejo de enemigos
-    void spawnEnemy(const EnemyGenome& genome);
+    void spawnEnemy(const EnemyGenome::Ptr& genome);
     void updateEnemies(float deltaTime);
     void logEnemyDeath(const std::unique_ptr<Enemy>& enemy);
 

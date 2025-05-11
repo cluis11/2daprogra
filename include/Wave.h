@@ -5,8 +5,10 @@
 #include <memory>
 #include "EnemyGenome.h"
 
+// Forward declarations
 class Game;
 class GridSystem;
+class GeneticManager;
 
 class Wave {
 public:
@@ -18,14 +20,15 @@ public:
         int maxSpawnPoints = 6; // Puntos de spawn, lista en game
         int enemiesPerSpawn = 1; // Enemigos a spawnear por interval
         int maxEnemies = 20; //Maxima cantidad de enemigos que aparecen en la primer oleada
-
     };
 
-    //constructor
-    //Recibe el numero de wave, y los puntos de spawn definidos en game, la config, referencia al grid y  Genomas disponibles para spawn
-    Wave(int waveNumber, const std::vector<sf::Vector2i>& spawnPoints,
-         const Config& config, GridSystem* grid,
-         const std::vector<EnemyGenome>& genomes);
+    //Recibe el numero de wave, y los puntos de spawn definidos en game, la config, referencia al grid y el genetic manager
+    Wave(int waveNumber,
+         const std::vector<sf::Vector2i>& spawnPoints,
+         const Config& config,
+         GridSystem* grid,
+         GeneticManager* geneticManager);
+
     //funciones
     void update(float deltaTime); // Actualiza el estado de la oleada
     bool isCompleted() const; // Verifica si la oleada ha terminado
@@ -34,21 +37,21 @@ public:
     int getMaxEnemies() const { return m_config.maxEnemies; }
 
     // Obtiene los genomas para el proximo spawn
-    std::vector<EnemyGenome> getGenomesForNextSpawn();
+    std::vector<EnemyGenome::Ptr> getGenomesForNextSpawn();
     // Obtiene los puntos de spawn activos
     const std::vector<sf::Vector2i>& getSpawnPoints() const { return m_spawnPoints; }
+
 
 private:
     const Config m_config;
     std::vector<sf::Vector2i> m_spawnPoints;
     std::vector<sf::Vector2i> m_activeSpawnPoints;
     GridSystem* m_grid;
-    const std::vector<EnemyGenome>& m_genomes; // Referencia a los genomas disponibles
+    GeneticManager* m_geneticManager;
 
     int m_waveNumber;
     float m_timeElapsed = 0.f; // Tiempo transcurrido en la oleada
     float m_spawnTimer = 0.f; // Temporizador para controlar spawns
     int m_enemiesSpawned = 0; // Contador de enemigos spawneados
     int m_totalEnemies = 0; // Total de enemigos a spawnear en esta oleada
-
 };
