@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include "EnemyGenome.h"
+#include  <unordered_set>
 
 // Forward declarations
 class Game;
@@ -35,11 +36,14 @@ public:
     int getEnemiesSpawned() const { return m_enemiesSpawned; }
     int getTotalEnemies() const { return m_totalEnemies; }
     int getMaxEnemies() const { return m_config.maxEnemies; }
+    int getWaveNumber() const { return m_waveNumber; } // Nuevo getter
+    const Config& getWaveConfig() const { return m_config; }
 
     // Obtiene los genomas para el proximo spawn
     std::vector<EnemyGenome::Ptr> getGenomesForNextSpawn();
     // Obtiene los puntos de spawn activos
     const std::vector<sf::Vector2i>& getSpawnPoints() const { return m_spawnPoints; }
+
 
 
 private:
@@ -48,6 +52,10 @@ private:
     std::vector<sf::Vector2i> m_activeSpawnPoints;
     GridSystem* m_grid;
     GeneticManager* m_geneticManager;
+
+    std::unordered_set<int> m_usedGenomes; //Registro de IDs usados
+
+    std::vector<EnemyGenome::Ptr> getUnusedGenomes(int count); // Nuevo método privado
 
     int m_waveNumber;
     float m_timeElapsed = 0.f; // Tiempo transcurrido en la oleada

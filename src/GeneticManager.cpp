@@ -3,226 +3,101 @@
 #include <random>
 #include <algorithm>
 #include <iostream>
+#include <unordered_set>
 
 GeneticManager::GeneticManager() {
-    // Inicializacion de la primera generacion (vacía, se generara bajo demanda)
+    // Inicialización vacía, la población se generará bajo demanda
 }
 
-/*
- * Genera un nuevo genoma de enemigo con atributos aleatorios
- * Recibe Tipo de enemigo a generar
- * Retorna: Puntero compartido al nuevo genoma creado
- *
- * El genoma se agrega automaticamente a la generacion actual
- */
 EnemyGenome::Ptr GeneticManager::generateEnemyGenome(EnemyType type) {
-    // Obtiene atributos aleatorios para el tipo especificado
     auto attrs = getRandomAttributesForType(type);
-    // Crea un nuevo genoma como shared_ptr
     auto genome = std::make_shared<EnemyGenome>(type, attrs);
-    // Agrega el genoma a la generacion actual
     m_currentGenomes.push_back(genome);
+
+    std::cout << "Generado nuevo genoma - ID: " << genome->getId()
+              << ", Tipo: " << static_cast<int>(type)
+              << ", Total genomas: " << m_currentGenomes.size() << "\n";
+
     return genome;
 }
-/*
- * Genera atributos aleatorios para un tipo de enemigo especifico
- * Recibe type: Tipo de enemigo (Ogre, DarkElf, Harpy, Mercenary)
- * Retorna: Estructura Attributes con valores aleatorios dentro de rangos predefinidos
- *
- * Cada tipo tiene rangos diferentes para sus atributos:
- * - Ogros: alta salud, baja velocidad
- * - Elfos Oscuros: equilibrados
- * - Arpias: alta velocidad, baja defensa
- * - Mercenarios: buena salud y defensa
- */
+
 EnemyGenome::Attributes GeneticManager::getRandomAttributesForType(EnemyType type) const {
-    //generador de numeros aleatorios
     static std::random_device rd;
     static std::mt19937 gen(rd());
 
-    // Rangos base para los atributos segun tipo
-    float healthMin, healthMax, speedMin, speedMax, armorMax, magicResistMax;
-    // Configura rangos segun tipo de enemigo
-    switch(type) {
-        case EnemyType::Ogre:
-            healthMin = 100.0f; healthMax = 200.0f;  // Mucha salud
-            speedMin = 0.5f; speedMax = 1.2f;       // Lento
-            armorMax = 0.5f; magicResistMax = 0.3f; // Resistencia moderada
-            break;
-        case EnemyType::DarkElf:
-            healthMin = 60.0f; healthMax = 120.0f;  // Salud media
-            speedMin = 1.0f; speedMax = 2.0f;       // Velocidad media
-            armorMax = 0.3f; magicResistMax = 0.5f; // Resistencia magica alta
-            break;
-        case EnemyType::Harpy:
-            healthMin = 80.0f; healthMax = 150.0f;  // Salud decente
-            speedMin = 1.5f; speedMax = 2.5f;       // Muy rapido
-            armorMax = 0.2f; magicResistMax = 0.2f; // Poca defensa
-            break;
-        case EnemyType::Mercenary:
-            healthMin = 120.0f; healthMax = 180.0f; // Buena salud
-            speedMin = 0.8f; speedMax = 1.5f;       // Velocidad decente
-            armorMax = 0.6f; magicResistMax = 0.4f; // Buena defensa fisica
-            break;
-        default: // Valores por defecto para tipos no especificados
-            healthMin = 50.0f; healthMax = 150.0f;
-            speedMin = 0.5f; speedMax = 2.0f;
-            armorMax = 0.5f; magicResistMax = 0.5f;
-    }
+    // Configuracion de atributos por tipo
+    struct TypeConfig {
+        float healthMin, healthMax;
+        float speedMin, speedMax;
+        float armorMax, magicResistMax;
+    };
+
+    static const std::unordered_map<EnemyType, TypeConfig> typeConfigs = {
+        {EnemyType::Ogre,      {100.0f, 200.0f, 0.5f, 1.2f, 0.5f, 0.3f}},
+        {EnemyType::DarkElf,   {60.0f, 120.0f, 1.0f, 2.0f, 0.3f, 0.5f}},
+        {EnemyType::Harpy,     {80.0f, 150.0f, 1.5f, 2.5f, 0.2f, 0.2f}},
+        {EnemyType::Mercenary, {120.0f, 180.0f, 0.8f, 1.5f, 0.6f, 0.4f}}
+    };
+
+    const auto& config = typeConfigs.at(type);
 
     // Distribuciones para cada atributo
-    std::uniform_real_distribution<float> healthDist(healthMin, healthMax);
-    std::uniform_real_distribution<float> speedDist(speedMin, speedMax);
-    std::uniform_real_distribution<float> armorDist(0.0f, armorMax);
-    std::uniform_real_distribution<float> magicResistDist(0.0f, magicResistMax);
+    std::uniform_real_distribution<float> healthDist(config.healthMin, config.healthMax);
+    std::uniform_real_distribution<float> speedDist(config.speedMin, config.speedMax);
+    std::uniform_real_distribution<float> armorDist(0.0f, config.armorMax);
+    std::uniform_real_distribution<float> magicResistDist(0.0f, config.magicResistMax);
 
-    // Crea y retorna estructura de atributos con valores aleatorios
     EnemyGenome::Attributes attrs;
     attrs.health = healthDist(gen);
     attrs.speed = speedDist(gen);
     attrs.armor = armorDist(gen);
     attrs.magicResist = magicResistDist(gen);
-    attrs.stepsTaken = 0; // resetea pasos a 0
+    attrs.stepsTaken = 0;
 
     return attrs;
 }
-/*
- * Evalua la generacion actual basada en el desempeño de los enemigos
- * Recibe enemies: Lista de enemigos de la oleada que acaba de terminar
- *
- * Calcula el fitness de cada genoma basado en cuantos pasos avanzaron los enemigos
- * Ordena los genomas por fitness, los mejores primero
- * Muestra resultados en consola
- */
 
 void GeneticManager::evaluateGeneration(const std::vector<std::unique_ptr<Enemy>>& enemies) {
-    std::cout << "\n=== EVALUANDO GENERACION ===\n";
-    std::cout << std::fixed << std::setprecision(2);
+    std::cout << "\n=== EVALUANDO GENERACIÓN ===\n";
 
-    // Reset fitness solo para genomas actuales
+    // Reset fitness
     for (auto& genome : m_currentGenomes) {
         genome->setFitness(0.0f);
     }
 
-    // Calcula fitness basado en pasos recorridos por cada enemigo
+    // Asignar fitness basado en pasos recorridos
     for (const auto& enemy : enemies) {
         auto genome = enemy->getGenome();
-        float fitness = static_cast<float>(enemy->getStepsTaken());
-        genome->setFitness(genome->getFitness() + fitness);
+        genome->setFitness(genome->getFitness() + enemy->getStepsTaken());
     }
 
-    // Ordena genomas por fitness (de mayor a menor)
+    // Ordenar por fitness
     std::sort(m_currentGenomes.begin(), m_currentGenomes.end(),
-        [](const EnemyGenome::Ptr& a, const EnemyGenome::Ptr& b) {
-            return a->getFitness() > b->getFitness();
-        });
+        [](const auto& a, const auto& b) { return a->getFitness() > b->getFitness(); });
 
-    // Mostrar resultados de evaluacion
-    std::cout << "\n--- RESULTADOS DE GENERACION ---\n";
+    // Mostrar resultados
     for (const auto& genome : m_currentGenomes) {
         const auto& attrs = genome->getAttributes();
-        std::cout << "Genoma ID:" << genome->getId()
-                  << " Tipo:" << static_cast<int>(genome->getType())
-                  << " Fitness:" << genome->getFitness()
-                  << " (H:" << attrs.health
-                  << " S:" << attrs.speed
-                  << " A:" << attrs.armor
-                  << " MR:" << attrs.magicResist << ")\n";
-    }
-}
-/*
- * Crea una nueva generacion de genomas usando seleccion natural
- *
- * Proceso:
- * 1. Conserva los mejores genomas (elite) sin cambios
- * 2. Completa la poblacion con descendencia de los mejores
- * 3. Aplica mutaciones aleatorias a la descendencia
- * 4. Muestra estadisticas del proceso
- */
-void GeneticManager::createNextGeneration() {
-    //generador de numeros aleatorios
-    static std::random_device rd;
-    static std::mt19937 gen(rd());
-
-    std::cout << std::fixed << std::setprecision(2);// Configura formato de salida para numeros, que sean de 2 decimales
-    std::cout << "\n=== CREANDO NUEVA GENERACION ===\n";
-
-    m_nextGenomes.clear();// Prepara la nueva generacion
-    // Calcula cuantos genomas de elite conservar (30% por defecto)
-    size_t eliteCount = static_cast<size_t>(m_currentGenomes.size() * SELECTION_RATE);
-    eliteCount = std::max(eliteCount, static_cast<size_t>(1)); // Minimo 1
-
-    // Conservar elite
-    std::cout << "\n--- GENOMAS ELITE ---\n";
-    for (size_t i = 0; i < eliteCount; ++i) {
-        const auto& genome = m_currentGenomes[i];
-        const auto& attrs = genome->getAttributes();
-
-        // Muestra info del genoma elite
         std::cout << "ID:" << genome->getId()
-                  << " Tipo:" << static_cast<int>(genome->getType())
-                  << " Fit:" << genome->getFitness()
+                  << " T:" << static_cast<int>(genome->getType())
+                  << " F:" << genome->getFitness()
                   << " H:" << attrs.health
                   << " S:" << attrs.speed
                   << " A:" << attrs.armor
                   << " MR:" << attrs.magicResist << "\n";
-
-        // Copia el genoma elite a la nueva generacion
-        m_nextGenomes.push_back(std::make_shared<EnemyGenome>(*genome));
     }
-
-    // Crea descendencia hasta completar la poblacion
-    std::cout << "\n--- DESCENDENCIA ---\n";
-    while (m_nextGenomes.size() < m_currentGenomes.size()) {
-        // Selecciona un genoma aleatorio de la elite como referencia para el tipo
-        std::uniform_int_distribution<size_t> typeDist(0, eliteCount-1);
-        EnemyType targetType = m_currentGenomes[typeDist(gen)]->getType();
-
-        // Selecciona primer padre
-        auto parent1 = selectParent(m_currentGenomes, eliteCount, targetType);
-
-        // Selecciona segundo padre (excluyendo al primero)
-        auto parent2 = selectParent(m_currentGenomes, eliteCount, targetType, parent1->getId());
-
-        // Si por algun motivo son iguales (no debería pasar), regenerar el segundo, Garantiza que los padres sean diferentes
-        while (parent2->getId() == parent1->getId()) {
-            parent2 = selectParent(m_currentGenomes, eliteCount, targetType, parent1->getId());
-        }
-
-        // Crea hijo mediante cruce genetico
-        auto child = EnemyGenome::crossoverUniform(parent1, parent2);
-        child->mutate(MUTATION_RATE); // Aplica posibles mutaciones al hijo
-        m_nextGenomes.push_back(child);// Agrega el hijo a la nueva generacion
-    }
-
-    // Muestra resumen de la nueva generacion
-    std::cout << "\n--- RESUMEN ---\n"
-              << "Total: " << m_currentGenomes.size() << "\n"
-              << "Elite: " << eliteCount << "\n"
-              << "Nuevos: " << (m_currentGenomes.size() - eliteCount) << "\n";
 }
 
-/*
- * Selecciona un padre para reproduccion con exclusion opcional
- *  Recibe: -genomes: Lista de genomas disponibles
- *          -eliteCount: Cantidad de genomas elite
- *          -requiredType: Tipo de enemigo requerido
- *          -excludedId: ID a excluir
- * Retorna: Puntero al genoma seleccionado
- *
- * Prioriza seleccionar de la elite (80% probabilidad)
- * Si no hay candidatos validos, genera un nuevo genoma
- */
+
 EnemyGenome::Ptr GeneticManager::selectParent(
     const std::vector<EnemyGenome::Ptr>& genomes,
     size_t eliteCount,
     EnemyType requiredType,
-    int excludedId)  // Nuevo parámetro para excluir un ID específico
+    int excludedId)
 {
-    static std::random_device rd;
-    static std::mt19937 gen(rd());
+    static std::mt19937 gen(std::random_device{}());
 
-    // Busca candidatos validos (mismo tipo y ID diferente al excluido)
+    // 1. Buscar candidatos válidos del tipo requerido (excluyendo excludedId)
     std::vector<EnemyGenome::Ptr> validCandidates;
     for (const auto& genome : genomes) {
         if (genome->getType() == requiredType && genome->getId() != excludedId) {
@@ -230,25 +105,221 @@ EnemyGenome::Ptr GeneticManager::selectParent(
         }
     }
 
-    // Si no hay candidatos válidos (excepto el excluido), genera uno nuevo
+    // 2. Si no hay del tipo requerido, buscar cualquier tipo (excepto excludedId)
     if (validCandidates.empty()) {
-        return generateEnemyGenome(requiredType);
+        for (const auto& genome : genomes) {
+            if (genome->getId() != excludedId) {
+                validCandidates.push_back(genome);
+            }
+        }
     }
 
-    // Separa los candidatos elite
+    // 3. Si aun no hay, permitir incluso el excludedId (último recurso)
+    if (validCandidates.empty()) {
+        validCandidates = genomes;
+    }
+
+    // 4. Si realmente no hay genomas
+    if (validCandidates.empty()) {
+        std::cerr << "ERROR CRÍTICO: No se encontraron genomas para selección\n";
+        std::cerr << "Genomas disponibles en el sistema: " << genomes.size() << "\n";
+        for (const auto& g : genomes) {
+            std::cerr << "ID:" << g->getId() << " T:" << static_cast<int>(g->getType())
+                     << " F:" << g->getFitness() << "\n";
+        }
+        throw std::runtime_error("Fallo crítico en selección de padres");
+    }
+
+    // 5. Clasificar en elite y no-elite
     std::vector<EnemyGenome::Ptr> eliteCandidates;
-    for (size_t i = 0; i < std::min(eliteCount, validCandidates.size()); ++i) {
-        eliteCandidates.push_back(validCandidates[i]);
+    std::vector<EnemyGenome::Ptr> nonEliteCandidates;
+
+    for (const auto& genome : validCandidates) {
+        bool isElite = false;
+        for (size_t i = 0; i < eliteCount && i < genomes.size(); ++i) {
+            if (genomes[i]->getId() == genome->getId()) {
+                isElite = true;
+                break;
+            }
+        }
+
+        if (isElite) {
+            eliteCandidates.push_back(genome);
+        } else {
+            nonEliteCandidates.push_back(genome);
+        }
     }
 
-    // 80% de probabilidad de seleccionar de la elite
+    // 6. Seleccion con preferencia por elite (80% de probabilidad)
     std::bernoulli_distribution eliteDist(0.8);
+
     if (!eliteCandidates.empty() && eliteDist(gen)) {
-        std::uniform_int_distribution<size_t> dist(0, eliteCandidates.size()-1);
-        return eliteCandidates[dist(gen)];
+        return eliteCandidates[std::uniform_int_distribution<size_t>(0, eliteCandidates.size()-1)(gen)];
     }
 
-    // Si no se selecciona elite, elige de toda la poblacion valida
-    std::uniform_int_distribution<size_t> dist(0, validCandidates.size()-1);
-    return validCandidates[dist(gen)];
+    if (!nonEliteCandidates.empty()) {
+        return nonEliteCandidates[std::uniform_int_distribution<size_t>(0, nonEliteCandidates.size()-1)(gen)];
+    }
+
+    return validCandidates[std::uniform_int_distribution<size_t>(0, validCandidates.size()-1)(gen)];
+}
+
+void GeneticManager::createNextGeneration(int requiredPopulation) {
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+
+    m_nextGenomes.clear();
+    std::cout << "\n=== CREANDO NUEVA GENERACIÓN (" << requiredPopulation << " enemigos) ===\n";
+
+    // 1. Ordenar por fitness
+    std::sort(m_currentGenomes.begin(), m_currentGenomes.end(),
+        [](const auto& a, const auto& b) { return a->getFitness() > b->getFitness(); });
+
+    // 2. Conservar SOLO el 10% como elite
+    size_t eliteCount = std::min(
+        static_cast<size_t>(requiredPopulation * 0.1f), // Solo 10% elite
+        m_currentGenomes.size()
+    );
+
+    // 3. Llenar nueva generacion con la elite
+    for (size_t i = 0; i < eliteCount; ++i) {
+        auto eliteCopy = std::make_shared<EnemyGenome>(*m_currentGenomes[i]);
+        m_nextGenomes.push_back(eliteCopy);
+        std::cout << "Elite conservada - ID:" << eliteCopy->getId()
+                 << " Tipo:" << static_cast<int>(eliteCopy->getType())
+                 << " Fitness:" << eliteCopy->getFitness() << "\n";
+    }
+
+    // 4. Organizar poblacion por tipos
+    std::array<std::vector<EnemyGenome::Ptr>, 4> genomesByType;
+    for (const auto& genome : m_currentGenomes) {
+        genomesByType[static_cast<int>(genome->getType())].push_back(genome);
+    }
+
+    // 5. Generar descendencia balanceada
+    while (m_nextGenomes.size() < requiredPopulation) {
+        // Selección rotativa de tipos (0-1-2-3)
+        int targetType = m_nextGenomes.size() % 4;
+
+        EnemyGenome::Ptr parent1, parent2;
+        bool usingPreferredParents = false;
+
+        // Estrategia mejorada de seleccion de padres:
+        // 1. Primero intentar encontrar 2 padres del tipo objetivo en toda la poblacion
+        if (genomesByType[targetType].size() >= 2) {
+            std::uniform_int_distribution<size_t> dist(0, genomesByType[targetType].size()-1);
+            size_t idx1 = dist(gen);
+            size_t idx2;
+
+            do {
+                idx2 = dist(gen);
+            } while (idx2 == idx1 && genomesByType[targetType].size() > 1);
+
+            parent1 = genomesByType[targetType][idx1];
+            parent2 = genomesByType[targetType][idx2];
+            usingPreferredParents = true;
+        }
+        // 2. Si no hay suficientes, buscar un padre del tipo y otro cualquiera
+        else if (!genomesByType[targetType].empty()) {
+            parent1 = genomesByType[targetType][0];
+            parent2 = selectParentFromAllTypes(m_currentGenomes, parent1->getId());
+        }
+        // 3. Como ultimo recurso, usar cualquier padre
+        else {
+            parent1 = selectParentFromAllTypes(m_currentGenomes, -1);
+            parent2 = selectParentFromAllTypes(m_currentGenomes, parent1->getId());
+        }
+
+        // Crear hijo con validacion
+        auto child = EnemyGenome::crossoverUniform(parent1, parent2);
+        child->mutate(MUTATION_RATE);
+        m_nextGenomes.push_back(child);
+
+        std::cout << "Nuevo hijo - ID:" << child->getId()
+                 << " Tipo:" << targetType
+                 << " | Padres: " << parent1->getId() << "(T" << static_cast<int>(parent1->getType())
+                 << (usingPreferredParents ? "*" : "") << "), "
+                 << parent2->getId() << "(T" << static_cast<int>(parent2->getType())
+                 << (usingPreferredParents ? "*" : "") << ")\n";
+    }
+
+    // 6. Mezclar y actualizar generacion
+    std::shuffle(m_nextGenomes.begin(), m_nextGenomes.end(), gen);
+    m_currentGenomes = m_nextGenomes;
+
+    // 7. Validacion final
+    validateGeneration();
+}
+
+EnemyGenome::Ptr GeneticManager::selectParentFromAllTypes(
+    const std::vector<EnemyGenome::Ptr>& genomes,
+    int excludedId)
+{
+    static std::mt19937 gen(std::random_device{}());
+
+    std::vector<EnemyGenome::Ptr> candidates;
+    for (const auto& genome : genomes) {
+        if (genome->getId() != excludedId) {
+            candidates.push_back(genome);
+        }
+    }
+
+    if (candidates.empty()) {
+        candidates = genomes; // Permitir cualquier como último recurso
+    }
+
+    if (candidates.empty()) {
+        throw std::runtime_error("No hay genomas disponibles para selección");
+    }
+
+    // Selección por torneo (más eficiente que ruleta)
+    const size_t tournamentSize = std::min(static_cast<size_t>(3), candidates.size());
+    std::vector<EnemyGenome::Ptr> tournament;
+
+    std::uniform_int_distribution<size_t> dist(0, candidates.size()-1);
+    for (size_t i = 0; i < tournamentSize; ++i) {
+        size_t randomIndex = dist(gen);
+        tournament.push_back(candidates[randomIndex]);
+    }
+
+    // Seleccionar el mejor del torneo
+    return *std::max_element(tournament.begin(), tournament.end(),
+        [](const auto& a, const auto& b) { return a->getFitness() < b->getFitness(); });
+}
+
+void GeneticManager::validateGeneration() {
+    std::unordered_set<int> ids;
+    std::array<int, 4> typeCounts = {0};
+    float totalFitness = 0.0f;
+
+    for (const auto& genome : m_currentGenomes) {
+        // Verificar IDs unicos
+        if (ids.count(genome->getId())) {
+            std::cerr << "ERROR: ID duplicado " << genome->getId() << "\n";
+        }
+        ids.insert(genome->getId());
+
+        // Contar tipos
+        typeCounts[static_cast<int>(genome->getType())]++;
+
+        // Calcular fitness total
+        totalFitness += genome->getFitness();
+
+        // Validar atributos
+        const auto& attrs = genome->getAttributes();
+        if (attrs.health <= 0 || attrs.speed <= 0) {
+            std::cerr << "ADVERTENCIA: Genoma " << genome->getId()
+                     << " tiene atributos inválidos\n";
+        }
+    }
+
+    // Reporte final
+    std::cout << "\n=== VALIDACION FINAL ===\n";
+    std::cout << "Distribucion de tipos:\n";
+    for (int i = 0; i < 4; ++i) {
+        std::cout << "Tipo " << i << ": " << typeCounts[i] << " ("
+                 << (100.0f * typeCounts[i] / m_currentGenomes.size()) << "%)\n";
+    }
+    std::cout << "Fitness promedio: " << (totalFitness / m_currentGenomes.size()) << "\n";
+    std::cout << "Total genomas: " << m_currentGenomes.size() << "\n";
 }

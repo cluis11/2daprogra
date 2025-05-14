@@ -33,6 +33,7 @@ private:
     void spawnEnemy(const EnemyGenome::Ptr& genome);
     void updateEnemies(float deltaTime);
     void logEnemyDeath(const std::unique_ptr<Enemy>& enemy);
+    void generateInitialEnemies(int totalEnemies);
 
     // Objetos del juego
     sf::RenderWindow m_window; //main screen

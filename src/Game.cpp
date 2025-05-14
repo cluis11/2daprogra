@@ -111,20 +111,57 @@ void Game::startNewWave() {
     m_stateTimer = 0.f;
 
     Wave::Config config;
-    config.spawnInterval = 1.0f; // Enemigos cada 1 segundo
-    config.enemiesPerSpawn = 1;  // 1 enemigo por spawn
-    config.maxEnemies = 20 + (20 * (m_waveNumber - 1)); // Aumenta en 20 por wave
-    config.waveDuration = 60.0f; // 60 segundos dura cada wave
-    config.maxSpawnPoints = std::min(3 + m_waveNumber, 6); // Hasta 6 spawn points
+    config.spawnInterval = 1.0f;
+    config.enemiesPerSpawn = 1;
 
-    // Crea la nueva oleada con la configuracion y puntos de spawn
+    // Formula mejorada para tamaño de oleadas
+    config.maxEnemies = 20 * m_waveNumber; // Oleada 1: 20, Oleada 2: 40, Oleada 3: 60
+
+    config.waveDuration = 60.0f;
+    config.maxSpawnPoints = std::min(3 + m_waveNumber, 6);
+    config.totalWaves = 3;
+
     m_currentWave = std::make_unique<Wave>(
         m_waveNumber,
         m_grid.getSpawnPoints(),
         config,
         &m_grid,
         &m_geneticManager);
+
+    // Solo genera población inicial si es la primera oleada
+    if (m_waveNumber == 1) {
+        generateInitialEnemies(config.maxEnemies);
+    }
+
+    std::cout << "=== INICIANDO OLEADA " << m_waveNumber << " ===\n"
+              << "Enemigos totales: " << config.maxEnemies << "\n"
+              << "Puntos de spawn: " << config.maxSpawnPoints << "\n"
+              << "Genomas disponibles: " << m_geneticManager.getCurrentGenomes().size() << "\n";
 }
+
+void Game::generateInitialEnemies(int totalEnemies) {
+    // Verifica si ya hay genomas generados
+    if (m_geneticManager.getCurrentGenomes().empty()) {
+        std::cout << "Generando población inicial de " << totalEnemies << " enemigos\n";
+
+        // 1. Crea 2 de cada tipo (8 enemigos base)
+        for (int type = 0; type < 4; ++type) {
+            m_geneticManager.generateEnemyGenome(static_cast<EnemyType>(type));
+            m_geneticManager.generateEnemyGenome(static_cast<EnemyType>(type));
+        }
+
+        // 2. Crea el resto de forma aleatoria
+        for (int i = 8; i < totalEnemies; ++i) {
+            EnemyType randomType = static_cast<EnemyType>(rand() % 4);
+            m_geneticManager.generateEnemyGenome(randomType);
+        }
+    } else {
+        std::cout << "Población existente detectada ("
+                 << m_geneticManager.getCurrentGenomes().size()
+                 << " genomas). No se generan nuevos.\n";
+    }
+}
+
 
 /*
  * Actualiza el estado de la oleada actual
@@ -152,39 +189,59 @@ void Game::updateWaveState(float deltaTime) {
  * y elimina los enemigos existentes
  */
 void Game::endCurrentWave() {
-    m_geneticManager.evaluateGeneration(m_enemies);
-    m_geneticManager.createNextGeneration();
+    std::cout << "=== FINALIZANDO OLEADA " << m_waveNumber << " ===\n";
+
+    const auto& waveConfig = m_currentWave->getWaveConfig();
+
+    if (m_waveNumber < waveConfig.totalWaves) {
+        // 1. Evaluar la generacion actual (calcula fitness)
+        m_geneticManager.evaluateGeneration(m_enemies);
+
+        // 2. Preparar para la siguiente oleada
+        int nextWaveNumber = m_waveNumber + 1;
+        int requiredPopulation = 20 + (20 * (nextWaveNumber - 1));
+
+        // 3. Crear nueva generación BASADA EN LOS GENOMAS ACTUALES
+        m_geneticManager.createNextGeneration(requiredPopulation);
+
+        // 4. Limpiar enemigos existentes (pero no los genomas)
+        m_enemies.clear();
+
+        // 5. Incrementa numero de oleada
+        m_waveNumber++;
+    } else {
+        std::cout << "JUEGO COMPLETADO - Todas las oleadas finalizadas\n";
+    }
+
+    // Cambiar estado y reiniciar temporizador
     m_currentState = GameState::Cooldown;
-    m_currentWave.reset();  // Resetea la oleada actual
-    m_waveNumber++;         // Incrementa el contador de waves
-    m_enemies.clear();      // elimina los enemigos
+    m_stateTimer = 0.f;
 }
+
 
 /*
  * Crea un nuevo enemigo en un punto de spawn aleatorio
  * Recibe Genoma compartido que define los atributos del enemigo
  */
 void Game::spawnEnemy(const EnemyGenome::Ptr& genome) {
-    auto spawnPoints = m_currentWave->getSpawnPoints();
+    const auto& spawnPoints = m_currentWave->getSpawnPoints();
     if (spawnPoints.empty()) return;
 
-    // Selecciona punto de spawn de forma rotativa
     static size_t spawnIndex = 0;
-    spawnIndex = (spawnIndex + 1) % spawnPoints.size();
     const auto& spawnPos = spawnPoints[spawnIndex];
+    spawnIndex = (spawnIndex + 1) % spawnPoints.size();
 
-    // Crea el enemigo con el genoma proporcionado
-    auto enemy = std::make_unique<Enemy>(genome, spawnPos.x, spawnPos.y, &m_grid);
-    m_enemies.emplace_back(std::move(enemy));
+    m_enemies.emplace_back(std::make_unique<Enemy>(genome, spawnPos.x, spawnPos.y, &m_grid));
 
-    // Log de spawn para debugging
+    // Log detallado del spawn
     const auto& attrs = genome->getAttributes();
-    std::cout << "--> Spawn en (" << spawnPos.x << "," << spawnPos.y << ")"
-              << " Tipo: " << static_cast<int>(genome->getType())
-              << " H:" << attrs.health
+    std::cout << "Spawning Enemy ID:" << genome->getId()
+              << " Type:" << static_cast<int>(genome->getType())
+              << " at (" << spawnPos.x << "," << spawnPos.y << ")"
+              << " [H:" << attrs.health
               << " S:" << attrs.speed
               << " A:" << attrs.armor
-              << " MR:" << attrs.magicResist << "\n";
+              << " MR:" << attrs.magicResist << "]\n";
 }
 
 
