@@ -24,6 +24,7 @@ private:
     void recalculatePaths(); //Recalcula los caminos
     void updateUI(); //Funcion encargada de actualizar la interfaz
     void updateTowerInfo();
+    void restartGame();
 
     sf::RenderWindow m_window; //main screen
     GridSystem m_grid; //matriz
@@ -36,7 +37,7 @@ private:
     
     //Enum para patron state del comportamiento del juego
     //Se pueden agregar states como pantalla inicial, registro de actividades, pantalla de perdedor etc
-    enum class GameState { Prep, Wave, Cooldown }; 
+    enum class GameState { Prep, Wave, Cooldown, EndScreen }; 
 
     //Se inicia el juego en estado prep, se puede cambiar a pantalla inicial
     GameState m_currentState = GameState::Prep;
@@ -77,4 +78,13 @@ private:
     sf::RectangleShape m_upgradeButton;
     sf::Text m_upgradeButtonText;
     Tower* m_selectedTower = nullptr;
+
+    sf::RectangleShape m_restartButton;   
+    sf::RectangleShape m_exitButton;
+    sf::RectangleShape m_statsButton;
+
+    sf::Text m_restartText;
+    sf::Text m_exitText;
+    sf::Text m_statsText;
+    sf::Text m_titleEnd;
 };

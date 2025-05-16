@@ -35,6 +35,7 @@ public:
     void takeDamage(float amount, const std::string& damageType); //para futura implementacion de ataque de torres
     void updateMovement(float deltaTime); //mueve al enemigo
     bool isAlive() const { return m_health > 0; }
+    bool EndGame() const { return m_end; }
 
     //Getters
     Type getType() const { return m_type; }
@@ -63,6 +64,7 @@ private:
     float m_moveTimer = 0; //timer para movimiento
     int m_prevGridX, m_prevGridY; //coordenadas anteriores para facilitar actualizaciones a matrices
     std::vector<sf::Vector2i> m_currentPath; //Camino del enemigo
+    bool m_end;
     PathFinding m_pathfinder;
 
     sf::Clock m_damageClock;  // Temporizador para el efecto

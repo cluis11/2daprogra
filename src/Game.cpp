@@ -17,6 +17,10 @@ Game::Game()
       m_towerInfoText(m_font, "No tower selected", 16),
       m_towerLevelText(m_font, "Level: 0/3", 16),
       m_upgradeButtonText(m_font, "Upgrade (100)", 16),
+      m_restartText(m_font, "Reiniciar", 40),
+      m_exitText(m_font, "Exit", 40),
+      m_statsText(m_font, "Stats", 40),
+      m_titleEnd(m_font, "Game Over", 80),
       m_isPlacingTower(false)
 {
     //Limite de framerates
@@ -99,7 +103,18 @@ void Game::processEvents() {
                     }
                 }
             }
-        }
+            else if (m_currentState == GameState::EndScreen) {
+                if (m_restartButton.getGlobalBounds().contains(sf::Vector2f(mousePos))) {
+                    restartGame();
+                }
+                else if (m_exitButton.getGlobalBounds().contains(sf::Vector2f(mousePos))) {
+                    m_window.close();
+                }
+                else if (m_statsButton.getGlobalBounds().contains(sf::Vector2f(mousePos))) {
+                    //se implementa la logica de stats
+                }
+            }
+        }    
     }
 }
 
@@ -136,7 +151,14 @@ void Game::update(float deltaTime) {
         while (it != m_enemies.end()) {
             (*it)->update(deltaTime);
             // Eliminar enemigos muertos
-            if (!(*it)->isAlive()) {
+            if ((*it)->EndGame()) {
+                m_currentState = GameState::EndScreen;
+                std::cout << "Game Over" << std::endl;
+                //m_window.close();               
+                m_enemies.clear();
+                break;
+            }
+            else if (!(*it)->isAlive()) {
                 //suma el oro ganado
                 m_economy.earn((*it)->getBounty());
                 // La limpieza del grid se hace automáticamente en el destructor de Enemy
@@ -175,6 +197,26 @@ void Game::update(float deltaTime) {
 
 //funcion que dibuja en la pantalla
 void Game::render() {
+    if (m_currentState == GameState::EndScreen) {
+        m_window.clear(sf::Color::Black);
+        
+        //m_window.setSize({ 600, 500 });
+        
+
+        m_window.draw(m_restartButton);
+        m_window.draw(m_exitButton);
+        m_window.draw(m_statsButton);
+
+        m_window.draw(m_restartText);
+        m_window.draw(m_exitText);
+        m_window.draw(m_statsText);
+        m_window.draw(m_titleEnd);
+
+        m_window.display();
+        return;
+    }
+
+
     m_window.clear();
     
     //Dibuja matriz
@@ -256,16 +298,6 @@ void Game::recalculatePaths() {
         auto path = m_pathfinder.findPath(spawn);
         m_grid.m_precomputedPaths[spawn] = path;
     }
-
-    // Reasigna caminos a enemigos existentes si los hay
-    /*if (!m_enemies.empty()) {
-        for (const auto& enemy : m_enemies) {
-            sf::Vector2i pos = { enemy->getGridX(), enemy->getGridY() };
-            auto path = m_pathfinder.findPath(pos);
-            enemy->setPath(path);
-        }
-    }*/
-
 }
 
 //inicializa el panel de la derecha
@@ -320,6 +352,46 @@ void Game::initUI() {
     m_upgradeButton.setOutlineColor(sf::Color::White);
 
     m_upgradeButtonText.setPosition({830.f, 305.f});
+
+    //Botones de EndScreen
+    m_restartButton.setSize({ 400, 75 });
+    m_restartButton.setPosition({ 300, 350 });
+    m_restartButton.setFillColor(sf::Color(30, 30, 30));
+    m_restartButton.setOutlineColor(sf::Color(190, 0, 0));
+    m_restartButton.setOutlineThickness(3);
+
+    m_exitButton.setSize({ 400, 75 });
+    m_exitButton.setPosition({ 300, 500 });
+    m_exitButton.setFillColor(sf::Color(30, 30, 30));
+    m_exitButton.setOutlineColor(sf::Color(190, 0, 0));
+    m_exitButton.setOutlineThickness(3);
+
+    m_statsButton.setSize({ 400, 75 });
+    m_statsButton.setPosition({ 300, 650 });
+    m_statsButton.setFillColor(sf::Color(30, 30, 30));
+    m_statsButton.setOutlineColor(sf::Color(190, 0, 0));
+    m_statsButton.setOutlineThickness(3);
+
+    //Textos
+    m_restartText.setPosition({ 420, 360 });
+    m_restartText.setFillColor(sf::Color::Black);
+    m_restartText.setOutlineColor(sf::Color(190, 0, 0, 230));
+    m_restartText.setOutlineThickness(2);
+
+    m_exitText.setPosition({ 460, 510 });
+    m_exitText.setFillColor(sf::Color::Black);
+    m_exitText.setOutlineColor(sf::Color(190, 0, 0, 230));
+    m_exitText.setOutlineThickness(2);
+
+    m_statsText.setPosition({ 450, 660 });
+    m_statsText.setFillColor(sf::Color::Black);
+    m_statsText.setOutlineColor(sf::Color(190, 0, 0, 230));
+    m_statsText.setOutlineThickness(2);
+
+    m_titleEnd.setPosition({ 300, 100 });
+    m_titleEnd.setFillColor(sf::Color::Black); // Rojo oscuro + un poco de transparencia
+    m_titleEnd.setOutlineColor(sf::Color(190, 0, 0, 230));
+    m_titleEnd.setOutlineThickness(2);
 }
 
 void Game::updateTowerGhost(const sf::Vector2i& mousePos) {
@@ -403,6 +475,13 @@ void Game::updateTowerInfo() {
         m_upgradeButtonText.setString("Upgrade (---)");
         m_upgradeButton.setFillColor(sf::Color(150, 150, 150));
     }
+}
+
+void Game::restartGame() {
+    m_window.clear();
+    m_window.close();
+    Game game;
+    game.run();
 }
 
 //Funcion responsable de todo lo que pasa en el juego

@@ -13,6 +13,7 @@ Enemy::Enemy(Type type, int gridX, int gridY, GridSystem* grid, std::vector<sf::
     m_speed(getDefaultSpeed(type)),
     m_resistances(getDefaultResistances(type)),
     m_currentPath(path),
+    m_end(false),
     m_pathfinder(grid),
     m_prevGridX(gridX),
     m_prevGridY(gridY)  {
@@ -63,6 +64,7 @@ void Enemy::updateMovement(float deltaTime) {
             else if (m_grid->getCell(nextPos.x, nextPos.y) == CellType::ExitPoint) {
                 //Actualizar posicion
                 std::cout << "Enemigo llego al exitpoint, GAME OVER" << std::endl;
+                m_end = true;
                 m_health = 0;
                 return;
             }
