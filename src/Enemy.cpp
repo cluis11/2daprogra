@@ -27,6 +27,20 @@ Enemy::~Enemy() {
 
 void Enemy::update(float deltaTime) {
     updateMovement(deltaTime);
+
+    // Efecto de parpadeo (rojo intermitente durante 0.3 segundos)
+    if (m_isDamaged) {
+        float elapsed = m_damageClock.getElapsedTime().asSeconds();
+        if (elapsed < 0.3f) {
+            // Alternar entre rojo y color original basado en tiempo (5 cambios por segundo)
+            bool showRed = static_cast<int>(elapsed * 10) % 2 == 0;
+            m_shape.setFillColor(showRed ? sf::Color::Red : getColorForType(m_type));
+        }
+        else {
+            m_isDamaged = false;
+            m_shape.setFillColor(getColorForType(m_type)); // Restaura el color original
+        }
+    }
 }
 
 void Enemy::takeDamage(float amount, const std::string& damageType) {
@@ -37,6 +51,10 @@ void Enemy::takeDamage(float amount, const std::string& damageType) {
     
     m_health -= amount * std::max(0.0f, multiplier);
     if (m_health < 0) m_health = 0;
+
+    // Activa el efecto visual
+    m_isDamaged = true;
+    m_damageClock.restart();
 }
 
 //hace que el enemigo se mueva

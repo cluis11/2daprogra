@@ -122,10 +122,8 @@ std::vector<EnemyGenome::Ptr> Wave::getUnusedGenomes(int count) {
 
 void Wave::spawnEnemy(const EnemyGenome::Ptr& genome, std::vector<std::unique_ptr<Enemy>>& enemies, const sf::Vector2i& point) {
     if (m_grid->getCell(point.x, point.y) == CellType::Empty) {
-        std::cout << "Se creo el enemigo y esta es la posicion: ( " << point.x << ", " << point.y << " )" << std::endl;
             auto it = m_grid->m_precomputedPaths.find(point);
             if (it != m_grid->m_precomputedPaths.end()) {
-                std::cout << "si se encontro el camino" << std::endl;
                 enemies.emplace_back(std::make_unique<Enemy>(
                     genome,
                     point.x,
