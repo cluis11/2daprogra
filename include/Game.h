@@ -21,20 +21,12 @@ private:
     void processEvents(); //Captura eventos para ejecutar comportamientos
     void update(float deltaTime); //Ejecuta logica del objeto e interacciones
     void render(); //Encargado de dibujar los objetos
-    void spawnEnemy(const EnemyGenome::Ptr& genome); //Funcion encargada de crear enemigos durante las waves
     void recalculatePaths(); //Recalcula los caminos
     void updateUI(); //Funcion encargada de actualizar la interfaz
     void updateTowerInfo();
 
-    void updateEnemies(float deltaTime);
     void logEnemyDeath(const std::unique_ptr<Enemy>& enemy);
 
-     // Metodos de manejo de oleadas
-    void startNewWave();
-    void updateWaveState(float deltaTime);
-    void spawnWaveEnemies();
-    void endCurrentWave();
-    void handleCooldownEnd();
 
     sf::RenderWindow m_window; //main screen
     GridSystem m_grid; //matriz

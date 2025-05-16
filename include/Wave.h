@@ -21,7 +21,7 @@ public:
     };
     //constructor
     //Recibe el numero de wave, y los puntos de spawn definidos en game, la congif y referencia al grid
-    Wave(int waveNumber, const std::vector<sf::Vector2i>& spawnPoints, const Config& config, GridSystem* grid, GeneticManager* geneticManager);
+    Wave(int waveNumber, const std::vector<sf::Vector2i>& spawnPoints, Config& config, GridSystem* grid, GeneticManager* geneticManager);
 
     //funciones
     void update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& enemies);
@@ -36,13 +36,12 @@ public:
     // Obtiene los puntos de spawn activos
     const std::vector<sf::Vector2i>& getSpawnPoints() const { return m_spawnPoints; }
 
-    void startNewWave();
+    void generateInitialEnemies();
 
 private:
-    Enemy::Type getEnemyType() const; //puede que se quite
-    void spawnEnemy(std::vector<std::unique_ptr<Enemy>>& enemies);
+    void spawnEnemy(const EnemyGenome::Ptr& genome, std::vector<std::unique_ptr<Enemy>>& enemies, const sf::Vector2i& point);
 
-    const Config m_config;
+    Config m_config;
     const std::vector<sf::Vector2i>& m_spawnPoints;
     std::vector<sf::Vector2i> m_activeSpawnPoints; //probable que se quite
     GridSystem* m_grid;

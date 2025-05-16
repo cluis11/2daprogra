@@ -4,7 +4,7 @@
 #include <random>
 
 //constructor
-Wave::Wave(int waveNumber, const std::vector<sf::Vector2i>& spawnPoints, const Config& config, GridSystem* grid, GeneticManager* geneticManager)
+Wave::Wave(int waveNumber, const std::vector<sf::Vector2i>& spawnPoints, Config& config, GridSystem* grid, GeneticManager* geneticManager)
     : m_waveNumber(waveNumber), m_spawnPoints(spawnPoints), m_config(config), m_grid(grid), m_geneticManager(geneticManager) {
     
     // Calcula spawn points activos (mínimo 1, máximo config.maxSpawnPoints)
@@ -12,6 +12,10 @@ Wave::Wave(int waveNumber, const std::vector<sf::Vector2i>& spawnPoints, const C
         std::max(1, 3 + (waveNumber - 1)), // Ejemplo: 3, 4, 5, 6...
         std::min(m_config.maxSpawnPoints, static_cast<int>(m_spawnPoints.size()))
     );
+
+    m_config.maxEnemies = 20*waveNumber;
+
+    if (m_waveNumber==1){ generateInitialEnemies(); }
 
     std::cout << "\n=== OLEADA " << m_waveNumber << " ===\n";
     std::cout << "Max enemigos: " << m_totalEnemies
@@ -24,9 +28,35 @@ void Wave::update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& enemies)
     m_timeElapsed += deltaTime;
     m_spawnTimer += deltaTime;
 
-    if (m_spawnTimer >= m_config.spawnInterval && m_timeElapsed <= m_config.waveDuration) {
-        spawnEnemy(enemies);
-        m_spawnTimer = 0.f;
+    auto genomes = getGenomesForNextSpawn(); // Ahora devuelve Ptr
+    int i=0;
+    for (const auto& genome : genomes) {
+        const auto& point = m_spawnPoints[i % m_spawnPoints.size()];
+        spawnEnemy(genome, enemies, point); // genome ya es Ptr
+        i++;
+    }
+}
+
+void Wave::generateInitialEnemies() {
+    // Verifica si ya hay genomas generados
+    if (m_geneticManager->getCurrentGenomes().empty()) {
+        std::cout << "Generando población inicial de " << m_config.maxEnemies << " enemigos\n";
+
+        // 1. Crea 2 de cada tipo (8 enemigos base)
+        for (int type = 0; type < 4; ++type) {
+            m_geneticManager->generateEnemyGenome(static_cast<EnemyType>(type));
+            m_geneticManager->generateEnemyGenome(static_cast<EnemyType>(type));
+        }
+
+        // 2. Crea el resto de forma aleatoria
+        for (int i = 8; i < m_config.maxEnemies; ++i) {
+            EnemyType randomType = static_cast<EnemyType>(rand() % 4);
+            m_geneticManager->generateEnemyGenome(randomType);
+        }
+    } else {
+        std::cout << "Población existente detectada ("
+                 << m_geneticManager->getCurrentGenomes().size()
+                 << " genomas). No se generan nuevos.\n";
     }
 }
 
@@ -77,42 +107,30 @@ std::vector<EnemyGenome::Ptr> Wave::getUnusedGenomes(int count) {
     return result;
 }
 
-Enemy::Type Wave::getEnemyType() const {
-    std::uniform_int_distribution<int> dist(0, 99);
-    int roll = dist(m_grid->getRNG());
 
-    if (m_waveNumber >= 3 && roll < 15) return Enemy::Type::Mercenary;
-    else if (m_waveNumber >= 2 && roll < 30) return Enemy::Type::Harpy;
-    else if (roll < 40) return Enemy::Type::Ogre;
-    else return Enemy::Type::DarkElf;
-}
-
-void Wave::spawnEnemy(std::vector<std::unique_ptr<Enemy>>& enemies) {
-    for (int i = 0; i < m_activeSpawnPoints && m_enemiesSpawned < m_totalEnemies; ++i) {
-        const auto& point = m_spawnPoints[i % m_spawnPoints.size()];
-        if (m_grid->getCell(point.x, point.y) == CellType::Empty) {
-            std::cout << "Se creo el enemigo y esta es la posicion: ( " << point.x << ", " << point.y << " )" << std::endl;
-                auto it = m_grid->m_precomputedPaths.find(point);
-                if (it != m_grid->m_precomputedPaths.end()) {
-                    std::cout << "si se encontro el camino" << std::endl;
-                    enemies.emplace_back(std::make_unique<Enemy>(
-                        getEnemyType(),
-                        point.x,
-                        point.y,
-                        m_grid,
-                        it->second
-                    ));
-                    m_enemiesSpawned++;
-            } else { continue; }
+void Wave::spawnEnemy(const EnemyGenome::Ptr& genome, std::vector<std::unique_ptr<Enemy>>& enemies, const sf::Vector2i& point) {
+    if (m_grid->getCell(point.x, point.y) == CellType::Empty) {
+        std::cout << "Se creo el enemigo y esta es la posicion: ( " << point.x << ", " << point.y << " )" << std::endl;
+            auto it = m_grid->m_precomputedPaths.find(point);
+            if (it != m_grid->m_precomputedPaths.end()) {
+                std::cout << "si se encontro el camino" << std::endl;
+                enemies.emplace_back(std::make_unique<Enemy>(
+                    genome,
+                    point.x,
+                    point.y,
+                    m_grid,
+                    it->second
+                ));
+            }
         }
-    }
+
 }
 
 //revisar bien esta logica
 bool Wave::isCompleted() const {
-    bool timeExpired = m_timeElapsed >= m_config.waveDuration;
+    //bool timeExpired = m_timeElapsed >= m_config.waveDuration;
     bool allEnemiesSpawned = m_enemiesSpawned >= m_totalEnemies;
     bool allGenomesUsed = m_usedGenomes.size() >= m_geneticManager->getCurrentGenomes().size();
 
-    return timeExpired || (allEnemiesSpawned && allGenomesUsed);
+    return (allEnemiesSpawned && allGenomesUsed); //|| timeExpired
 }
