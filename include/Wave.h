@@ -41,9 +41,8 @@ public:
 private:
     void spawnEnemy(const EnemyGenome::Ptr& genome, std::vector<std::unique_ptr<Enemy>>& enemies, const sf::Vector2i& point);
 
-    Config m_config;
+    const Config m_config;
     const std::vector<sf::Vector2i>& m_spawnPoints;
-    std::vector<sf::Vector2i> m_activeSpawnPoints; //probable que se quite
     GridSystem* m_grid;
     GeneticManager* m_geneticManager;
 
@@ -53,7 +52,6 @@ private:
     int m_waveNumber = 1;
     float m_timeElapsed = 0.f;
     float m_spawnTimer = 0.f;
-    int m_enemiesSpawned = 0;
     int m_activeSpawnPoints = 0;
     int m_enemiesSpawned = 0; // Contador de enemigos spawneados
     int m_totalEnemies = 0; // Total de enemigos a spawnear en esta oleada

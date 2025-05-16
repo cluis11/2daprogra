@@ -13,8 +13,6 @@ Wave::Wave(int waveNumber, const std::vector<sf::Vector2i>& spawnPoints, Config&
         std::min(m_config.maxSpawnPoints, static_cast<int>(m_spawnPoints.size()))
     );
 
-    m_config.maxEnemies = 20*waveNumber;
-
     if (m_waveNumber==1){ generateInitialEnemies(); }
 
     std::cout << "\n=== OLEADA " << m_waveNumber << " ===\n";
@@ -35,6 +33,18 @@ void Wave::update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& enemies)
         spawnEnemy(genome, enemies, point); // genome ya es Ptr
         i++;
     }
+    if (m_waveNumber < m_config.totalWaves) {
+        // 1. Evaluar la generacion actual (calcula fitness)
+        m_geneticManager->evaluateGeneration(enemies);
+
+        int requiredPopulation = 20 + m_config.maxEnemies;
+
+        // 3. Crear nueva generación BASADA EN LOS GENOMAS ACTUALES
+        m_geneticManager->createNextGeneration(requiredPopulation);
+
+        // 4. Limpiar enemigos existentes (pero no los genomas)
+        enemies.clear();
+    } 
 }
 
 void Wave::generateInitialEnemies() {
@@ -128,9 +138,9 @@ void Wave::spawnEnemy(const EnemyGenome::Ptr& genome, std::vector<std::unique_pt
 
 //revisar bien esta logica
 bool Wave::isCompleted() const {
-    //bool timeExpired = m_timeElapsed >= m_config.waveDuration;
+    bool timeExpired = m_timeElapsed >= m_config.waveDuration;
     bool allEnemiesSpawned = m_enemiesSpawned >= m_totalEnemies;
     bool allGenomesUsed = m_usedGenomes.size() >= m_geneticManager->getCurrentGenomes().size();
 
-    return (allEnemiesSpawned && allGenomesUsed); //|| timeExpired
+    return timeExpired || (allEnemiesSpawned && allGenomesUsed); 
 }

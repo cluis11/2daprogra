@@ -122,10 +122,12 @@ void Game::update(float deltaTime) {
         if (!m_currentWave) {
             // Inicializa la wave con parámetros configurables
             recalculatePaths();
+            Wave::Config config;
+            config.maxEnemies = 20 * m_waveNumber;
             m_currentWave = std::make_unique<Wave>(
                 m_waveNumber, 
                 m_grid.getSpawnPoints(),
-                Wave::Config{}, // Configuración default
+                config, // Configuración default
                 &m_grid,
                 &m_geneticManager
             );
@@ -156,6 +158,7 @@ void Game::update(float deltaTime) {
             m_currentState = GameState::Cooldown;
             m_currentWave.reset();
             m_waveNumber++;
+            m_stateTimer = 0.f;
         }
     }
     //Transicion de state Cooldown a Prep despues de 10 segundos
@@ -212,38 +215,6 @@ void Game::render() {
     
     //Abre la pantalla
     m_window.display();
-}
-
-//Funcion encargada de crear enemigos durante el wave
-//Hay que agregar el algoritmo genetico en la clase enemy
-//Segun el numero de wave se puede modificar
-void Game::spawnEnemy() {
-    auto spawnPoints = m_grid.getSpawnPoints(); //obtiene lista {x,y} de spawn area
-
-    for (const auto& spawnPos : spawnPoints) {
-        // Verificar si la celda está vacía
-        if (m_grid.getCell(spawnPos.x, spawnPos.y) == CellType::Empty) {
-            // Lógica de probabilidad para tipo de enemigo 
-            std::uniform_int_distribution<int> dist(0, 99);
-            int roll = dist(m_grid.getRNG());
-            Enemy::Type type;
-            
-            if (roll < 40) type = Enemy::Type::Ogre;
-            else if (roll < 70) type = Enemy::Type::DarkElf;
-            else if (roll < 90) type = Enemy::Type::Harpy;
-            else type = Enemy::Type::Mercenary;
-
-            // Crear enemigo 
-            auto it = m_grid.m_precomputedPaths.find(spawnPos);
-            if (it != m_grid.m_precomputedPaths.end()) {
-                m_enemies.emplace_back(std::make_unique<Enemy>(type, spawnPos.x, spawnPos.y, &m_grid, it->second));
-            }
-            
-            m_grid.setCell(spawnPos.x, spawnPos.y, CellType::Enemy); 
-           
-            break; 
-        }
-    }
 }
 
 
