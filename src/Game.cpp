@@ -126,7 +126,8 @@ void Game::update(float deltaTime) {
                 m_waveNumber, 
                 m_grid.getSpawnPoints(),
                 Wave::Config{}, // Configuración default
-                &m_grid
+                &m_grid,
+                &m_geneticManager
             );
         }
         m_currentWave->update(deltaTime, m_enemies);
