@@ -36,6 +36,7 @@ public:
     void takeDamage(float amount, const std::string& damageType); //para futura implementacion de ataque de torres
     void updateMovement(float deltaTime); //mueve al enemigo
     bool isAlive() const { return m_health > 0; }
+    bool EndGame() const { return m_end; }
 
     //Asigna un genoma al enemigo y aplica sus atributos
     void setGenome(const EnemyGenome::Ptr& genome); // Asigna un nuevo genoma
@@ -74,6 +75,7 @@ private:
     EnemyGenome::Ptr m_genome; // Puntero compartido al genoma
 
     std::vector<sf::Vector2i> m_currentPath; //Camino del enemigo
+    bool m_end;
     PathFinding m_pathfinder;
 
     sf::Clock m_damageClock;  // Temporizador para el efecto

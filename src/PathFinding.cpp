@@ -69,8 +69,6 @@ sf::Vector2i PathFinding::findExitPosition() const
 std::vector<sf::Vector2i> PathFinding::findPath(const sf::Vector2i& start) {
     sf::Vector2i target = findExitPosition();
 
-    std::cout << "[DEBUG] Buscando camino desde (" << start.x << "," << start.y << ") hasta (" << target.x << "," << target.y << ")\n";
-
     // Reinicia los nodos antes de iniciar una nueva b�squeda
     initializeNodes();
 
@@ -174,13 +172,6 @@ std::vector<sf::Vector2i> PathFinding::reconstructPath(const sf::Vector2i& start
     }
 
     std::reverse(path.begin(), path.end()); // Ordenar camino de inicio a fin
-
-    // Mostrar camino reconstruido en consola
-    std::cout << "[CAMINO] Pasos (" << path.size() << "): ";
-    for (const auto& step : path) {
-        std::cout << "(" << step.x << "," << step.y << ") ";
-    }
-
     std::cout << std::endl;
     return path;
 }

@@ -13,6 +13,7 @@ Enemy::Enemy(const EnemyGenome::Ptr& genome, int gridX, int gridY, GridSystem* g
     m_speed(genome->getAttributes().speed),
     m_resistances(getDefaultResistances(genome->getType())),
     m_currentPath(path),
+    m_end(false),
     m_pathfinder(grid),
     m_prevGridX(gridX),
     m_prevGridY(gridY)  {
@@ -26,22 +27,7 @@ Enemy::~Enemy() {
 
 void Enemy::update(float deltaTime) {
     updateMovement(deltaTime);
-
-    // Efecto de parpadeo (rojo intermitente durante 0.3 segundos)
-    if (m_isDamaged) {
-        float elapsed = m_damageClock.getElapsedTime().asSeconds();
-        if (elapsed < 0.3f) {
-            // Alternar entre rojo y color original basado en tiempo (5 cambios por segundo)
-            bool showRed = static_cast<int>(elapsed * 10) % 2 == 0;
-            m_shape.setFillColor(showRed ? sf::Color::Red : getColorForType(m_type));
-        } else {
-            m_isDamaged = false;
-            m_shape.setFillColor(getColorForType(m_type)); // Restaura el color original
-        }
-    }
 }
-
-
 
 void Enemy::takeDamage(float amount, const std::string& damageType) {
     float multiplier = 1.0f;
@@ -51,13 +37,8 @@ void Enemy::takeDamage(float amount, const std::string& damageType) {
     
     m_health -= amount * std::max(0.0f, multiplier);
     if (m_health < 0) m_health = 0;
-
-    // Activa el efecto visual
-    m_isDamaged = true;
-    m_damageClock.restart();
 }
 
-//hace que el enemigo se mueva
 //hace que el enemigo se mueva
 void Enemy::updateMovement(float deltaTime) {
     m_moveTimer += deltaTime;
@@ -68,7 +49,6 @@ void Enemy::updateMovement(float deltaTime) {
 
             //Verificar que la celda de destino sea valida
             if (m_grid->getCell(nextPos.x, nextPos.y) == CellType::Empty ||
-                m_grid->getCell(nextPos.x, nextPos.y) == CellType::ExitPoint ||
                 m_grid->getCell(nextPos.x, nextPos.y) == CellType::Enemy) {
                 
                 //Actualizar posicion
@@ -80,7 +60,15 @@ void Enemy::updateMovement(float deltaTime) {
 
                 // Avanzar al siguiente paso del camino
                 m_currentPath.erase(m_currentPath.begin());
-            } else {
+            }
+            else if (m_grid->getCell(nextPos.x, nextPos.y) == CellType::ExitPoint) {
+                //Actualizar posicion
+                std::cout << "Enemigo llego al exitpoint, GAME OVER" << std::endl;
+                m_end = true;
+                m_health = 0;
+                return;
+            }
+            else {
                 //Camino bloqueado, limpiar para recalcular
                 m_currentPath.clear();
                 std::cout << "Choco contra una torre u obstaculo" << std::endl;
@@ -113,7 +101,6 @@ void Enemy::setGenome(const EnemyGenome::Ptr& genome) {
     m_speed = genome->getAttributes().speed;
 }
 
-
 //Funciones para obtener valores de cada tipo espeficico en el constructor
 
 sf::Color Enemy::getColorForType(Type type) {
@@ -138,10 +125,10 @@ float Enemy::getDefaultHealth(Type type) {
 
 float Enemy::getDefaultSpeed(Type type) {
     switch(type) {
-        case Type::Ogre: return 1.5f;
-        case Type::DarkElf: return 1.f;
-        case Type::Harpy: return 0.7f;
-        case Type::Mercenary: return 1.2f;
+        case Type::Ogre: return 1.2f;
+        case Type::DarkElf: return 0.7f;
+        case Type::Harpy: return 0.5f;
+        case Type::Mercenary: return 1.f;
         default: return 0.f;
     }
 }
