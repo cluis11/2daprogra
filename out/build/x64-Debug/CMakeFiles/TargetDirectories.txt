@@ -1,3 +1,0 @@
-C:/Users/luisc/Documents/GitHub/2daprogra/out/build/x64-Debug/CMakeFiles/GeneticKingdom.dir
-C:/Users/luisc/Documents/GitHub/2daprogra/out/build/x64-Debug/CMakeFiles/edit_cache.dir
-C:/Users/luisc/Documents/GitHub/2daprogra/out/build/x64-Debug/CMakeFiles/rebuild_cache.dir
