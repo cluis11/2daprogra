@@ -7,6 +7,7 @@
 #include "Enemy.h"
 #include "Wave.h"
 #include "Economy.h"
+#include "GeneticManager.h"
 #include "PathFinding.h"
 
 class Game {
@@ -20,14 +21,25 @@ private:
     void processEvents(); //Captura eventos para ejecutar comportamientos
     void update(float deltaTime); //Ejecuta logica del objeto e interacciones
     void render(); //Encargado de dibujar los objetos
-    void spawnEnemy(); //Funcion encargada de crear enemigos durante las waves
+    void spawnEnemy(const EnemyGenome::Ptr& genome); //Funcion encargada de crear enemigos durante las waves
     void recalculatePaths(); //Recalcula los caminos
     void updateUI(); //Funcion encargada de actualizar la interfaz
     void updateTowerInfo();
 
+    void updateEnemies(float deltaTime);
+    void logEnemyDeath(const std::unique_ptr<Enemy>& enemy);
+
+     // Metodos de manejo de oleadas
+    void startNewWave();
+    void updateWaveState(float deltaTime);
+    void spawnWaveEnemies();
+    void endCurrentWave();
+    void handleCooldownEnd();
+
     sf::RenderWindow m_window; //main screen
     GridSystem m_grid; //matriz
     PathFinding m_pathfinder; //pathfinding
+    GeneticManager m_geneticManager;
     
     std::vector<std::unique_ptr<Tower>> m_towers; //lista de torres
     std::vector<std::unique_ptr<Enemy>> m_enemies; //lista de enemigos
@@ -45,6 +57,9 @@ private:
     int m_waveNumber = 1; //variable que controla en numero de wave actual
     int m_towersPlaced = 0; //variable que controla numero de torres, se tiene que agregr logica de economia
     int m_leaks = 0; //controla cuantos enemigos que han llegado a la puerta para condicion game over
+
+    float m_spawnAccumulator = 0.f; // Nuevo miembro para controlar spawn
+    int m_totalEnemiesDefeated = 0;
     
     //economia
     Economy m_economy;

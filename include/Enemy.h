@@ -3,13 +3,14 @@
 #include "GridSystem.h"
 #include "PathFinding.h"
 #include <map>
+#include "EnemyGenome.h"
 
 
 
 class Enemy : public Entity {
 public:
     //enum para tipo de enemigo
-    enum class Type { Ogre, DarkElf, Harpy, Mercenary };
+    using Type = EnemyType;
 
     //struct de resistencias
     struct Resistances {
@@ -18,7 +19,7 @@ public:
         float artillery; // Resistencia a artillería (Artillery)
     };
 
-    Enemy(Type type, int gridX, int gridY, GridSystem* grid, std::vector<sf::Vector2i> m_currentPath);
+    Enemy(const EnemyGenome::Ptr& genome, int gridX, int gridY, GridSystem* grid, std::vector<sf::Vector2i> m_currentPath);
     ~Enemy();
 
     int getBounty() const { 
@@ -36,18 +37,24 @@ public:
     void updateMovement(float deltaTime); //mueve al enemigo
     bool isAlive() const { return m_health > 0; }
 
+    //Asigna un genoma al enemigo y aplica sus atributos
+    void setGenome(const EnemyGenome::Ptr& genome); // Asigna un nuevo genoma
+    float getStepsTaken() const { return static_cast<float>(m_stepsTaken); } // Pasos dados
+
     //Getters
     Type getType() const { return m_type; }
     float getHealth() const { return m_health; }
-    float getMaxHealth() const { return m_maxHealth; }
+    float getMaxHealth() const { return m_maxHealth; } //revisar si se usa
     float getSpeed() const { return m_speed; }
     const std::vector<sf::Vector2i>& getCurrentPath() const { return m_currentPath; }
     const Resistances& getResistances() const { return m_resistances; }
-    //Getters para obtener valores de tipo especifico
+    //Getters para obtener valores de tipo especifico, puede que ya no se ocupen
     static sf::Color getColorForType(Type type);
     static float getDefaultHealth(Type type);
     static float getDefaultSpeed(Type type);
+
     static Resistances getDefaultResistances(Type type);
+    const EnemyGenome::Ptr& getGenome() const { return m_genome; }
     //getters colision
     const sf::FloatRect& getGlobalBounds() const { return m_shape.getGlobalBounds(); }
     //Set para otorgar un nuevo Path
@@ -62,6 +69,10 @@ private:
     Resistances m_resistances;
     float m_moveTimer = 0; //timer para movimiento
     int m_prevGridX, m_prevGridY; //coordenadas anteriores para facilitar actualizaciones a matrices
+
+    int m_stepsTaken = 0;
+    EnemyGenome::Ptr m_genome; // Puntero compartido al genoma
+
     std::vector<sf::Vector2i> m_currentPath; //Camino del enemigo
     PathFinding m_pathfinder;
 

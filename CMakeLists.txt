@@ -27,6 +27,7 @@ add_executable(GeneticKingdom
     src/GridSystem.cpp
     src/Entity.cpp
     src/Tower.cpp
+    src/EnemyGenome.cpp
     src/Enemy.cpp
     src/PathFinding.cpp
 )

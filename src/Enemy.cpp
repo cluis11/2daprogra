@@ -4,14 +4,14 @@
 
 //Constructor de enemigo, varia atributos segun tipo
 //registra al enemigo en el grid
-Enemy::Enemy(Type type, int gridX, int gridY, GridSystem* grid, std::vector<sf::Vector2i> path)
-    : Entity(gridX, gridY, getColorForType(type), grid),
+Enemy::Enemy(const EnemyGenome::Ptr& genome, int gridX, int gridY, GridSystem* grid, std::vector<sf::Vector2i> path)
+    : Entity(gridX, gridY, getColorForType(genome->getType()), grid),
     //asignacion valores segun tipo
-    m_type(type),
-    m_maxHealth(getDefaultHealth(type)),
-    m_health(m_maxHealth),
-    m_speed(getDefaultSpeed(type)),
-    m_resistances(getDefaultResistances(type)),
+    m_type(genome->getType()), // Establece tipo desde genoma
+    m_genome(genome), //referencia al genoma
+    m_health(genome->getAttributes().health),
+    m_speed(genome->getAttributes().speed),
+    m_resistances(getDefaultResistances(genome->getType())),
     m_currentPath(path),
     m_pathfinder(grid),
     m_prevGridX(gridX),
@@ -103,6 +103,14 @@ void Enemy::updateMovement(float deltaTime) {
         // Reiniciar el temporizador de movimiento
         m_moveTimer = 0;
     }
+}
+
+//Implementacion de setGenome para asignar el genoma al enemigo
+void Enemy::setGenome(const EnemyGenome::Ptr& genome) {
+    m_genome = genome; // Actualiza referencia al genoma
+    m_type = genome->getType(); // Actualiza tipo
+    m_health = genome->getAttributes().health; // Restablece salud
+    m_speed = genome->getAttributes().speed;
 }
 
 
