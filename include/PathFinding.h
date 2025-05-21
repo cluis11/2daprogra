@@ -27,6 +27,7 @@ private:
     void initializeNodes(); 
     void precomputerHeuristics(); 
     sf::Vector2i findExitPosition() const;
+    sf::Vector2i findEmpty() const;
     std::vector<sf::Vector2i> reconstructPath(const sf::Vector2i& start, const sf::Vector2i& end) const;
 
     // Get

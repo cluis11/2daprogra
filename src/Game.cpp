@@ -77,17 +77,35 @@ void Game::processEvents() {
                     // Unified tower placement for both states
                     if (m_isPlacingTower) {
                         int cost = Tower::getCost(m_selectedTowerType);
+
                         if (m_grid.getCell(gridPos.x, gridPos.y) == CellType::Empty && 
                             m_economy.canAfford(cost) && 
                             m_towersPlaced < 10) {
+
+                            m_grid.setCell(gridPos.x, gridPos.y, CellType::Tower); 
+
+                            //sf::Vector2i path = { gridPos.x - 2, gridPos.y - 2 };
+                            std::vector<sf::Vector2i> m_ = m_pathfinder.findPath(gridPos);
+                            std::cout << "Path encontrado:\n";
+                            for (const auto& pos : m_) {
+                               std::cout << "(" << pos.x << ", " << pos.y << ")\n";
+                            }
+                            std::cout << "Cantidad de nodos en el camino: " << m_.size() << "\n";
+
+                            if (m_.empty()) {
+                                m_grid.unregisterTower(gridPos.x, gridPos.y);
+                                return;
+                            }
+
                             m_economy.spend(cost);
                             m_towers.emplace_back(
                                 std::make_unique<Tower>(m_selectedTowerType, gridPos.x, gridPos.y, &m_grid)
                             );
-                            m_grid.setCell(gridPos.x, gridPos.y, CellType::Tower);
+                            //m_grid.setCell(gridPos.x, gridPos.y, CellType::Tower);
                             m_towersPlaced++;
                             updateUI();
                         }
+                        //m_grid.unregisterTower(gridPos.x, gridPos.y);
                         m_isPlacingTower = false;
                     }
                     // Tower selection (common for both states)

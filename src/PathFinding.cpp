@@ -65,9 +65,25 @@ sf::Vector2i PathFinding::findExitPosition() const
     throw std::runtime_error("ExitPoint not found in grid");
 }
 
+sf::Vector2i PathFinding::findEmpty() const {
+    for (unsigned x = 0; x < m_grid->getWidth(); ++x) {
+        for (unsigned y = 0; y < m_grid->getHeight(); ++y) {
+            if (m_grid->getCell(x, y) == CellType::Empty) {
+                return sf::Vector2i(x, y);
+            }
+        }
+    }
+    throw std::runtime_error("Empty not found in grid");
+}
+
 // Algoritmo principal de A* para encontrar un camino desde 'start' hasta la salida
-std::vector<sf::Vector2i> PathFinding::findPath(const sf::Vector2i& start) {
+std::vector<sf::Vector2i> PathFinding::findPath(const sf::Vector2i& inputStart) {
     sf::Vector2i target = findExitPosition();
+    sf::Vector2i start = inputStart;
+
+    if (m_grid->getCell(start.x, start.y) == CellType::Tower) {
+        start = findEmpty();
+    }
 
     // Reinicia los nodos antes de iniciar una nueva b�squeda
     initializeNodes();

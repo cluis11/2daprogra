@@ -18,12 +18,15 @@ void GridSystem::initializeGrid() {
     m_spawnPoints = {{0, 0}, {0, 1}, {1, 0}, {1, 1}, {0, 25}, {0, 26}};
 
     //asigna la puerta del castillo en el borde derecho
-    m_grid[m_width-1][m_height-1] = CellType::ExitPoint;
+    m_grid[49][24] = CellType::ExitPoint;
+    m_grid[49][25] = CellType::ExitPoint;
+    m_grid[49][26] = CellType::ExitPoint;
+    
 
     //asigna obstaculos
-    addObstacleCluster(10, 10, 3);
-    addObstacleCluster(30, 20, 2);
-    addObstacleCluster(15, 35, 4);
+    addObstacleCluster(15, 10, 11);
+    addObstacleCluster(15, 40, 11);
+    //addObstacleCluster(15, 35, 4);
 }
 
 //guarda un enemy en la matriz y un puntero a este en la matriz de punteros
@@ -63,9 +66,9 @@ void GridSystem::addObstacleCluster(int centerX, int centerY, int radius){
     for(int x = centerX - radius; x<= centerX + radius; x++) {
         for(int y = centerY - radius; y <= centerY + radius; y++) {
             if(x >= 0 && x < static_cast<int>(m_width) && y < static_cast<int>(m_height)) {
-                if(dist(m_rng) < 70) {
+                //if(dist(m_rng) < 70) {
                     m_grid[x][y] = CellType::Obstacle;
-                }
+                //}
             }
         }
     }
@@ -126,6 +129,14 @@ void GridSystem::render(sf::RenderTarget& target) const {
             }
             target.draw(cell);
         }
+    }
+}
+
+void GridSystem::unregisterTower(int gridX, int gridY) {
+    if (gridX >= 0 && gridY >= 0 && gridX < static_cast<int>(m_width) && gridY < static_cast<int>(m_height)) {
+        //m_enemyGrid[gridX][gridY] = nullptr;
+        m_grid[gridX][gridY] = CellType::Empty;
+        std::cout << "Ahora se hizo vacio el campo" << std::endl;
     }
 }
 
