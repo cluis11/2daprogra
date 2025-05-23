@@ -26,15 +26,26 @@ Wave::Wave(int waveNumber, const std::vector<sf::Vector2i>& spawnPoints, Config&
 
 void Wave::update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& enemies) {
     m_timeElapsed += deltaTime;
-    m_spawnTimer += deltaTime;
+    //m_spawnTimer += deltaTime;
 
-    auto genomes = getGenomesForNextSpawn(); // Ahora devuelve Ptr
-    int i=0;
-    for (const auto& genome : genomes) {
-        const auto& point = m_spawnPoints[i % m_spawnPoints.size()];
-        spawnEnemy(genome, enemies, point); // genome ya es Ptr
-        i++;
+    if (m_geneticManager->getCurrentGenomes().size() < m_config.maxEnemies &&
+        m_enemiesSpawned >= m_geneticManager->getCurrentGenomes().size()) {
+        m_geneticManager->createNextGeneration(m_config.maxEnemies);
     }
+
+
+
+    if (m_enemiesSpawned <= m_config.maxEnemies) {
+        m_spawnTimer += deltaTime;
+        auto genomes = getGenomesForNextSpawn(); // Ahora devuelve Ptr
+        int i=0;
+        for (const auto& genome : genomes) {
+            const auto& point = m_spawnPoints[i % m_spawnPoints.size()];
+            spawnEnemy(genome, enemies, point); // genome ya es Ptr
+            i++;
+        }
+    }
+
     if (m_waveNumber < m_config.totalWaves && m_timeElapsed >= m_config.waveDuration) {
         // 1. Evaluar la generacion actual (calcula fitness)
         m_geneticManager->evaluateGeneration(enemies);
@@ -80,11 +91,16 @@ std::vector<EnemyGenome::Ptr> Wave::getGenomesForNextSpawn() {
         int toSpawn = std::min(m_activeSpawnPoints,
                              m_config.maxEnemies - m_enemiesSpawned);
 
-        // Obtiene genomas unicos no usados aun
-        auto unusedGenomes = getUnusedGenomes(toSpawn);
-        genomes.insert(genomes.end(), unusedGenomes.begin(), unusedGenomes.end());
+        int availableGenomes = static_cast<int>(m_geneticManager->getCurrentGenomes().size() - m_usedGenomes.size());
+        toSpawn = std::min(toSpawn, availableGenomes);
 
-        m_enemiesSpawned += toSpawn;
+        if (toSpawn > 0) {
+            // Obtiene genomas unicos no usados aun
+            auto unusedGenomes = getUnusedGenomes(toSpawn);
+            genomes.insert(genomes.end(), unusedGenomes.begin(), unusedGenomes.end());
+
+            m_enemiesSpawned += toSpawn;
+        }
     }
 
     return genomes;
@@ -121,26 +137,28 @@ std::vector<EnemyGenome::Ptr> Wave::getUnusedGenomes(int count) {
 
 
 void Wave::spawnEnemy(const EnemyGenome::Ptr& genome, std::vector<std::unique_ptr<Enemy>>& enemies, const sf::Vector2i& point) {
+    std::cout << "Esta es la cantidad de maxEnemies: " << m_config.maxEnemies << ", y esta de enemiesSpawned: " << m_enemiesSpawned << std::endl;
     if (m_grid->getCell(point.x, point.y) == CellType::Empty) {
-            auto it = m_grid->m_precomputedPaths.find(point);
-            if (it != m_grid->m_precomputedPaths.end()) {
-                enemies.emplace_back(std::make_unique<Enemy>(
-                    genome,
-                    point.x,
-                    point.y,
-                    m_grid,
-                    it->second
-                ));
-            }
+        auto it = m_grid->m_precomputedPaths.find(point);
+        if (it != m_grid->m_precomputedPaths.end()) {
+            enemies.emplace_back(std::make_unique<Enemy>(
+                genome,
+                point.x,
+                point.y,
+                m_grid,
+                it->second
+            ));
         }
-
+    }
 }
 
 //revisar bien esta logica
 bool Wave::isCompleted() const {
-    bool timeExpired = m_timeElapsed >= m_config.waveDuration;
-    bool allEnemiesSpawned = m_enemiesSpawned >= m_totalEnemies;
-    bool allGenomesUsed = m_usedGenomes.size() >= m_geneticManager->getCurrentGenomes().size();
+    bool allEnemiesDead = m_enemiesDead >= m_config.maxEnemies;
 
-    return timeExpired || (allEnemiesSpawned && allGenomesUsed); 
+    /*bool timeExpired = m_timeElapsed >= m_config.waveDuration;
+    bool allEnemiesSpawned = m_enemiesSpawned >= m_totalEnemies;
+    bool allGenomesUsed = m_usedGenomes.size() >= m_geneticManager->getCurrentGenomes().size();*/
+
+    return allEnemiesDead; 
 }

@@ -84,14 +84,8 @@ void Game::processEvents() {
 
                             m_grid.setCell(gridPos.x, gridPos.y, CellType::Tower); 
 
-                            //sf::Vector2i path = { gridPos.x - 2, gridPos.y - 2 };
                             std::vector<sf::Vector2i> m_ = m_pathfinder.findPath(gridPos);
-                            std::cout << "Path encontrado:\n";
-                            for (const auto& pos : m_) {
-                               std::cout << "(" << pos.x << ", " << pos.y << ")\n";
-                            }
-                            std::cout << "Cantidad de nodos en el camino: " << m_.size() << "\n";
-
+                            
                             if (m_.empty()) {
                                 m_grid.unregisterTower(gridPos.x, gridPos.y);
                                 return;
@@ -101,11 +95,9 @@ void Game::processEvents() {
                             m_towers.emplace_back(
                                 std::make_unique<Tower>(m_selectedTowerType, gridPos.x, gridPos.y, &m_grid)
                             );
-                            //m_grid.setCell(gridPos.x, gridPos.y, CellType::Tower);
                             m_towersPlaced++;
                             updateUI();
                         }
-                        //m_grid.unregisterTower(gridPos.x, gridPos.y);
                         m_isPlacingTower = false;
                     }
                     // Tower selection (common for both states)
@@ -165,7 +157,7 @@ void Game::update(float deltaTime) {
                 &m_geneticManager
             );
         }
-        m_currentWave->update(deltaTime, m_enemies);
+       m_currentWave->update(deltaTime, m_enemies);
 
         // ACTUALIZACIÓN OPTIMIZADA DE ENEMIGOS
         auto it = m_enemies.begin();
@@ -180,6 +172,8 @@ void Game::update(float deltaTime) {
                 break;
             }
             else if (!(*it)->isAlive()) {
+                m_currentWave->enemyDead();
+                std::cout << "Estos son los que estan muertos: " << m_currentWave->getEnemyDead() << std::endl;
                 //suma el oro ganado
                 m_economy.earn((*it)->getBounty());
                 // La limpieza del grid se hace automáticamente en el destructor de Enemy
@@ -195,16 +189,18 @@ void Game::update(float deltaTime) {
         //Mas comportamientos del wave irian aqui tambien
 
         if (m_currentWave->isCompleted()) {
+        
             m_currentState = GameState::Cooldown;
             m_currentWave.reset();
             m_waveNumber++;
             m_stateTimer = 0.f;
+            
         }
     }
     //Transicion de state Cooldown a Prep despues de 10 segundos
     else if (m_currentState == GameState::Cooldown && m_stateTimer >= 10.f) {
-        //Logica de ganar si completa 3 waves
-        if (m_waveNumber > 3) {
+        //Logica de ganar si completa 5 waves
+        if (m_waveNumber > 5) {
             // Cierra la ventana pero hay que implementar un stade de victory
             //stade victory muestra datos de la partida y permite cerrar o volver a jugar
             m_window.close();

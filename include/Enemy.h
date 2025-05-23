@@ -24,10 +24,10 @@ public:
 
     int getBounty() const { 
         static const std::map<Type, int> bounties = {
-            {Type::Ogre, 10},
-            {Type::DarkElf, 15},
-            {Type::Harpy, 20},
-            {Type::Mercenary, 25}
+            {Type::Ogre, 20},
+            {Type::DarkElf, 30},
+            {Type::Harpy, 40},
+            {Type::Mercenary, 50}
         };
         return bounties.at(m_type);
     }

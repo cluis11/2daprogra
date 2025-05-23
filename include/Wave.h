@@ -13,7 +13,7 @@ public:
 
     //struct para las configuraciones del wave
     struct Config {
-        int totalWaves = 3; //total de waves
+        int totalWaves = 5; //total de waves
         float waveDuration = 60.f; //duracion de cada una
         float spawnInterval = 5.0f; //intervalo spawn
         int maxSpawnPoints = 6; // Puntos de spawn, lista en game
@@ -26,6 +26,8 @@ public:
     //funciones
     void update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& enemies);
     bool isCompleted() const;
+    void enemyDead() { m_enemiesDead++; }
+    int getEnemyDead() { return m_enemiesDead; }
     int getEnemiesSpawned() const { return m_enemiesSpawned; }
     int getTotalEnemies() const { return m_totalEnemies; } //puede que no se ocupe
     int getMaxEnemies() const { return m_config.maxEnemies; }
@@ -45,7 +47,7 @@ private:
     const std::vector<sf::Vector2i>& m_spawnPoints;
     GridSystem* m_grid;
     GeneticManager* m_geneticManager;
-
+    
     std::unordered_set<int> m_usedGenomes; //Registro de IDs usados
     std::vector<EnemyGenome::Ptr> getUnusedGenomes(int count); // Nuevo método privado
 
@@ -55,4 +57,5 @@ private:
     int m_activeSpawnPoints = 0;
     int m_enemiesSpawned = 0; // Contador de enemigos spawneados
     int m_totalEnemies = 0; // Total de enemigos a spawnear en esta oleada
+    int m_enemiesDead = 0;
 };
