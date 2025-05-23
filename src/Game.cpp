@@ -188,19 +188,17 @@ void Game::update(float deltaTime) {
         }
         //Mas comportamientos del wave irian aqui tambien
 
-        if (m_currentWave->isCompleted()) {
-        
+        if (m_currentWave->isCompleted()) {        
             m_currentState = GameState::Cooldown;
             m_currentWave.reset();
             m_waveNumber++;
-            m_stateTimer = 0.f;
-            
+            m_stateTimer = 0.f;            
         }
     }
     //Transicion de state Cooldown a Prep despues de 10 segundos
     else if (m_currentState == GameState::Cooldown && m_stateTimer >= 10.f) {
-        //Logica de ganar si completa 5 waves
-        if (m_waveNumber > 5) {
+        //Logica de ganar si completa 3 waves
+        if (m_waveNumber > 3) {
             // Cierra la ventana pero hay que implementar un stade de victory
             //stade victory muestra datos de la partida y permite cerrar o volver a jugar
             m_window.close();

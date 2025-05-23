@@ -46,7 +46,7 @@ void Wave::update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& enemies)
         }
     }
 
-    if (m_waveNumber < m_config.totalWaves && m_timeElapsed >= m_config.waveDuration) {
+    if (m_waveNumber < m_config.totalWaves && m_enemiesDead == m_config.maxEnemies) {
         // 1. Evaluar la generacion actual (calcula fitness)
         m_geneticManager->evaluateGeneration(enemies);
 
