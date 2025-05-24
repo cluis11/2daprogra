@@ -9,10 +9,13 @@ Wave::Wave(int waveNumber, const std::vector<sf::Vector2i>& spawnPoints, Config&
     
     // Calcula spawn points activos (mínimo 1, máximo config.maxSpawnPoints)
     m_activeSpawnPoints = std::min(
-        std::max(1, 3 + (waveNumber - 1)), // Ejemplo: 3, 4, 5, 6...
+        waveNumber * 33, // aumenta en múltiplos de 33 por ronda
         std::min(m_config.maxSpawnPoints, static_cast<int>(m_spawnPoints.size()))
     );
 
+    //Almacena los puntos activos en el nuevo vector
+    m_activeSpawnList.assign(m_spawnPoints.begin(), m_spawnPoints.begin() + m_activeSpawnPoints);
+    
     m_spawnTimer=m_config.spawnInterval;
 
     if (m_waveNumber==1){ generateInitialEnemies(); }
@@ -137,7 +140,6 @@ std::vector<EnemyGenome::Ptr> Wave::getUnusedGenomes(int count) {
 
 
 void Wave::spawnEnemy(const EnemyGenome::Ptr& genome, std::vector<std::unique_ptr<Enemy>>& enemies, const sf::Vector2i& point) {
-    std::cout << "Esta es la cantidad de maxEnemies: " << m_config.maxEnemies << ", y esta de enemiesSpawned: " << m_enemiesSpawned << std::endl;
     if (m_grid->getCell(point.x, point.y) == CellType::Empty) {
         auto it = m_grid->m_precomputedPaths.find(point);
         if (it != m_grid->m_precomputedPaths.end()) {
@@ -152,13 +154,21 @@ void Wave::spawnEnemy(const EnemyGenome::Ptr& genome, std::vector<std::unique_pt
     }
 }
 
-//revisar bien esta logica
+// Función que verifica si todos los enemigos están muertos
 bool Wave::isCompleted() const {
-    bool allEnemiesDead = m_enemiesDead >= m_config.maxEnemies;
-
-    /*bool timeExpired = m_timeElapsed >= m_config.waveDuration;
-    bool allEnemiesSpawned = m_enemiesSpawned >= m_totalEnemies;
-    bool allGenomesUsed = m_usedGenomes.size() >= m_geneticManager->getCurrentGenomes().size();*/
-
+    bool allEnemiesDead = m_enemiesDead >= m_enemiesSpawned; //m_config.maxEnemies;
     return allEnemiesDead; 
+}
+
+// Función que busca si hay algún enemigo vivo.
+bool Wave::findEnemy() const
+{
+    for (unsigned x = 0; x < m_grid->getWidth(); ++x) {        
+        for (unsigned y = 0; y < m_grid->getHeight(); ++y) {
+            if (m_grid->getCell(x, y) == CellType::Enemy) {
+                return true;
+            }
+        }
+    }
+    return false;
 }

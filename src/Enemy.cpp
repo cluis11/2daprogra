@@ -143,10 +143,10 @@ float Enemy::getDefaultHealth(Type type) {
 
 float Enemy::getDefaultSpeed(Type type) {
     switch(type) {
-        case Type::Ogre: return 1.2f;
-        case Type::DarkElf: return 0.7f;
-        case Type::Harpy: return 0.5f;
-        case Type::Mercenary: return 1.f;
+        case Type::Ogre: return 1.0f;
+        case Type::DarkElf: return 1.8f;
+        case Type::Harpy: return 1.5f;
+        case Type::Mercenary: return 1.2f;
         default: return 0.f;
     }
 }

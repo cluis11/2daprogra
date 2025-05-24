@@ -9,9 +9,9 @@ Game::Game()
       m_grid(50, 50, 16.f), //crea la matriz mxm y asigna el cellSize
       m_pathfinder(&m_grid),
       m_font(), //Se define la fuente aqui por cambio en 3.0
-      m_waveText(m_font, "Wave: 0/3",    20), //Se define el texto aqui por cambio en 3.0
+      m_waveText(m_font, "Wave: 0/5",    20), //Se define el texto aqui por cambio en 3.0
       m_timerText(m_font, "Time: 0s",     20), //Se define la texto aqui por cambio en 3.0
-      m_towersText(m_font, "Towers: 0/10",20), //Se define la texto aqui por cambio en 3.0
+      m_towersText(m_font, "Towers: 0/15",20), //Se define la texto aqui por cambio en 3.0
       m_leaksText(m_font, "Leaks: 0/5",   20), //Se define la texto aqui por cambio en 3.0
       m_coinsText(m_font, "Coins: ", 20),
       m_towerInfoText(m_font, "No tower selected", 16),
@@ -80,7 +80,7 @@ void Game::processEvents() {
 
                         if (m_grid.getCell(gridPos.x, gridPos.y) == CellType::Empty && 
                             m_economy.canAfford(cost) && 
-                            m_towersPlaced < 10) {
+                            m_towersPlaced < 15) {
 
                             m_grid.setCell(gridPos.x, gridPos.y, CellType::Tower); 
 
@@ -146,9 +146,8 @@ void Game::update(float deltaTime) {
     else if (m_currentState == GameState::Wave) {
         if (!m_currentWave) {
             // Inicializa la wave con parámetros configurables
-            recalculatePaths();
             Wave::Config config;
-            config.maxEnemies = 20 * m_waveNumber;
+            config.maxEnemies = 40 * m_waveNumber;
             m_currentWave = std::make_unique<Wave>(
                 m_waveNumber, 
                 m_grid.getSpawnPoints(),
@@ -156,6 +155,7 @@ void Game::update(float deltaTime) {
                 &m_grid,
                 &m_geneticManager
             );
+            recalculatePaths();
         }
        m_currentWave->update(deltaTime, m_enemies);
 
@@ -173,7 +173,6 @@ void Game::update(float deltaTime) {
             }
             else if (!(*it)->isAlive()) {
                 m_currentWave->enemyDead();
-                std::cout << "Estos son los que estan muertos: " << m_currentWave->getEnemyDead() << std::endl;
                 //suma el oro ganado
                 m_economy.earn((*it)->getBounty());
                 // La limpieza del grid se hace automáticamente en el destructor de Enemy
@@ -194,11 +193,17 @@ void Game::update(float deltaTime) {
             m_waveNumber++;
             m_stateTimer = 0.f;            
         }
+        else if (!m_currentWave->findEnemy() && m_currentState == GameState::Wave) {
+            m_currentState = GameState::Cooldown;
+            m_currentWave.reset();
+            m_waveNumber++;
+            m_stateTimer = 0.f;
+        }
     }
     //Transicion de state Cooldown a Prep despues de 10 segundos
     else if (m_currentState == GameState::Cooldown && m_stateTimer >= 10.f) {
         //Logica de ganar si completa 3 waves
-        if (m_waveNumber > 3) {
+        if (m_waveNumber > 5) {
             // Cierra la ventana pero hay que implementar un stade de victory
             //stade victory muestra datos de la partida y permite cerrar o volver a jugar
             m_window.close();
@@ -275,7 +280,7 @@ void Game::render() {
 // Función que recalcula los caminos del PathFinding
 void Game::recalculatePaths() {
     m_grid.m_precomputedPaths.clear();
-    auto spawnPoints = m_grid.getSpawnPoints();
+    auto spawnPoints = m_currentWave->getActiveSpawnPoints();
     
     // Calcula y guarda el camino desde cada punto de aparición
     for (const auto& spawn : spawnPoints) {
@@ -427,9 +432,9 @@ void Game::updateUI() {
         case GameState::Cooldown: stateStr = "END";   break;
     }
     //Actualiza los textos con los datos actuales
-    m_waveText.setString("Wave:  " + std::to_string(m_waveNumber)   + "/3");
+    m_waveText.setString("Wave:  " + std::to_string(m_waveNumber)   + "/5");
     m_timerText.setString(stateStr + ": " + std::to_string(int(m_stateTimer)) + "s");
-    m_towersText.setString("Towers: " + std::to_string(m_towersPlaced) + "/10");
+    m_towersText.setString("Towers: " + std::to_string(m_towersPlaced) + "/15");
     m_leaksText.setString("Leaks: "  + std::to_string(m_leaks)         + "/5");
     m_coinsText.setString("Coins: " + std::to_string(m_economy.getCoins()));
 

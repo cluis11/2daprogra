@@ -15,9 +15,9 @@ public:
     struct Config {
         int totalWaves = 5; //total de waves
         float waveDuration = 60.f; //duracion de cada una
-        float spawnInterval = 5.0f; //intervalo spawn
-        int maxSpawnPoints = 6; // Puntos de spawn, lista en game
-        int maxEnemies = 20;
+        float spawnInterval = 5.5f; //intervalo spawn
+        int maxSpawnPoints = 100; // Puntos de spawn, lista en game
+        int maxEnemies = 200;
     };
     //constructor
     //Recibe el numero de wave, y los puntos de spawn definidos en game, la congif y referencia al grid
@@ -26,6 +26,7 @@ public:
     //funciones
     void update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& enemies);
     bool isCompleted() const;
+    bool findEnemy() const;
     void enemyDead() { m_enemiesDead++; }
     int getEnemyDead() { return m_enemiesDead; }
     int getEnemiesSpawned() const { return m_enemiesSpawned; }
@@ -33,10 +34,11 @@ public:
     int getMaxEnemies() const { return m_config.maxEnemies; }
     int getWaveNumber() const { return m_waveNumber; } 
     const Config& getWaveConfig() const { return m_config; }
+    const std::vector<sf::Vector2i>& getSpawnPoints() const { return m_spawnPoints; }
     // Obtiene los genomas para el proximo spawn
     std::vector<EnemyGenome::Ptr> getGenomesForNextSpawn();
     // Obtiene los puntos de spawn activos
-    const std::vector<sf::Vector2i>& getSpawnPoints() const { return m_spawnPoints; }
+    const std::vector<sf::Vector2i>& getActiveSpawnPoints() const { return m_activeSpawnList; }
 
     void generateInitialEnemies();
 
@@ -50,6 +52,7 @@ private:
     
     std::unordered_set<int> m_usedGenomes; //Registro de IDs usados
     std::vector<EnemyGenome::Ptr> getUnusedGenomes(int count); // Nuevo método privado
+    std::vector<sf::Vector2i> m_activeSpawnList; // Vector de spawns activos
 
     int m_waveNumber = 1;
     float m_timeElapsed = 0.f;
@@ -57,5 +60,5 @@ private:
     int m_activeSpawnPoints = 0;
     int m_enemiesSpawned = 0; // Contador de enemigos spawneados
     int m_totalEnemies = 0; // Total de enemigos a spawnear en esta oleada
-    int m_enemiesDead = 0;
+    int m_enemiesDead = 0; // Contador de enemigos muertos
 };
