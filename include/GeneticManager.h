@@ -2,6 +2,7 @@
 #include "EnemyGenome.h"
 #include <vector>
 #include <memory>
+#include "Wave.h" 
 
 class Enemy;
 
@@ -13,7 +14,7 @@ public:
     EnemyGenome::Ptr generateEnemyGenome(EnemyType type);
 
     // Evalua la generación actual basado en el fitness de los enemigos
-    void evaluateGeneration(const std::vector<std::unique_ptr<Enemy>>& enemies);
+    void evaluateGeneration(std::vector<Wave::enemyData> enemies);
 
     // Crea una nueva generación usando los mejores genomas
     void createNextGeneration(int requiredPopulation);

@@ -11,6 +11,7 @@ class GeneticManager;
 class Wave {
 public:
 
+    struct enemyData{EnemyGenome::Ptr m_genome; float steps;};
     //struct para las configuraciones del wave
     struct Config {
         int totalWaves = 5; //total de waves
@@ -23,11 +24,11 @@ public:
     //Recibe el numero de wave, y los puntos de spawn definidos en game, la congif y referencia al grid
     Wave(int waveNumber, const std::vector<sf::Vector2i>& spawnPoints, Config& config, GridSystem* grid, GeneticManager* geneticManager);
 
+    std::vector<enemyData> m_deathEnemyStats;
     //funciones
     void update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& enemies);
     bool isCompleted() const;
-    bool findEnemy() const;
-    void enemyDead() { m_enemiesDead++; }
+    void enemyDead(const EnemyGenome::Ptr& genome, float steps);
     int getEnemyDead() { return m_enemiesDead; }
     int getEnemiesSpawned() const { return m_enemiesSpawned; }
     int getTotalEnemies() const { return m_totalEnemies; } //puede que no se ocupe
@@ -39,6 +40,8 @@ public:
     std::vector<EnemyGenome::Ptr> getGenomesForNextSpawn();
     // Obtiene los puntos de spawn activos
     const std::vector<sf::Vector2i>& getActiveSpawnPoints() const { return m_activeSpawnList; }
+    std::vector<enemyData> getEnemyData() {return m_deathEnemyStats;}
+    void addEnemyData(const EnemyGenome::Ptr& genome, int steps);
 
     void generateInitialEnemies();
 

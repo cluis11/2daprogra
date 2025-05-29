@@ -1,6 +1,6 @@
-^C:\USERS\SOTOL\ONEDRIVE\DOCUMENTOS\TAREAS TEC\TERCER SEMESTRE\DATOS II\2DAPROGRA\BUILD\CMAKEFILES\76A2F3A2D21C82607DAE47E80148840F\GENERATE.STAMP.RULE
+^C:\USERS\LUISC\DOCUMENTS\GITHUB\2DAPROGRA\BUILD\CMAKEFILES\6F0D5BD4AD80A57077FA599BECFB4AD1\GENERATE.STAMP.RULE
 setlocal
-"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" "-SC:/Users/sotol/OneDrive/Documentos/Tareas TEC/Tercer semestre/Datos II/2daprogra" "-BC:/Users/sotol/OneDrive/Documentos/Tareas TEC/Tercer semestre/Datos II/2daprogra/build" --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file "C:/Users/sotol/OneDrive/Documentos/Tareas TEC/Tercer semestre/Datos II/2daprogra/build/GeneticKingdom.sln"
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/luisc/Documents/GitHub/2daprogra -BC:/Users/luisc/Documents/GitHub/2daprogra/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Users/luisc/Documents/GitHub/2daprogra/build/GeneticKingdom.sln
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone

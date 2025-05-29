@@ -2,13 +2,13 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\Users\sotol\OneDrive\Documentos\Tareas TEC\Tercer semestre\Datos II\2daprogra\build\x64\Release\ZERO_CHECK</FullPath>
+      <FullPath>C:\Users\luisc\Documents\GitHub\2daprogra\build\x64\Release\ZERO_CHECK</FullPath>
     </ProjectOutput>
     <ProjectOutput>
-      <FullPath>C:\Users\sotol\OneDrive\Documentos\Tareas TEC\Tercer semestre\Datos II\2daprogra\build\Release\GeneticKingdom.exe</FullPath>
+      <FullPath>C:\Users\luisc\Documents\GitHub\2daprogra\build\Release\GeneticKingdom.exe</FullPath>
     </ProjectOutput>
     <ProjectOutput>
-      <FullPath>C:\Users\sotol\OneDrive\Documentos\Tareas TEC\Tercer semestre\Datos II\2daprogra\build\x64\Release\ALL_BUILD</FullPath>
+      <FullPath>C:\Users\luisc\Documents\GitHub\2daprogra\build\x64\Release\ALL_BUILD</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

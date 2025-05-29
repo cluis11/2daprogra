@@ -12,6 +12,8 @@ Wave::Wave(int waveNumber, const std::vector<sf::Vector2i>& spawnPoints, Config&
         waveNumber * 33, // aumenta en múltiplos de 33 por ronda
         std::min(m_config.maxSpawnPoints, static_cast<int>(m_spawnPoints.size()))
     );
+    m_enemiesDead = 0;
+    m_deathEnemyStats.clear();
 
     //Almacena los puntos activos en el nuevo vector
     m_activeSpawnList.assign(m_spawnPoints.begin(), m_spawnPoints.begin() + m_activeSpawnPoints);
@@ -51,7 +53,7 @@ void Wave::update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& enemies)
 
     if (m_waveNumber < m_config.totalWaves && m_enemiesDead == m_config.maxEnemies) {
         // 1. Evaluar la generacion actual (calcula fitness)
-        m_geneticManager->evaluateGeneration(enemies);
+        m_geneticManager->evaluateGeneration(m_deathEnemyStats);
 
         int requiredPopulation = 20 + m_config.maxEnemies;
 
@@ -150,25 +152,29 @@ void Wave::spawnEnemy(const EnemyGenome::Ptr& genome, std::vector<std::unique_pt
                 m_grid,
                 it->second
             ));
+
+            // Log detallado del spawn
+            const auto& attrs = genome->getAttributes();
+            std::cout << "Spawning Enemy ID:" << genome->getId()
+              << " Type:" << static_cast<int>(genome->getType())
+              << " at (" << point.x << "," << point.y << ")"
+              << " [H:" << attrs.health
+              << " S:" << attrs.speed
+              << " A:" << attrs.armor
+              << " MR:" << attrs.magicResist << "]\n";
         }
     }
+}
+
+void Wave::enemyDead(const EnemyGenome::Ptr& genome, float steps){
+    m_enemiesDead++;
+    enemyData data = {genome, steps};
+    m_deathEnemyStats.emplace_back(data);
+    
 }
 
 // Función que verifica si todos los enemigos están muertos
 bool Wave::isCompleted() const {
-    bool allEnemiesDead = m_enemiesDead >= m_enemiesSpawned; //m_config.maxEnemies;
+    bool allEnemiesDead = m_enemiesDead == m_enemiesSpawned; //m_config.maxEnemies;
     return allEnemiesDead; 
-}
-
-// Función que busca si hay algún enemigo vivo.
-bool Wave::findEnemy() const
-{
-    for (unsigned x = 0; x < m_grid->getWidth(); ++x) {        
-        for (unsigned y = 0; y < m_grid->getHeight(); ++y) {
-            if (m_grid->getCell(x, y) == CellType::Enemy) {
-                return true;
-            }
-        }
-    }
-    return false;
 }

@@ -155,6 +155,10 @@ void Game::update(float deltaTime) {
                 &m_grid,
                 &m_geneticManager
             );
+            std::cout << "=== INICIANDO OLEADA " << m_waveNumber << " ===\n"
+              << "Enemigos totales: " << config.maxEnemies << "\n"
+              << "Puntos de spawn: " << config.maxSpawnPoints << "\n"
+              << "Genomas disponibles: " << m_geneticManager.getCurrentGenomes().size() << "\n";
             recalculatePaths();
         }
        m_currentWave->update(deltaTime, m_enemies);
@@ -172,7 +176,7 @@ void Game::update(float deltaTime) {
                 break;
             }
             else if (!(*it)->isAlive()) {
-                m_currentWave->enemyDead();
+                m_currentWave->enemyDead((*it)->getGenome(), (*it)->getStepsTaken());
                 //suma el oro ganado
                 m_economy.earn((*it)->getBounty());
                 // La limpieza del grid se hace automáticamente en el destructor de Enemy
@@ -187,21 +191,16 @@ void Game::update(float deltaTime) {
         }
         //Mas comportamientos del wave irian aqui tambien
 
-        if (m_currentWave->isCompleted()) {        
+        if (m_currentWave->isCompleted()) {  
+            std::cout << "=== FINALIZANDO OLEADA " << m_waveNumber << " ===\n";      
             m_currentState = GameState::Cooldown;
             m_currentWave.reset();
             m_waveNumber++;
             m_stateTimer = 0.f;            
         }
-        else if (!m_currentWave->findEnemy() && m_currentState == GameState::Wave) {
-            m_currentState = GameState::Cooldown;
-            m_currentWave.reset();
-            m_waveNumber++;
-            m_stateTimer = 0.f;
-        }
     }
     //Transicion de state Cooldown a Prep despues de 10 segundos
-    else if (m_currentState == GameState::Cooldown && m_stateTimer >= 10.f) {
+    else if (m_currentState == GameState::Cooldown && m_stateTimer >= 5.f) {
         //Logica de ganar si completa 3 waves
         if (m_waveNumber > 5) {
             // Cierra la ventana pero hay que implementar un stade de victory

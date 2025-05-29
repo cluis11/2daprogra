@@ -1,5 +1,6 @@
 #include "GeneticManager.h"
 #include "Enemy.h"
+#include "Wave.h"
 #include <random>
 #include <algorithm>
 #include <iostream>
@@ -57,7 +58,7 @@ EnemyGenome::Attributes GeneticManager::getRandomAttributesForType(EnemyType typ
     return attrs;
 }
 
-void GeneticManager::evaluateGeneration(const std::vector<std::unique_ptr<Enemy>>& enemies) {
+void GeneticManager::evaluateGeneration(std::vector<Wave::enemyData> enemies) {
     std::cout << "\n=== EVALUANDO GENERACIÓN ===\n";
 
     // Reset fitness
@@ -67,8 +68,8 @@ void GeneticManager::evaluateGeneration(const std::vector<std::unique_ptr<Enemy>
 
     // Asignar fitness basado en pasos recorridos
     for (const auto& enemy : enemies) {
-        auto genome = enemy->getGenome();
-        genome->setFitness(genome->getFitness() + enemy->getStepsTaken());
+        auto genome = enemy.m_genome;
+        genome->setFitness(genome->getFitness() + enemy.steps);
     }
 
     // Ordenar por fitness
