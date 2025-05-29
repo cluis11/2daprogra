@@ -75,6 +75,7 @@ void Enemy::updateMovement(float deltaTime) {
                 m_gridY = nextPos.y;
                 m_grid->registerEnemy(this, m_gridX, m_gridY);
                 m_shape.setPosition(m_grid->gridToWorld(m_gridX, m_gridY));
+                m_stepsTaken++;
 
                 // Avanzar al siguiente paso del camino
                 m_currentPath.erase(m_currentPath.begin());
