@@ -18,9 +18,14 @@ std::string Tower::typeToString(Type type) {
 
 void Tower::update(float deltaTime) {
     m_attackTimer += deltaTime;
+    m_specialTimer += deltaTime;
     if (m_attackTimer >= m_attackSpeed) {
         attackEnemy();
         m_attackTimer = 0.f;
+    }
+    if (m_specialTimer >= m_attackCooldown) {
+        specialAttack();
+        m_specialTimer = 0.f;
     }
 }
 
@@ -137,6 +142,18 @@ void Tower::attackEnemy() {
         });
         // Atacar al primero (menor vida)
         enemies[0]->takeDamage(m_damage, typeToString(m_type));
+    }
+}
+
+void Tower::specialAttack() {
+    switch (expression)
+    {
+    case constant expression:
+        /* code */
+        break;
+    
+    default:
+        break;
     }
 }
 

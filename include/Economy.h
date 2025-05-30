@@ -2,7 +2,7 @@
 
 class Economy {
 public:
-    Economy(int startingCoins = 100) : m_coins(startingCoins) {}
+    Economy(int startingCoins = 500) : m_coins(startingCoins) {}
 
     //funcion que valida si le alcanza la torre o el upgrade
     bool canAfford(int cost) const { return m_coins >= cost; }

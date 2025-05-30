@@ -33,6 +33,7 @@ public:
     static std::string typeToString(Type type);
     void attackEnemy();
     void upgrade(); 
+    void specialAttack();
     
 
     //Getters
@@ -57,6 +58,7 @@ public:
         float m_attackSpeed;
         float m_attackCooldown = 0.f;
         float m_attackTimer = 0.f;
+        float m_specialTimer = 0.f;
         int m_level = 0;
 
         void upgradeArcher();

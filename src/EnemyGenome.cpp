@@ -15,9 +15,6 @@ EnemyGenome::EnemyGenome(EnemyType type, Attributes attrs)
     {
         // Resetea el contador si llega a un número muy grande
         if (nextId > 1000000) nextId = 0;
-
-        std::cout << "Nuevo genoma creado - ID: " << m_id
-                << " Tipo: " << static_cast<int>(m_type) << "\n";
     }
 
 /* Realiza cruce uniforme entre dos genomas padres

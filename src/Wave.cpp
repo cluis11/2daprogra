@@ -3,6 +3,7 @@
 #include <iostream>
 #include <random>
 
+std::vector<Wave::enemyData> Wave::m_deathEnemyStats;
 //constructor
 Wave::Wave(int waveNumber, const std::vector<sf::Vector2i>& spawnPoints, Config& config, GridSystem* grid, GeneticManager* geneticManager)
     : m_waveNumber(waveNumber), m_spawnPoints(spawnPoints), m_config(config), m_grid(grid), m_geneticManager(geneticManager) {
@@ -13,7 +14,6 @@ Wave::Wave(int waveNumber, const std::vector<sf::Vector2i>& spawnPoints, Config&
         std::min(m_config.maxSpawnPoints, static_cast<int>(m_spawnPoints.size()))
     );
     m_enemiesDead = 0;
-    m_deathEnemyStats.clear();
 
     //Almacena los puntos activos en el nuevo vector
     m_activeSpawnList.assign(m_spawnPoints.begin(), m_spawnPoints.begin() + m_activeSpawnPoints);
@@ -33,13 +33,6 @@ void Wave::update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& enemies)
     m_timeElapsed += deltaTime;
     //m_spawnTimer += deltaTime;
 
-    if (m_geneticManager->getCurrentGenomes().size() < m_config.maxEnemies &&
-        m_enemiesSpawned >= m_geneticManager->getCurrentGenomes().size()) {
-        m_geneticManager->createNextGeneration(m_config.maxEnemies);
-    }
-
-
-
     if (m_enemiesSpawned <= m_config.maxEnemies) {
         m_spawnTimer += deltaTime;
         auto genomes = getGenomesForNextSpawn(); // Ahora devuelve Ptr
@@ -49,9 +42,10 @@ void Wave::update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& enemies)
             spawnEnemy(genome, enemies, point); // genome ya es Ptr
             i++;
         }
-    }
+    } 
 
     if (m_waveNumber < m_config.totalWaves && m_enemiesDead == m_config.maxEnemies) {
+        std::cout << "Se supone que solo entro al final de cada wave" << "\n";
         // 1. Evaluar la generacion actual (calcula fitness)
         m_geneticManager->evaluateGeneration(m_deathEnemyStats);
 
@@ -62,7 +56,8 @@ void Wave::update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& enemies)
 
         // 4. Limpiar enemigos existentes (pero no los genomas)
         enemies.clear();
-    } 
+    }
+
 }
 
 void Wave::generateInitialEnemies() {
@@ -168,6 +163,7 @@ void Wave::spawnEnemy(const EnemyGenome::Ptr& genome, std::vector<std::unique_pt
 
 void Wave::enemyDead(const EnemyGenome::Ptr& genome, float steps){
     m_enemiesDead++;
+    std::cout << genome->getFitness() << "\n\n";
     enemyData data = {genome, steps};
     m_deathEnemyStats.emplace_back(data);
     
@@ -175,6 +171,9 @@ void Wave::enemyDead(const EnemyGenome::Ptr& genome, float steps){
 
 // Función que verifica si todos los enemigos están muertos
 bool Wave::isCompleted() const {
-    bool allEnemiesDead = m_enemiesDead == m_enemiesSpawned; //m_config.maxEnemies;
-    return allEnemiesDead; 
+    if (completed) {
+        bool allEnemiesDead = m_enemiesDead == m_enemiesSpawned; //m_config.maxEnemies;
+        return allEnemiesDead; 
+    }
+    return false;
 }
