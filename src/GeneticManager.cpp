@@ -34,10 +34,10 @@ EnemyGenome::Attributes GeneticManager::getRandomAttributesForType(EnemyType typ
     };
 
     static const std::unordered_map<EnemyType, TypeConfig> typeConfigs = {
-        {EnemyType::Ogre,      {100.0f, 200.0f, 0.5f, 1.2f, 0.5f, 0.3f}},
-        {EnemyType::DarkElf,   {60.0f, 120.0f, 1.0f, 2.0f, 0.3f, 0.5f}},
-        {EnemyType::Harpy,     {80.0f, 150.0f, 1.5f, 2.5f, 0.2f, 0.2f}},
-        {EnemyType::Mercenary, {120.0f, 180.0f, 0.8f, 1.5f, 0.6f, 0.4f}}
+        {EnemyType::Ogre,      {100.0f, 200.0f, 1.5f, 2.5f, 0.5f, 0.3f}},
+        {EnemyType::DarkElf,   {60.0f, 120.0f, 0.8f, 1.5f, 0.3f, 0.5f}},
+        {EnemyType::Harpy,     {80.0f, 150.0f, 0.5f, 1.2f, 0.2f, 0.2f}},
+        {EnemyType::Mercenary, {120.0f, 180.0f, 1.0f, 2.0f, 0.6f, 0.4f}}
     };
 
     const auto& config = typeConfigs.at(type);
