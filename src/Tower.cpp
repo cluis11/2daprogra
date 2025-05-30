@@ -146,15 +146,7 @@ void Tower::attackEnemy() {
 }
 
 void Tower::specialAttack() {
-    switch (expression)
-    {
-    case constant expression:
-        /* code */
-        break;
-    
-    default:
-        break;
-    }
+    return;
 }
 
 

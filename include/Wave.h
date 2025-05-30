@@ -64,4 +64,5 @@ private:
     int m_enemiesSpawned = 0; // Contador de enemigos spawneados
     int m_totalEnemies = 0; // Total de enemigos a spawnear en esta oleada
     int m_enemiesDead = 0; // Contador de enemigos muertos
+    bool completed = false;
 };
