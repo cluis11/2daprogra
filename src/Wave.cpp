@@ -56,6 +56,7 @@ void Wave::update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& enemies)
 
         // 4. Limpiar enemigos existentes (pero no los genomas)
         enemies.clear();
+        completed = true;
     }
 
 }
