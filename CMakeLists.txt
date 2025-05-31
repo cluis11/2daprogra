@@ -32,6 +32,8 @@ add_executable(GeneticKingdom
     src/Enemy.cpp
     src/PathFinding.cpp
     src/GameStats.cpp
+        src/ProjectileEffect.cpp
+        src/AreaAttackEffect.cpp
 )
 
 # Copy assets to build directory

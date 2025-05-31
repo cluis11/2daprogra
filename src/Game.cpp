@@ -141,7 +141,27 @@ void Game::processEvents() {
 //Aqui se cambian los state y se determina que hacer segun estos
 void Game::update(float deltaTime) {
     //Inicia el timer del juego, se reinicia en cada cambio de estado
-    m_stateTimer += deltaTime; 
+    m_stateTimer += deltaTime;
+
+    for (auto it = m_projectileEffects.begin(); it != m_projectileEffects.end(); ) {
+        it->update(deltaTime);
+        if (it->isComplete()) {
+            it = m_projectileEffects.erase(it);
+        } else {
+            ++it;
+        }
+    }
+    // Actualiza efectos de área (nuevo)
+    updateAreaEffects(deltaTime);
+
+    for (const auto& tower : m_towers) {
+        auto enemies = m_grid.getEnemiesInRadius(tower->getGridX(), tower->getGridY(), tower->getRange());
+        if (!enemies.empty() && tower->isAttacking()) {  //agregar metodo a tower.
+            sf::Vector2f towerPos = m_grid.gridToWorld(tower->getGridX(), tower->getGridY());
+            sf::Vector2f enemyPos = enemies[0]->getPosition();
+            addProjectileEffect(towerPos, enemyPos, Tower::getColorForType(tower->getType()));
+        }
+    }
 
     //Transisiones de state
     //Transicion de state Prep a Wave despues de 10 segundos
@@ -229,6 +249,22 @@ void Game::update(float deltaTime) {
     updateUI();
 }
 
+void Game::updateAreaEffects(float deltaTime) {
+    for (auto it = m_areaEffects.begin(); it != m_areaEffects.end(); ) {
+        it->update(deltaTime);
+        if (it->isComplete()) {
+            it = m_areaEffects.erase(it);
+        } else {
+            ++it;
+        }
+    }
+}
+
+void Game::renderAreaEffects(sf::RenderTarget& target) {
+    for (auto& effect : m_areaEffects) {
+        effect.draw(target);
+    }
+}
 //funcion que dibuja en la pantalla
 void Game::render() {
     if (m_currentState == GameState::EndScreen) {
@@ -259,7 +295,12 @@ void Game::render() {
     
     //Dibuja matriz
     m_grid.render(m_window);
-    
+
+    for (const auto& tower : m_towers) {
+        if (auto effect = tower->getCurrentEffect()) {
+            effect->draw(m_window);
+        }
+    }
     //Dibuja torres y enemigos
     //Llama a la funcion render de cada objeto
     //render se maneja a nivel de Entity
@@ -282,6 +323,12 @@ void Game::render() {
         m_window.draw(m_towerGhost);
     }
 
+    // Dibuja efectos de proyectiles
+    for (const auto& effect : m_projectileEffects) {
+        effect.draw(m_window);
+    }
+
+
     // Draw tower info panel
     m_window.draw(m_towerInfoPanel);
     m_window.draw(m_towerInfoText);
@@ -292,6 +339,7 @@ void Game::render() {
     //Abre la pantalla
     m_window.display();
 }
+
 
 
 // Función que recalcula los caminos del PathFinding
@@ -305,6 +353,8 @@ void Game::recalculatePaths() {
         m_grid.m_precomputedPaths[spawn] = path;
     }
 }
+
+
 
 //inicializa el panel de la derecha
 void Game::initUI() {
