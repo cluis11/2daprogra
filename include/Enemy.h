@@ -4,7 +4,7 @@
 #include "PathFinding.h"
 #include <map>
 #include "EnemyGenome.h"
-
+#include <string>
 
 
 class Enemy : public Entity {
@@ -82,6 +82,8 @@ public:
     const sf::FloatRect& getGlobalBounds() const { return m_shape.getGlobalBounds(); }
     //Set para otorgar un nuevo Path
     void setPath(std::vector<sf::Vector2i> path) { m_currentPath = path; };
+
+    std::string killer;
 
 private:
     //Atributos

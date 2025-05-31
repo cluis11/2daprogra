@@ -24,7 +24,7 @@ public:
     //Recibe el numero de wave, y los puntos de spawn definidos en game, la congif y referencia al grid
     Wave(int waveNumber, const std::vector<sf::Vector2i>& spawnPoints, Config& config, GridSystem* grid, GeneticManager* geneticManager);
 
-    static std::vector<enemyData> m_deathEnemyStats;
+    std::vector<enemyData> m_deathEnemyStats;
     //funciones
     void update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& enemies);
     bool isCompleted() const;

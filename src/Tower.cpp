@@ -175,7 +175,6 @@ void Tower::specialAttack() {
 }
 
 void Tower::specialArcherAttack() {
-    std::cout << "attack\n";
     // Ataque triple con daño normal
     auto enemies = m_grid->getEnemiesInRadius(m_gridX, m_gridY, m_range);
     if (!enemies.empty()) {
@@ -192,7 +191,6 @@ void Tower::specialArcherAttack() {
 }
 
 void Tower::specialMageAttack() {
-    std::cout << "mage\n";
     // Ataque a hasta 5 enemigos en rango
     auto enemies = m_grid->getEnemiesInRadius(m_gridX, m_gridY, m_range);
     if (!enemies.empty()) {
@@ -211,7 +209,6 @@ void Tower::specialMageAttack() {
 }
 
 void Tower::specialArtilleryAttack() {
-    std::cout << "arti\n";
     // Ataque en área ampliada con bonus de daño
     int extendedRange = m_range + 2;
     auto enemies = m_grid->getEnemiesInRadius(m_gridX, m_gridY, extendedRange);

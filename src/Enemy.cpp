@@ -48,12 +48,16 @@ void Enemy::update(float deltaTime) {
 void Enemy::takeDamage(float amount, const std::string& damageType) {
     Resistances res = getCurrentResistances();
     float multiplier = 1.0f;
-    if (damageType=="Archer"){ multiplier = res.arrows; }
-    else if (damageType=="Mage"){ multiplier = res.magic; }
-    else if (damageType=="Artillery"){ multiplier = res.artillery; }
+    if (damageType=="archer"){ multiplier = res.arrows; }
+    else if (damageType=="mage"){ multiplier = res.magic; }
+    else if (damageType=="artillery"){ multiplier = res.artillery; }
     
     m_health -= amount * std::max(0.0f, multiplier);
-    if (m_health < 0) m_health = 0;
+    if (m_health <= 0) {
+        if (damageType=="Bleed") {killer="archer";}
+        else {killer=damageType;}
+        m_health = 0;
+    }
 
     // Activa el efecto visual
     m_isDamaged = true;
