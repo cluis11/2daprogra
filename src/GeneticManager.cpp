@@ -83,9 +83,7 @@ void GeneticManager::evaluateGeneration(std::vector<Wave::enemyData> enemies) {
                   << " T:" << static_cast<int>(genome->getType())
                   << " F:" << genome->getFitness()
                   << " H:" << attrs.health
-                  << " S:" << attrs.speed
-                  << " A:" << attrs.armor
-                  << " MR:" << attrs.magicResist << "\n";
+                  << " S:" << attrs.speed << "\n";
     }
 }
 
