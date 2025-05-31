@@ -31,6 +31,7 @@ add_executable(GeneticKingdom
     src/GeneticManager.cpp
     src/Enemy.cpp
     src/PathFinding.cpp
+    src/GameStats.cpp
         src/ProjectileEffect.cpp
 )
 

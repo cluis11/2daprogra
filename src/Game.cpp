@@ -11,7 +11,7 @@ Game::Game()
       m_font(), //Se define la fuente aqui por cambio en 3.0
       m_waveText(m_font, "Wave: 0/5",    20), //Se define el texto aqui por cambio en 3.0
       m_timerText(m_font, "Time: 0s",     20), //Se define la texto aqui por cambio en 3.0
-      m_towersText(m_font, "Towers: 0/15",20), //Se define la texto aqui por cambio en 3.0
+      m_towersText(m_font, "Towers: 0/50",20), //Se define la texto aqui por cambio en 3.0
       m_leaksText(m_font, "Leaks: 0/5",   20), //Se define la texto aqui por cambio en 3.0
       m_coinsText(m_font, "Coins: ", 20),
       m_towerInfoText(m_font, "No tower selected", 16),
@@ -21,6 +21,7 @@ Game::Game()
       m_exitText(m_font, "Exit", 40),
       m_statsText(m_font, "Stats", 40),
       m_titleEnd(m_font, "Game Over", 80),
+      m_statsTitle(m_font),
       m_isPlacingTower(false)
 {
     //Limite de framerates
@@ -80,7 +81,7 @@ void Game::processEvents() {
 
                         if (m_grid.getCell(gridPos.x, gridPos.y) == CellType::Empty && 
                             m_economy.canAfford(cost) && 
-                            m_towersPlaced < 15) {
+                            m_towersPlaced < 51) {
 
                             m_grid.setCell(gridPos.x, gridPos.y, CellType::Tower); 
 
@@ -121,7 +122,14 @@ void Game::processEvents() {
                     m_window.close();
                 }
                 else if (m_statsButton.getGlobalBounds().contains(sf::Vector2f(mousePos))) {
-                    //se implementa la logica de stats
+                    showStats();
+                }
+            }
+            else if (m_currentState == GameState::StatsScreen) {
+                // Botón para volver al EndScreen
+                if (mousePos.x >= 300 && mousePos.x <= 500 &&
+                    mousePos.y >= 600 && mousePos.y <= 650) {
+                    m_currentState = GameState::EndScreen;
                 }
             }
         }    
@@ -178,10 +186,11 @@ void Game::update(float deltaTime) {
               << "Puntos de spawn: " << config.maxSpawnPoints << "\n"
               << "Genomas disponibles: " << m_geneticManager.getCurrentGenomes().size() << "\n";
             recalculatePaths();
+            m_gameStats.recordWaveStart(m_waveNumber,config.maxEnemies);
         }
        m_currentWave->update(deltaTime, m_enemies);
 
-        // ACTUALIZACIÓN OPTIMIZADA DE ENEMIGOS
+        
         auto it = m_enemies.begin();
         while (it != m_enemies.end()) {
             (*it)->update(deltaTime);
@@ -198,6 +207,7 @@ void Game::update(float deltaTime) {
                 //suma el oro ganado
                 m_economy.earn((*it)->getBounty());
                 // La limpieza del grid se hace automáticamente en el destructor de Enemy
+                m_gameStats.recordEnemyDeath((*it)->killer);
                 it = m_enemies.erase(it);
             } else {
                 ++it;
@@ -210,6 +220,9 @@ void Game::update(float deltaTime) {
         //Mas comportamientos del wave irian aqui tambien
 
         if (m_currentWave->isCompleted()) {  
+            for (auto& tower : m_towers) {
+                m_gameStats.recordTower(tower->typeToString(tower->getType()),tower->getLevel());
+            }
             std::cout << "=== FINALIZANDO OLEADA " << m_waveNumber << " ===\n";      
             m_currentState = GameState::Cooldown;
             m_currentWave.reset();
@@ -218,7 +231,7 @@ void Game::update(float deltaTime) {
         }
     }
     //Transicion de state Cooldown a Prep despues de 10 segundos
-    else if (m_currentState == GameState::Cooldown && m_stateTimer >= 5.f) {
+    else if (m_currentState == GameState::Cooldown && m_stateTimer >= 2.f) {
         //Logica de ganar si completa 3 waves
         if (m_waveNumber > 5) {
             // Cierra la ventana pero hay que implementar un stade de victory
@@ -251,6 +264,10 @@ void Game::render() {
         m_window.draw(m_titleEnd);
 
         m_window.display();
+        return;
+    }
+    if (m_currentState == GameState::StatsScreen) {
+        renderStats();
         return;
     }
 
@@ -405,6 +422,20 @@ void Game::initUI() {
     m_titleEnd.setFillColor(sf::Color::Black); // Rojo oscuro + un poco de transparencia
     m_titleEnd.setOutlineColor(sf::Color(190, 0, 0, 230));
     m_titleEnd.setOutlineThickness(2);
+
+
+    // Configurar elementos de la pantalla de stats
+    m_statsBackground.setSize({700.f, 500.f});
+    m_statsBackground.setPosition({150.f, 150.f});
+    m_statsBackground.setFillColor(sf::Color(50, 50, 70, 220));
+    m_statsBackground.setOutlineThickness(2.f);
+    m_statsBackground.setOutlineColor(sf::Color::White);
+    
+    m_statsTitle.setFont(m_font);
+    m_statsTitle.setString("Game Statistics");
+    m_statsTitle.setCharacterSize(40);
+    m_statsTitle.setPosition({400.f, 170.f});
+    m_statsTitle.setFillColor(sf::Color::White);
 }
 
 void Game::updateTowerGhost(const sf::Vector2i& mousePos) {
@@ -507,4 +538,139 @@ void Game::run() {
         update(deltaTime);
         render();
     }
+}
+
+
+void Game::showStats() {
+    m_currentState = GameState::StatsScreen;
+    m_statsTexts.clear();
+    
+    if (!m_gameStats.hasData()) {
+        // Mostrar mensaje de no datos
+        sf::Text noData(m_font);
+        noData.setString("No statistics available");
+        noData.setCharacterSize(30);
+        noData.setPosition({400.f, 300.f});
+        noData.setFillColor(sf::Color::White);
+        m_statsTexts.push_back(noData);
+        return;
+    }
+    
+    // Títulos de columnas
+    sf::Text header(m_font);
+    header.setString("Wave  Kills    Fitness  Mutations  Towers (L1/L2/L3)  Kills");
+    header.setCharacterSize(24);
+    header.setPosition({180.f, 230.f});
+    header.setFillColor(sf::Color::Yellow);
+    m_statsTexts.push_back(header);
+    
+    // Línea divisoria
+    sf::RectangleShape line({700.f - 60.f, 2.f});
+    line.setPosition({180.f, 260.f});
+    line.setFillColor(sf::Color::White);
+    
+    // Datos de cada wave
+    float yPos = 280.f;
+    for (const auto& wave : m_gameStats.getAllStats()) {
+        // Wave number
+        sf::Text waveText(m_font);
+        waveText.setString(std::to_string(wave.waveNumber));
+        waveText.setPosition({180.f, yPos});
+        waveText.setFillColor(getWaveColor(wave.waveNumber));
+        m_statsTexts.push_back(waveText);
+        
+        // Kills
+        std::string killsStr = std::to_string(wave.killedEnemies) + "/" + std::to_string(wave.totalEnemies);
+        sf::Text killsText(m_font, killsStr, 20);
+        killsText.setPosition({250.f, yPos});
+        killsText.setFillColor(sf::Color::White);
+        m_statsTexts.push_back(killsText);
+        
+        // Fitness
+        std::stringstream fitnessSS;
+        fitnessSS << std::fixed << std::setprecision(2) << wave.averageFitness;
+        sf::Text fitnessText(m_font, fitnessSS.str(), 20);
+        fitnessText.setPosition({350.f, yPos});
+        fitnessText.setFillColor(getFitnessColor(wave.averageFitness));
+        m_statsTexts.push_back(fitnessText);
+        
+        // Mutations
+        sf::Text mutationsText(m_font, std::to_string(wave.mutationsCount), 20);
+        mutationsText.setPosition({450.f, yPos});
+        mutationsText.setFillColor(sf::Color::White);
+        m_statsTexts.push_back(mutationsText);
+        
+        // Towers info
+        std::string towersInfo = "A:" + std::to_string(wave.towerStats.archerCount) + "(" +
+            std::to_string(wave.towerStats.archerLevel1) + "/" +
+            std::to_string(wave.towerStats.archerLevel2) + "/" +
+            std::to_string(wave.towerStats.archerLevel3) + ") " +
+            "M:" + std::to_string(wave.towerStats.mageCount) + "(" +
+            std::to_string(wave.towerStats.mageLevel1) + "/" +
+            std::to_string(wave.towerStats.mageLevel2) + "/" +
+            std::to_string(wave.towerStats.mageLevel3) + ") " +
+            "R:" + std::to_string(wave.towerStats.artilleryCount) + "(" +
+            std::to_string(wave.towerStats.artilleryLevel1) + "/" +
+            std::to_string(wave.towerStats.artilleryLevel2) + "/" +
+            std::to_string(wave.towerStats.artilleryLevel3) + ")";
+        
+        sf::Text towersText(m_font, towersInfo, 18);
+        towersText.setPosition({180.f, yPos + 25.f});
+        towersText.setFillColor(sf::Color(200, 200, 255));
+        m_statsTexts.push_back(towersText);
+        
+        // Kills por torre
+        std::string killsInfo = "A:" + std::to_string(wave.towerStats.archerKills) + 
+                              " M:" + std::to_string(wave.towerStats.mageKills) +
+                              " R:" + std::to_string(wave.towerStats.artilleryKills);
+        
+        sf::Text killsInfoText(m_font, killsInfo, 18);
+        killsInfoText.setPosition({180.f, yPos + 50.f});
+        killsInfoText.setFillColor(sf::Color(200, 255, 200));
+        m_statsTexts.push_back(killsInfoText);
+        
+        yPos += 90.f; // Espacio para la siguiente wave
+    }
+}
+
+sf::Color Game::getWaveColor(int waveNumber) const {
+    static const sf::Color colors[] = {
+        sf::Color(255, 100, 100), // Rojo
+        sf::Color(255, 200, 100), // Naranja
+        sf::Color(255, 255, 100), // Amarillo
+        sf::Color(100, 255, 100), // Verde
+        sf::Color(100, 200, 255)  // Azul
+    };
+    return colors[waveNumber % 5];
+}
+
+sf::Color Game::getFitnessColor(float fitness) const {
+    if (fitness < 10) return sf::Color(255, 100, 100); // Rojo para bajo fitness
+    if (fitness < 20) return sf::Color(255, 255, 100); // Amarillo
+    return sf::Color(100, 255, 100); // Verde para alto fitness
+}
+void Game::renderStats() {
+    m_window.clear(sf::Color::Black);
+    
+    // Fondo semitransparente
+    m_window.draw(m_statsBackground);
+    m_window.draw(m_statsTitle);
+    
+    // Mostrar todos los textos de estadísticas
+    for (const auto& text : m_statsTexts) {
+        m_window.draw(text);
+    }
+    
+    // Botón para volver
+    sf::RectangleShape backButton({200.f, 50.f});
+    backButton.setPosition({400.f - 100.f, 600.f});
+    backButton.setFillColor(sf::Color(100, 100, 150));
+    
+    sf::Text backText(m_font);
+    backText.setString("Back");
+    backText.setCharacterSize(30);
+    backText.setPosition({400.f, 610.f});
+    m_window.draw(backButton);
+    m_window.draw(backText);
+    m_window.display();
 }

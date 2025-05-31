@@ -50,12 +50,18 @@ EnemyGenome::Ptr EnemyGenome::crossoverUniform(const Ptr& parent1, const Ptr& pa
     std::cout << "[Cruce] Nuevo ID:" << nextId
               << "\n  Padre1 ID:" << parent1->getId()
               << " (H:" << parent1->getAttributes().health
-              << ", S:" << parent1->getAttributes().speed<< ")"
+              << ", S:" << parent1->getAttributes().speed
+              << ", A:" << parent1->getAttributes().armor
+              << ", MR:" << parent1->getAttributes().magicResist << ")"
               << "\n  Padre2 ID:" << parent2->getId()
               << " (H:" << parent2->getAttributes().health
-              << ", S:" << parent2->getAttributes().speed<< ")"
+              << ", S:" << parent2->getAttributes().speed
+              << ", A:" << parent2->getAttributes().armor
+              << ", MR:" << parent2->getAttributes().magicResist << ")"
               << "\n  Resultado: H:" << childAttrs.health
-              << " S:" << childAttrs.speed << "\n";
+              << " S:" << childAttrs.speed
+              << " A:" << childAttrs.armor
+              << " MR:" << childAttrs.magicResist << "\n";
 
     // Crea y retorna nuevo genoma hijo
     return std::make_shared<EnemyGenome>(parent1->getType(), childAttrs);

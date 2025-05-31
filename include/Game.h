@@ -10,6 +10,7 @@
 #include "GeneticManager.h"
 #include "PathFinding.h"
 #include "ProjectileEffect.h"
+#include "GameStats.h"
 
 class Game {
 public:
@@ -17,6 +18,11 @@ public:
     void run(); //Funcion que ejecuta el juego
     GridSystem& getGrid() { return m_grid; }
     Economy& getEconomy() { return m_economy; }
+    GameStats& getGameStats() { return m_gameStats; }
+    void showStats(); // Método para mostrar estadísticas
+    void renderStats(); // Método para renderizar estadísticas
+    sf::Color getWaveColor(int waveNumber) const;
+    sf::Color getFitnessColor(float fitness) const;
 
 private:
     void processEvents(); //Captura eventos para ejecutar comportamientos
@@ -30,11 +36,14 @@ private:
     void logEnemyDeath(const std::unique_ptr<Enemy>& enemy);
 
 
+
+
     sf::RenderWindow m_window; //main screen
     GridSystem m_grid; //matriz
     PathFinding m_pathfinder; //pathfinding
     GeneticManager m_geneticManager;
-    
+    GameStats m_gameStats;
+
     std::vector<std::unique_ptr<Tower>> m_towers; //lista de torres
     std::vector<std::unique_ptr<Enemy>> m_enemies; //lista de enemigos
 
@@ -48,7 +57,7 @@ private:
 
     //Enum para patron state del comportamiento del juego
     //Se pueden agregar states como pantalla inicial, registro de actividades, pantalla de perdedor etc
-    enum class GameState { Prep, Wave, Cooldown, EndScreen }; 
+    enum class GameState { Prep, Wave, Cooldown, EndScreen, Victory, StatsScreen };
 
     //Se inicia el juego en estado prep, se puede cambiar a pantalla inicial
     GameState m_currentState = GameState::Prep;
@@ -101,4 +110,9 @@ private:
     sf::Text m_exitText;
     sf::Text m_statsText;
     sf::Text m_titleEnd;
+
+    // Textos para estadísticas
+    std::vector<sf::Text> m_statsTexts;
+    sf::Text m_statsTitle;
+    sf::RectangleShape m_statsBackground;
 };

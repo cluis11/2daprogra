@@ -15,6 +15,7 @@ Enemy::Enemy(const EnemyGenome::Ptr& genome, int gridX, int gridY, GridSystem* g
     m_currentPath(path),
     m_end(false),
     m_pathfinder(grid),
+    m_currentEffect{NONE, 0, 0, 0},
     m_prevGridX(gridX),
     m_prevGridY(gridY)  {
         m_grid->registerEnemy(this, gridX, gridY);
@@ -26,6 +27,7 @@ Enemy::~Enemy() {
 }
 
 void Enemy::update(float deltaTime) {
+    updateEffects(deltaTime);
     updateMovement(deltaTime);
 
     // Efecto de parpadeo (rojo intermitente durante 0.3 segundos)
@@ -34,23 +36,28 @@ void Enemy::update(float deltaTime) {
         if (elapsed < 0.3f) {
             // Alternar entre rojo y color original basado en tiempo (5 cambios por segundo)
             bool showRed = static_cast<int>(elapsed * 10) % 2 == 0;
-            m_shape.setFillColor(showRed ? sf::Color::Red : getColorForType(m_type));
+            m_shape.setFillColor(showRed ? sf::Color::Red : getEffectColor());
         }
         else {
             m_isDamaged = false;
-            m_shape.setFillColor(getColorForType(m_type)); // Restaura el color original
+            m_shape.setFillColor(getEffectColor()); // Restaura el color original
         }
     }
 }
 
 void Enemy::takeDamage(float amount, const std::string& damageType) {
+    Resistances res = getCurrentResistances();
     float multiplier = 1.0f;
-    if (damageType=="Archer"){ multiplier = m_resistances.arrows; }
-    else if (damageType=="Archer"){ multiplier = m_resistances.magic; }
-    else if (damageType=="Archer"){ multiplier = m_resistances.artillery; }
+    if (damageType=="archer"){ multiplier = res.arrows; }
+    else if (damageType=="mage"){ multiplier = res.magic; }
+    else if (damageType=="artillery"){ multiplier = res.artillery; }
     
     m_health -= amount * std::max(0.0f, multiplier);
-    if (m_health < 0) m_health = 0;
+    if (m_health <= 0) {
+        if (damageType=="Bleed") {killer="archer";}
+        else {killer=damageType;}
+        m_health = 0;
+    }
 
     // Activa el efecto visual
     m_isDamaged = true;
@@ -59,9 +66,10 @@ void Enemy::takeDamage(float amount, const std::string& damageType) {
 
 //hace que el enemigo se mueva
 void Enemy::updateMovement(float deltaTime) {
+    float currentSpeed = getCurrentSpeed();
     m_moveTimer += deltaTime;
     
-    if (m_moveTimer >= m_speed) {
+    if (m_moveTimer >= currentSpeed) {
         if (!m_currentPath.empty()) {
             sf::Vector2i nextPos = m_currentPath.front();
 
@@ -90,7 +98,7 @@ void Enemy::updateMovement(float deltaTime) {
             else {
                 //Camino bloqueado, limpiar para recalcular
                 m_currentPath.clear();
-                std::cout << "Choco contra una torre u obstaculo" << std::endl;
+                //std::cout << "Choco contra una torre u obstaculo" << std::endl;
                 auto path = m_pathfinder.findPath({ m_gridX, m_gridY });
                 setPath(path);
             }
@@ -110,6 +118,59 @@ void Enemy::updateMovement(float deltaTime) {
         // Reiniciar el temporizador de movimiento
         m_moveTimer = 0;
     }
+}
+
+void Enemy::applyEffect(EffectType effectType, float duration) {
+    m_currentEffect.type = effectType;
+    m_currentEffect.duration = duration;
+    m_currentEffect.remainingTime = duration;
+    m_currentEffect.timer = 0.0f;
+
+    m_shape.setFillColor(getEffectColor());
+}
+
+void Enemy::updateEffects(float deltaTime) {
+    if (m_currentEffect.type == NONE) return;
+    
+    m_currentEffect.remainingTime -= deltaTime;
+    m_currentEffect.timer += deltaTime;
+    
+    // Aplicar efectos periódicos (sangrado)
+    if (m_currentEffect.type == BLEED && m_currentEffect.timer >= 2.0f) {
+        m_currentEffect.timer = 0.0f;
+        takeDamage(10.0f, "Bleed");
+        
+        if (m_health <= 0) {
+            m_health = 0;
+        }
+    }
+    // Finalizar efecto si se acaba el tiempo
+    if (m_currentEffect.remainingTime <= 0) {
+        clearEffect();
+    }
+}
+
+void Enemy::clearEffect() {
+    m_currentEffect.type = NONE;
+    m_shape.setFillColor(getColorForType(m_type));
+}
+
+float Enemy::getCurrentSpeed() const {
+    if (m_currentEffect.type == SLOW && m_currentEffect.remainingTime > 0) {
+        return m_speed * 1.5f; // 50% de velocidad
+    }
+    return m_speed;
+}
+
+Enemy::Resistances Enemy::getCurrentResistances() const {
+    Resistances res = m_resistances;
+    if (m_currentEffect.type == WEAKEN && m_currentEffect.remainingTime > 0) {
+        // Limitar resistencias a máximo 1.0
+        res.arrows = std::max(res.arrows, 1.0f);
+        res.magic = std::max(res.magic, 1.0f);
+        res.artillery = std::max(res.artillery, 1.0f);
+    }
+    return res;
 }
 
 //Implementacion de setGenome para asignar el genoma al enemigo
@@ -165,5 +226,18 @@ Enemy::Resistances Enemy::getDefaultResistances(Type type) {
             return {0.5f, 1.5f, 0.5f}; // Resistente a flechas/artillería, débil a magia
         default:
             return {1.0f, 1.0f, 1.0f};
+    }
+}
+
+sf::Color Enemy::getEffectColor() const {
+    switch(m_currentEffect.type) {
+        case SLOW: 
+            return sf::Color(100, 100, 255); // Azul
+        case WEAKEN: 
+            return sf::Color(255, 150, 150); // Rojo claro
+        case BLEED: 
+            return sf::Color(200, 0, 0); // Rojo oscuro
+        default:
+            return getColorForType(m_type);
     }
 }

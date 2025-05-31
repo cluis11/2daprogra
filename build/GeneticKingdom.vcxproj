@@ -407,6 +407,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="C:\Users\luisc\Documents\GitHub\2daprogra\src\GeneticManager.cpp" />
     <ClCompile Include="C:\Users\luisc\Documents\GitHub\2daprogra\src\Enemy.cpp" />
     <ClCompile Include="C:\Users\luisc\Documents\GitHub\2daprogra\src\PathFinding.cpp" />
+    <ClCompile Include="C:\Users\luisc\Documents\GitHub\2daprogra\src\GameStats.cpp" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
