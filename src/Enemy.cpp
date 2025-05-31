@@ -185,10 +185,10 @@ void Enemy::setGenome(const EnemyGenome::Ptr& genome) {
 
 sf::Color Enemy::getColorForType(Type type) {
     switch(type) {
-        case Type::Ogre: return sf::Color(128, 0, 128);     // Morado Oscuro
-        case Type::DarkElf: return sf::Color(0, 255, 255);  // Cyan
-        case Type::Harpy: return sf::Color(255, 215, 0);    // Amarillo Oro
-        case Type::Mercenary: return sf::Color(112, 128, 144); // Gris Pizarra
+        case Type::Ogre: return sf::Color(128, 0, 128, 100);     // Morado Oscuro
+        case Type::DarkElf: return sf::Color(0, 255, 255, 100);  // Cyan
+        case Type::Harpy: return sf::Color(255, 215, 0, 100);    // Amarillo Oro
+        case Type::Mercenary: return sf::Color(112, 128, 144, 100); // Gris Pizarra
         default: return sf::Color::White;
     }
 }
@@ -230,14 +230,14 @@ Enemy::Resistances Enemy::getDefaultResistances(Type type) {
 }
 
 sf::Color Enemy::getEffectColor() const {
-    switch(m_currentEffect.type) {
-        case SLOW: 
-            return sf::Color(100, 100, 255); // Azul
-        case WEAKEN: 
-            return sf::Color(255, 150, 150); // Rojo claro
-        case BLEED: 
-            return sf::Color(200, 0, 0); // Rojo oscuro
-        default:
-            return getColorForType(m_type);
+    switch (m_currentEffect.type) {
+    case SLOW:
+        return sf::Color(100, 100, 255, 150); // Azul translúcido
+    case WEAKEN:
+        return sf::Color(180, 130, 255, 150); // Violeta suave
+    case BLEED:
+        return sf::Color(200, 0, 0, 150);     // Rojo oscuro
+    default:
+        return getColorForType(m_type);
     }
 }

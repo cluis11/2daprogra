@@ -551,7 +551,7 @@ void Game::showStats() {
         // Wave number
         sf::Text waveText(m_font);
         waveText.setString(std::to_string(wave.waveNumber));
-        waveText.setPosition({180.f, yPos});
+        waveText.setPosition({190.f, yPos});
         waveText.setFillColor(getWaveColor(wave.waveNumber));
         m_statsTexts.push_back(waveText);
         
@@ -591,7 +591,7 @@ void Game::showStats() {
             std::to_string(wave.towerStats.artilleryLevel3) + ")";
         
         sf::Text towersText(m_font, towersInfo, 18);
-        towersText.setPosition({180.f, yPos + 25.f});
+        towersText.setPosition({550.f, yPos});
         towersText.setFillColor(sf::Color(200, 200, 255));
         m_statsTexts.push_back(towersText);
         
@@ -601,7 +601,7 @@ void Game::showStats() {
                               " R:" + std::to_string(wave.towerStats.artilleryKills);
         
         sf::Text killsInfoText(m_font, killsInfo, 18);
-        killsInfoText.setPosition({180.f, yPos + 50.f});
+        killsInfoText.setPosition({650, yPos +25.f});
         killsInfoText.setFillColor(sf::Color(200, 255, 200));
         m_statsTexts.push_back(killsInfoText);
         
