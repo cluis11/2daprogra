@@ -36,10 +36,15 @@ public:
     void setFitness(float fitness) { m_fitness = fitness; }
     void setStepsTaken(int steps) { m_attributes.stepsTaken = steps; }
 
+    static int getTotalMutations() { return s_totalMutations; }
+    static void resetMutationCount() { s_totalMutations = 0; }
+    static void incrementMutationCount() { s_totalMutations++; }
+
 
 
 
 private:
+    static int s_totalMutations;  // Contador estático de mutaciones
     EnemyType m_type;
     Attributes m_attributes; // Atributos geneticos
     float m_fitness = 0.0f; // Valor de aptitud para seleccion natural

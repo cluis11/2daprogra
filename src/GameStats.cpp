@@ -30,9 +30,9 @@ void GameStats::recordFitness(float fitness){
     w.averageFitness=fitness;
 }
 
-void GameStats::recordMutation() {
+void GameStats::recordMutations(int total) {
     auto& w = getCurrentGeneration();
-    w.mutationsCount++;
+    w.mutationsCount=total;
 }
 
 void GameStats::recordTower(const std::string& towerType, int level) {

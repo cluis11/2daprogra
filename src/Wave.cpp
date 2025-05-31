@@ -47,6 +47,8 @@ void Wave::update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& enemies)
         // 1. Evaluar la generacion actual (calcula fitness)
         m_geneticManager->evaluateGeneration(m_deathEnemyStats);
 
+        EnemyGenome::resetMutationCount();
+
         int requiredPopulation = 20 + m_config.maxEnemies;
 
         // 3. Crear nueva generación BASADA EN LOS GENOMAS ACTUALES

@@ -8,6 +8,7 @@ Game::Game()
     : m_window(sf::VideoMode( sf::Vector2u(1000u, 800u) ), "Genetic Kingdom"), //diferente en 3.0
       m_grid(50, 50, 16.f), //crea la matriz mxm y asigna el cellSize
       m_pathfinder(&m_grid),
+      m_geneticManager(m_gameStats),
       m_font(), //Se define la fuente aqui por cambio en 3.0
       m_waveText(m_font, "Wave: 0/5",    20), //Se define el texto aqui por cambio en 3.0
       m_timerText(m_font, "Time: 0s",     20), //Se define la texto aqui por cambio en 3.0
@@ -464,7 +465,7 @@ void Game::updateUI() {
     //Actualiza los textos con los datos actuales
     m_waveText.setString("Wave:  " + std::to_string(m_waveNumber)   + "/5");
     m_timerText.setString(stateStr + ": " + std::to_string(int(m_stateTimer)) + "s");
-    m_towersText.setString("Towers: " + std::to_string(m_towersPlaced) + "/15");
+    m_towersText.setString("Towers: " + std::to_string(m_towersPlaced) + "/50");
     m_leaksText.setString("Leaks: "  + std::to_string(m_leaks)         + "/5");
     m_coinsText.setString("Coins: " + std::to_string(m_economy.getCoins()));
 

@@ -3,12 +3,13 @@
 #include <vector>
 #include <memory>
 #include "Wave.h" 
+#include "GameStats.h"  
 
 class Enemy;
 
 class GeneticManager {
 public:
-    GeneticManager();
+    GeneticManager(GameStats& gameStats);
 
     // Genera un nuevo genoma para un enemigo
     EnemyGenome::Ptr generateEnemyGenome(EnemyType type);
@@ -32,6 +33,7 @@ public:
     }
 
 private:
+    GameStats& m_gameStats;
     std::vector<EnemyGenome::Ptr> m_currentGenomes; // Genomas de la generacion actual
     std::vector<EnemyGenome::Ptr> m_nextGenomes; // Siguiente generacion
 

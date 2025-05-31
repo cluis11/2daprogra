@@ -5,6 +5,7 @@
 
 //para asignar IDs unicos a cada genoma
 int EnemyGenome::nextId = 0;
+int EnemyGenome::s_totalMutations = 0;
 
 // Constructor - Inicializa un genoma con tipo y atributos especificos
 EnemyGenome::EnemyGenome(EnemyType type, Attributes attrs)
@@ -94,6 +95,7 @@ void EnemyGenome::mutate(float mutationChance) {
     auto mutateAttr = [&](float& attr, const char* name) {
         // Decide si este atributo en particular muta
         if (chanceDist(gen) < mutationChance) {
+            incrementMutationCount();
             float original = attr; // Guarda valor original
             float mutation = mutationDist(gen); // Valor de mutacion (-0.2 a +0.2 aprox)
             attr = std::max(0.1f, attr * (1.0f + mutation));  // Aplica mutacion (multiplicativa) con valor minimo 0.1

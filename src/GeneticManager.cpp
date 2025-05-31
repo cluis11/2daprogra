@@ -6,7 +6,7 @@
 #include <iostream>
 #include <unordered_set>
 
-GeneticManager::GeneticManager() {
+GeneticManager::GeneticManager(GameStats& gameStats) : m_gameStats(gameStats) {
     // Inicialización vacía, la población se generará bajo demanda
 }
 
@@ -248,6 +248,8 @@ void GeneticManager::createNextGeneration(int requiredPopulation) {
     std::shuffle(m_nextGenomes.begin(), m_nextGenomes.end(), gen);
     m_currentGenomes = m_nextGenomes;
 
+    m_gameStats.recordMutations(EnemyGenome::getTotalMutations());
+    EnemyGenome::resetMutationCount();  // Prepara para la siguiente generación
     // 7. Validacion final
     validateGeneration();
 }
@@ -323,4 +325,6 @@ void GeneticManager::validateGeneration() {
     }
     std::cout << "Fitness promedio: " << (totalFitness / m_currentGenomes.size()) << "\n";
     std::cout << "Total genomas: " << m_currentGenomes.size() << "\n";
+    float averageFitness = totalFitness / m_currentGenomes.size();
+    m_gameStats.recordFitness(averageFitness);
 }

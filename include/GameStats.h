@@ -43,7 +43,7 @@ public:
     void recordWaveStart(int generation, int totalEnemies);
     void recordEnemyDeath(const std::string& killerTowerType);
     void recordFitness(float fitness);
-    void recordMutation();
+    void recordMutations(int total);
     void recordTower(const std::string& towerType, int level);
     
     const std::vector<WaveStats>& getStats() const { return m_stats; }
