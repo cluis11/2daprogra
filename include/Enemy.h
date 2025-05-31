@@ -11,12 +11,25 @@ class Enemy : public Entity {
 public:
     //enum para tipo de enemigo
     using Type = EnemyType;
+    enum EffectType {
+        NONE = 0,
+        SLOW = 1,      // Reduce velocidad
+        WEAKEN = 2,    // Reduce resistencias
+        BLEED = 3      // Sangrado
+    };
 
     //struct de resistencias
     struct Resistances {
         float arrows;    // Resistencia a flechas (Archer)
         float magic;     // Resistencia a magia (Mage)
         float artillery; // Resistencia a artillería (Artillery)
+    };
+
+    struct ActiveEffect {
+        EffectType type;
+        float duration;
+        float remainingTime;
+        float timer;
     };
 
     Enemy(const EnemyGenome::Ptr& genome, int gridX, int gridY, GridSystem* grid, std::vector<sf::Vector2i> m_currentPath);
@@ -38,6 +51,14 @@ public:
     bool isAlive() const { return m_health > 0; }
     bool EndGame() const { return m_end; }
 
+    void applyEffect(EffectType type, float duration);
+    void updateEffects(float deltaTime);
+    void clearEffect();
+
+    // Getters que consideran efectos activos
+    float getCurrentSpeed() const;
+    Resistances getCurrentResistances() const;
+
     //Asigna un genoma al enemigo y aplica sus atributos
     void setGenome(const EnemyGenome::Ptr& genome); // Asigna un nuevo genoma
     float getStepsTaken() const { return static_cast<float>(m_stepsTaken); } // Pasos dados
@@ -53,6 +74,7 @@ public:
     static sf::Color getColorForType(Type type);
     static float getDefaultHealth(Type type);
     static float getDefaultSpeed(Type type);
+    sf::Color getEffectColor() const;
 
     static Resistances getDefaultResistances(Type type);
     const EnemyGenome::Ptr& getGenome() const { return m_genome; }
@@ -80,4 +102,6 @@ private:
 
     sf::Clock m_damageClock;  // Temporizador para el efecto
     bool m_isDamaged = false; // Estado de "recibiendo daño"
+
+    ActiveEffect m_currentEffect;
 };

@@ -22,11 +22,11 @@ Wave::Wave(int waveNumber, const std::vector<sf::Vector2i>& spawnPoints, Config&
 
     if (m_waveNumber==1){ generateInitialEnemies(); }
 
-    std::cout << "\n=== OLEADA " << m_waveNumber << " ===\n";
+    /*std::cout << "\n=== OLEADA " << m_waveNumber << " ===\n";
     std::cout << "Max enemigos: " << m_config.maxEnemies
               << " | Spawn cada: " << m_config.spawnInterval << "s"
               << " | Puntos de spawn: " << m_activeSpawnPoints
-              << " | Genomas disponibles: " << m_geneticManager->getCurrentGenomes().size() << "\n";
+              << " | Genomas disponibles: " << m_geneticManager->getCurrentGenomes().size() << "\n";*/
 }
 
 void Wave::update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& enemies) {
@@ -45,7 +45,6 @@ void Wave::update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& enemies)
     } 
 
     if (m_waveNumber < m_config.totalWaves && m_enemiesDead == m_config.maxEnemies) {
-        std::cout << "Se supone que solo entro al final de cada wave" << "\n";
         // 1. Evaluar la generacion actual (calcula fitness)
         m_geneticManager->evaluateGeneration(m_deathEnemyStats);
 
@@ -150,21 +149,20 @@ void Wave::spawnEnemy(const EnemyGenome::Ptr& genome, std::vector<std::unique_pt
             ));
 
             // Log detallado del spawn
-            const auto& attrs = genome->getAttributes();
-            std::cout << "Spawning Enemy ID:" << genome->getId()
+            //const auto& attrs = genome->getAttributes();
+            /*std::cout << "Spawning Enemy ID:" << genome->getId()
               << " Type:" << static_cast<int>(genome->getType())
               << " at (" << point.x << "," << point.y << ")"
               << " [H:" << attrs.health
               << " S:" << attrs.speed
               << " A:" << attrs.armor
-              << " MR:" << attrs.magicResist << "]\n";
+              << " MR:" << attrs.magicResist << "]\n";*/
         }
     }
 }
 
 void Wave::enemyDead(const EnemyGenome::Ptr& genome, float steps){
     m_enemiesDead++;
-    std::cout << genome->getFitness() << "\n\n";
     enemyData data = {genome, steps};
     m_deathEnemyStats.emplace_back(data);
     

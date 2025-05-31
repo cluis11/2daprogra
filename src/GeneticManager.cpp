@@ -15,9 +15,9 @@ EnemyGenome::Ptr GeneticManager::generateEnemyGenome(EnemyType type) {
     auto genome = std::make_shared<EnemyGenome>(type, attrs);
     m_currentGenomes.push_back(genome);
 
-    std::cout << "Generado nuevo genoma - ID: " << genome->getId()
+    /*std::cout << "Generado nuevo genoma - ID: " << genome->getId()
               << ", Tipo: " << static_cast<int>(type)
-              << ", Total genomas: " << m_currentGenomes.size() << "\n";
+              << ", Total genomas: " << m_currentGenomes.size() << "\n";*/
 
     return genome;
 }
@@ -77,16 +77,16 @@ void GeneticManager::evaluateGeneration(std::vector<Wave::enemyData> enemies) {
         [](const auto& a, const auto& b) { return a->getFitness() > b->getFitness(); });
 
     // Mostrar resultados
-    for (const auto& genome : m_currentGenomes) {
-        const auto& attrs = genome->getAttributes();
-        std::cout << "ID:" << genome->getId()
+   // for (const auto& genome : m_currentGenomes) {
+     //   const auto& attrs = genome->getAttributes();
+        /*std::cout << "ID:" << genome->getId()
                   << " T:" << static_cast<int>(genome->getType())
                   << " F:" << genome->getFitness()
                   << " H:" << attrs.health
                   << " S:" << attrs.speed
                   << " A:" << attrs.armor
-                  << " MR:" << attrs.magicResist << "\n";
-    }
+                  << " MR:" << attrs.magicResist << "\n";*/
+   // }
 }
 
 
@@ -186,9 +186,9 @@ void GeneticManager::createNextGeneration(int requiredPopulation) {
     for (size_t i = 0; i < eliteCount; ++i) {
         auto eliteCopy = std::make_shared<EnemyGenome>(*m_currentGenomes[i]);
         m_nextGenomes.push_back(eliteCopy);
-        std::cout << "Elite conservada - ID:" << eliteCopy->getId()
+      /*  std::cout << "Elite conservada - ID:" << eliteCopy->getId()
                  << " Tipo:" << static_cast<int>(eliteCopy->getType())
-                 << " Fitness:" << eliteCopy->getFitness() << "\n";
+                 << " Fitness:" << eliteCopy->getFitness() << "\n"; */
     }
 
     // 4. Organizar poblacion por tipos
@@ -236,12 +236,12 @@ void GeneticManager::createNextGeneration(int requiredPopulation) {
         child->mutate(MUTATION_RATE);
         m_nextGenomes.push_back(child);
 
-        std::cout << "Nuevo hijo - ID:" << child->getId()
+       /* std::cout << "Nuevo hijo - ID:" << child->getId()
                  << " Tipo:" << targetType
                  << " | Padres: " << parent1->getId() << "(T" << static_cast<int>(parent1->getType())
                  << (usingPreferredParents ? "*" : "") << "), "
                  << parent2->getId() << "(T" << static_cast<int>(parent2->getType())
-                 << (usingPreferredParents ? "*" : "") << ")\n";
+                 << (usingPreferredParents ? "*" : "") << ")\n";*/
     }
 
     // 6. Mezclar y actualizar generacion

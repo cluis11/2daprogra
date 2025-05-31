@@ -47,7 +47,7 @@ EnemyGenome::Ptr EnemyGenome::crossoverUniform(const Ptr& parent1, const Ptr& pa
     std::cout << std::fixed << std::setprecision(2);
 
     // Log detallado del cruce genetico
-    std::cout << "[Cruce] Nuevo ID:" << nextId
+   /* std::cout << "[Cruce] Nuevo ID:" << nextId
               << "\n  Padre1 ID:" << parent1->getId()
               << " (H:" << parent1->getAttributes().health
               << ", S:" << parent1->getAttributes().speed
@@ -61,7 +61,7 @@ EnemyGenome::Ptr EnemyGenome::crossoverUniform(const Ptr& parent1, const Ptr& pa
               << "\n  Resultado: H:" << childAttrs.health
               << " S:" << childAttrs.speed
               << " A:" << childAttrs.armor
-              << " MR:" << childAttrs.magicResist << "\n";
+              << " MR:" << childAttrs.magicResist << "\n";*/
 
     // Crea y retorna nuevo genoma hijo
     return std::make_shared<EnemyGenome>(parent1->getType(), childAttrs);

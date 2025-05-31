@@ -47,6 +47,7 @@ public:
     static int getDefaultRange(Type type);
     static float getDefaultDamage(Type type);
     static float getDefaultAttackSpeed(Type type);
+    static float getDefaultSpecialSpeed(Type type);
 
 
 
@@ -64,4 +65,8 @@ public:
         void upgradeArcher();
         void upgradeMage();
         void upgradeArtillery();
+
+        void specialArcherAttack();
+        void specialMageAttack();
+        void specialArtilleryAttack();
 };
