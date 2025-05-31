@@ -1,7 +1,8 @@
 #include "Tower.h"
 #include "Enemy.h"
+#include "Game.h"
 #include <iostream>
-
+class Game;
 //Constructor de torre, varia atributos segun tipo
 Tower::Tower(Type type, int gridX, int gridY, GridSystem* grid)
     : Entity(gridX, gridY, getColorForType(type), grid), 
@@ -20,6 +21,14 @@ std::string Tower::typeToString(Type type) {
 void Tower::update(float deltaTime) {
     m_attackTimer += deltaTime;
     m_specialTimer += deltaTime;
+
+    // Actualizar efecto si existe
+    if (m_specialEffect) {
+        m_specialEffect->update(deltaTime);
+        if (m_specialEffect->isComplete()) {
+            m_specialEffect.reset();
+        }
+    }
 
     //Resetea el estado de ataque
     m_isAttacking = false;
@@ -217,12 +226,22 @@ void Tower::specialArtilleryAttack() {
     // Ataque en área ampliada con bonus de daño
     int extendedRange = m_range + 2;
     auto enemies = m_grid->getEnemiesInRadius(m_gridX, m_gridY, extendedRange);
-    
+
+    // Crear el efecto visual
+    sf::Vector2f center(
+        m_gridX * m_grid->getCellSize() + m_grid->getCellSize()/2,
+        m_gridY * m_grid->getCellSize() + m_grid->getCellSize()/2
+    );
+    float radius = extendedRange * m_grid->getCellSize();
+    m_specialEffect = std::make_unique<AreaAttackEffect>(center, radius);
+
+    // Aplicar daño a enemigos
     for (auto& enemy : enemies) {
         enemy->takeDamage(m_damage * 1.2f, typeToString(m_type));
         enemy->applyEffect(Enemy::WEAKEN, 8.0f);
     }
 }
+
 
 
 

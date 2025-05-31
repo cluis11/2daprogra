@@ -45,17 +45,17 @@ void Wave::update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& enemies)
 
     if (m_waveNumber < m_config.totalWaves && m_enemiesDead == m_config.maxEnemies) {
         std::cout << "Se supone que solo entro al final de cada wave" << "\n";
-        // 1. Evaluar la generacion actual (calcula fitness)
+        // 1. Evalua la generacion actual (calcula fitness)
         m_geneticManager->evaluateGeneration(m_deathEnemyStats);
 
         EnemyGenome::resetMutationCount();
 
         int requiredPopulation = 20 + m_config.maxEnemies;
 
-        // 3. Crear nueva generación BASADA EN LOS GENOMAS ACTUALES
+        // 3. Crea nueva generación BASADA EN LOS GENOMAS ACTUALES
         m_geneticManager->createNextGeneration(requiredPopulation);
 
-        // 4. Limpiar enemigos existentes (pero no los genomas)
+        // 4. Limpia enemigos existentes (pero no los genomas)
         enemies.clear();
         completed = true;
     }

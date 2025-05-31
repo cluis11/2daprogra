@@ -42,7 +42,8 @@ public:
 
     //areas de spawn
     const std::vector<sf::Vector2i>& getSpawnPoints() const { return m_spawnPoints; }
-    
+
+
     void render(sf::RenderTarget& target) const;
     void unregisterTower(int gridX, int gridY);
 

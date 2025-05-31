@@ -11,6 +11,7 @@
 #include "PathFinding.h"
 #include "ProjectileEffect.h"
 #include "GameStats.h"
+#include "AreaAttackEffect.h"
 
 class Game {
 public:
@@ -19,8 +20,8 @@ public:
     GridSystem& getGrid() { return m_grid; }
     Economy& getEconomy() { return m_economy; }
     GameStats& getGameStats() { return m_gameStats; }
-    void showStats(); // Método para mostrar estadísticas
-    void renderStats(); // Método para renderizar estadísticas
+    void showStats(); // Metodo para mostrar estadísticas
+    void renderStats(); // Metodo para renderizar estadísticas
     sf::Color getWaveColor(int waveNumber) const;
     sf::Color getFitnessColor(float fitness) const;
 
@@ -32,6 +33,10 @@ private:
     void updateUI(); //Funcion encargada de actualizar la interfaz
     void updateTowerInfo();
     void restartGame();
+    std::vector<AreaAttackEffect> m_areaEffects;
+    void addAreaEffect(const sf::Vector2f& center, float radius, sf::Color color, float duration = 0.5f);
+    void updateAreaEffects(float deltaTime);
+    void renderAreaEffects(sf::RenderTarget& target);
 
     void logEnemyDeath(const std::unique_ptr<Enemy>& enemy);
 

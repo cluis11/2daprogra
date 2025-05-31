@@ -2,6 +2,7 @@
 #include "Entity.h"
 #include <string>
 #include <map>
+#include "AreaAttackEffect.h"
 
 class Tower : public Entity {
 public:
@@ -51,6 +52,8 @@ public:
 
     bool isAttacking() const { return m_attackTimer > m_attackSpeed * 0.9f; }
 
+    const AreaAttackEffect* getCurrentEffect() const { return m_specialEffect.get(); }
+
 
 
     private:
@@ -72,4 +75,6 @@ public:
         void specialArcherAttack();
         void specialMageAttack();
         void specialArtilleryAttack();
+
+        std::unique_ptr<AreaAttackEffect> m_specialEffect;
 };
