@@ -49,6 +49,8 @@ public:
     static float getDefaultAttackSpeed(Type type);
     static float getDefaultSpecialSpeed(Type type);
 
+    bool isAttacking() const { return m_attackTimer > m_attackSpeed * 0.9f; }
+
 
 
     private:
@@ -61,6 +63,7 @@ public:
         float m_attackTimer = 0.f;
         float m_specialTimer = 0.f;
         int m_level = 0;
+        bool m_isAttacking = false;
 
         void upgradeArcher();
         void upgradeMage();

@@ -9,6 +9,7 @@
 #include "Economy.h"
 #include "GeneticManager.h"
 #include "PathFinding.h"
+#include "ProjectileEffect.h"
 #include "GameStats.h"
 
 class Game {
@@ -19,7 +20,7 @@ public:
     Economy& getEconomy() { return m_economy; }
     GameStats& getGameStats() { return m_gameStats; }
     void showStats(); // Método para mostrar estadísticas
-    void renderStats(); // Método para renderizar estadísticas  
+    void renderStats(); // Método para renderizar estadísticas
     sf::Color getWaveColor(int waveNumber) const;
     sf::Color getFitnessColor(float fitness) const;
 
@@ -34,7 +35,7 @@ private:
 
     void logEnemyDeath(const std::unique_ptr<Enemy>& enemy);
 
-    
+
 
 
     sf::RenderWindow m_window; //main screen
@@ -42,15 +43,21 @@ private:
     PathFinding m_pathfinder; //pathfinding
     GeneticManager m_geneticManager;
     GameStats m_gameStats;
-    
+
     std::vector<std::unique_ptr<Tower>> m_towers; //lista de torres
     std::vector<std::unique_ptr<Enemy>> m_enemies; //lista de enemigos
 
     std::unique_ptr<Wave> m_currentWave;
-    
+
+    std::vector<ProjectileEffect> m_projectileEffects;  // Nuevo miembro
+    void addProjectileEffect(const sf::Vector2f& start, const sf::Vector2f& end, sf::Color color) {
+        // Valores por defecto para velocidad y radio
+        m_projectileEffects.emplace_back(start, end, color, 400.0f, 4.0f);
+    }
+
     //Enum para patron state del comportamiento del juego
     //Se pueden agregar states como pantalla inicial, registro de actividades, pantalla de perdedor etc
-    enum class GameState { Prep, Wave, Cooldown, EndScreen, Victory, StatsScreen }; 
+    enum class GameState { Prep, Wave, Cooldown, EndScreen, Victory, StatsScreen };
 
     //Se inicia el juego en estado prep, se puede cambiar a pantalla inicial
     GameState m_currentState = GameState::Prep;
