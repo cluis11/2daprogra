@@ -3,7 +3,6 @@
 #include <iostream>
 #include <random>
 
-std::vector<Wave::enemyData> Wave::m_deathEnemyStats;
 //constructor
 Wave::Wave(int waveNumber, const std::vector<sf::Vector2i>& spawnPoints, Config& config, GridSystem* grid, GeneticManager* geneticManager)
     : m_waveNumber(waveNumber), m_spawnPoints(spawnPoints), m_config(config), m_grid(grid), m_geneticManager(geneticManager) {
