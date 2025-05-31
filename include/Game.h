@@ -9,6 +9,7 @@
 #include "Economy.h"
 #include "GeneticManager.h"
 #include "PathFinding.h"
+#include "ProjectileEffect.h"
 
 class Game {
 public:
@@ -38,7 +39,13 @@ private:
     std::vector<std::unique_ptr<Enemy>> m_enemies; //lista de enemigos
 
     std::unique_ptr<Wave> m_currentWave;
-    
+
+    std::vector<ProjectileEffect> m_projectileEffects;  // Nuevo miembro
+    void addProjectileEffect(const sf::Vector2f& start, const sf::Vector2f& end, sf::Color color) {
+        // Valores por defecto para velocidad y radio
+        m_projectileEffects.emplace_back(start, end, color, 400.0f, 4.0f);
+    }
+
     //Enum para patron state del comportamiento del juego
     //Se pueden agregar states como pantalla inicial, registro de actividades, pantalla de perdedor etc
     enum class GameState { Prep, Wave, Cooldown, EndScreen }; 

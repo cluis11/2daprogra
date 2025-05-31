@@ -19,7 +19,12 @@ std::string Tower::typeToString(Type type) {
 void Tower::update(float deltaTime) {
     m_attackTimer += deltaTime;
     m_specialTimer += deltaTime;
+
+    //Resetea el estado de ataque
+    m_isAttacking = false;
+
     if (m_attackTimer >= m_attackSpeed) {
+        m_isAttacking = true;
         attackEnemy();
         m_attackTimer = 0.f;
     }
