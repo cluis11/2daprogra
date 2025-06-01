@@ -12,7 +12,7 @@ AreaAttackEffect::AreaAttackEffect(const sf::Vector2f& center, float maxRadius)
     // Ajuste del origen del círculo al centro
     m_circle.setOrigin(sf::Vector2f(0.f, 0.f));
 
-    // Posicionar el círculo en el centro del área de expansión
+    // Posiciona el círculo en el centro del área de expansión
     m_circle.setPosition(center);
 }
 
@@ -24,11 +24,11 @@ void AreaAttackEffect::update(float deltaTime) {
     m_currentTime += deltaTime;
     float progress = m_currentTime / m_duration;
 
-    // Interpolación suave para la expansión
+    // Interpolacion suave para la expansión
     m_currentRadius = m_maxRadius * progress;
     m_circle.setRadius(m_currentRadius);
 
-    // Ajustar origen para mantener el círculo centrado
+    // Ajusta origen para mantener el círculo centrado
     m_circle.setOrigin(sf::Vector2f(m_currentRadius, m_currentRadius));
 
     // Efecto de desvanecimiento

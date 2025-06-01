@@ -156,9 +156,7 @@ void Wave::spawnEnemy(const EnemyGenome::Ptr& genome, std::vector<std::unique_pt
               << " Type:" << static_cast<int>(genome->getType())
               << " at (" << point.x << "," << point.y << ")"
               << " [H:" << attrs.health
-              << " S:" << attrs.speed
-              << " A:" << attrs.armor
-              << " MR:" << attrs.magicResist << "]\n";
+              << " S:" << attrs.speed << "]\n";
         }
     }
 }

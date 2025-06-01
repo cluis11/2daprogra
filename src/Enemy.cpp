@@ -213,7 +213,7 @@ float Enemy::getDefaultSpeed(Type type) {
     }
 }
 
-// Función para obtener resistencias según tipo
+// Funcion para obtener resistencias según tipo
 Enemy::Resistances Enemy::getDefaultResistances(Type type) {
     switch(type) {
         case Type::Ogre:

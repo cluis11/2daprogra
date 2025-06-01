@@ -7,7 +7,7 @@
 #include <unordered_set>
 
 GeneticManager::GeneticManager(GameStats& gameStats) : m_gameStats(gameStats) {
-    // Inicialización vacía, la población se generará bajo demanda
+    // Inicializacion vacía, la poblacion se generara bajo demanda
 }
 
 EnemyGenome::Ptr GeneticManager::generateEnemyGenome(EnemyType type) {
@@ -66,26 +66,24 @@ void GeneticManager::evaluateGeneration(std::vector<Wave::enemyData> enemies) {
         genome->setFitness(0.0f);
     }
 
-    // Asignar fitness basado en pasos recorridos
+    // Asigna fitness basado en pasos recorridos
     for (const auto& enemy : enemies) {
         auto genome = enemy.m_genome;
         genome->setFitness(genome->getFitness() + enemy.steps);
     }
 
-    // Ordenar por fitness
+    // Ordena por fitness
     std::sort(m_currentGenomes.begin(), m_currentGenomes.end(),
         [](const auto& a, const auto& b) { return a->getFitness() > b->getFitness(); });
 
-    // Mostrar resultados
+    // Muestra resultados
     for (const auto& genome : m_currentGenomes) {
         const auto& attrs = genome->getAttributes();
         std::cout << "ID:" << genome->getId()
                   << " T:" << static_cast<int>(genome->getType())
                   << " F:" << genome->getFitness()
                   << " H:" << attrs.health
-                  << " S:" << attrs.speed
-                  << " A:" << attrs.armor
-                  << " MR:" << attrs.magicResist << "\n";
+                  << " S:" << attrs.speed << "\n";
     }
 }
 
@@ -98,7 +96,7 @@ EnemyGenome::Ptr GeneticManager::selectParent(
 {
     static std::mt19937 gen(std::random_device{}());
 
-    // 1. Buscar candidatos válidos del tipo requerido (excluyendo excludedId)
+    // 1. Busca candidatos válidos del tipo requerido (excluyendo excludedId)
     std::vector<EnemyGenome::Ptr> validCandidates;
     for (const auto& genome : genomes) {
         if (genome->getType() == requiredType && genome->getId() != excludedId) {
@@ -131,7 +129,7 @@ EnemyGenome::Ptr GeneticManager::selectParent(
         throw std::runtime_error("Fallo crítico en selección de padres");
     }
 
-    // 5. Clasificar en elite y no-elite
+    // 5. Clasifica en elite y no-elite
     std::vector<EnemyGenome::Ptr> eliteCandidates;
     std::vector<EnemyGenome::Ptr> nonEliteCandidates;
 
@@ -172,17 +170,17 @@ void GeneticManager::createNextGeneration(int requiredPopulation) {
     m_nextGenomes.clear();
     std::cout << "\n=== CREANDO NUEVA GENERACIÓN (" << requiredPopulation << " enemigos) ===\n";
 
-    // 1. Ordenar por fitness
+    // 1. Ordena por fitness
     std::sort(m_currentGenomes.begin(), m_currentGenomes.end(),
         [](const auto& a, const auto& b) { return a->getFitness() > b->getFitness(); });
 
-    // 2. Conservar SOLO el 10% como elite
+    // 2. Conserva SOLO el 10% como elite
     size_t eliteCount = std::min(
-        static_cast<size_t>(requiredPopulation * 0.1f), // Solo 10% elite
+        static_cast<size_t>(requiredPopulation * 0.3f), // Solo 30% elite
         m_currentGenomes.size()
     );
 
-    // 3. Llenar nueva generacion con la elite
+    // 3. Llena nueva generacion con la elite
     for (size_t i = 0; i < eliteCount; ++i) {
         auto eliteCopy = std::make_shared<EnemyGenome>(*m_currentGenomes[i]);
         m_nextGenomes.push_back(eliteCopy);
@@ -191,13 +189,13 @@ void GeneticManager::createNextGeneration(int requiredPopulation) {
                  << " Fitness:" << eliteCopy->getFitness() << "\n";
     }
 
-    // 4. Organizar poblacion por tipos
+    // 4. Organiza poblacion por tipos
     std::array<std::vector<EnemyGenome::Ptr>, 4> genomesByType;
     for (const auto& genome : m_currentGenomes) {
         genomesByType[static_cast<int>(genome->getType())].push_back(genome);
     }
 
-    // 5. Generar descendencia balanceada
+    // 5. Genera descendencia balanceada
     while (m_nextGenomes.size() < requiredPopulation) {
         // Selección rotativa de tipos (0-1-2-3)
         int targetType = m_nextGenomes.size() % 4;
@@ -244,7 +242,7 @@ void GeneticManager::createNextGeneration(int requiredPopulation) {
                  << (usingPreferredParents ? "*" : "") << ")\n";
     }
 
-    // 6. Mezclar y actualizar generacion
+    // 6. Mezcla y actualiza generacion
     std::shuffle(m_nextGenomes.begin(), m_nextGenomes.end(), gen);
     m_currentGenomes = m_nextGenomes;
 
@@ -268,14 +266,14 @@ EnemyGenome::Ptr GeneticManager::selectParentFromAllTypes(
     }
 
     if (candidates.empty()) {
-        candidates = genomes; // Permitir cualquier como último recurso
+        candidates = genomes; // Permite cualquier como último recurso
     }
 
     if (candidates.empty()) {
         throw std::runtime_error("No hay genomas disponibles para selección");
     }
 
-    // Selección por torneo (más eficiente que ruleta)
+    // Seleccion por torneo
     const size_t tournamentSize = std::min(static_cast<size_t>(3), candidates.size());
     std::vector<EnemyGenome::Ptr> tournament;
 
@@ -285,7 +283,7 @@ EnemyGenome::Ptr GeneticManager::selectParentFromAllTypes(
         tournament.push_back(candidates[randomIndex]);
     }
 
-    // Seleccionar el mejor del torneo
+    // Selecciona el mejor del torneo
     return *std::max_element(tournament.begin(), tournament.end(),
         [](const auto& a, const auto& b) { return a->getFitness() < b->getFitness(); });
 }
@@ -296,19 +294,19 @@ void GeneticManager::validateGeneration() {
     float totalFitness = 0.0f;
 
     for (const auto& genome : m_currentGenomes) {
-        // Verificar IDs unicos
+        // Verifica IDs unicos
         if (ids.count(genome->getId())) {
             std::cerr << "ERROR: ID duplicado " << genome->getId() << "\n";
         }
         ids.insert(genome->getId());
 
-        // Contar tipos
+        //Cuenta los tipos
         typeCounts[static_cast<int>(genome->getType())]++;
 
-        // Calcular fitness total
+        // Calcula fitness total
         totalFitness += genome->getFitness();
 
-        // Validar atributos
+        // Valida atributos
         const auto& attrs = genome->getAttributes();
         if (attrs.health <= 0 || attrs.speed <= 0) {
             std::cerr << "ADVERTENCIA: Genoma " << genome->getId()

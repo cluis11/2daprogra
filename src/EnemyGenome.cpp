@@ -51,18 +51,12 @@ EnemyGenome::Ptr EnemyGenome::crossoverUniform(const Ptr& parent1, const Ptr& pa
     std::cout << "[Cruce] Nuevo ID:" << nextId
               << "\n  Padre1 ID:" << parent1->getId()
               << " (H:" << parent1->getAttributes().health
-              << ", S:" << parent1->getAttributes().speed
-              << ", A:" << parent1->getAttributes().armor
-              << ", MR:" << parent1->getAttributes().magicResist << ")"
+              << ", S:" << parent1->getAttributes().speed << ")"
               << "\n  Padre2 ID:" << parent2->getId()
               << " (H:" << parent2->getAttributes().health
-              << ", S:" << parent2->getAttributes().speed
-              << ", A:" << parent2->getAttributes().armor
-              << ", MR:" << parent2->getAttributes().magicResist << ")"
+              << ", S:" << parent2->getAttributes().speed << ")"
               << "\n  Resultado: H:" << childAttrs.health
-              << " S:" << childAttrs.speed
-              << " A:" << childAttrs.armor
-              << " MR:" << childAttrs.magicResist << "\n";
+              << " S:" << childAttrs.speed << "\n";
 
     // Crea y retorna nuevo genoma hijo
     return std::make_shared<EnemyGenome>(parent1->getType(), childAttrs);
@@ -115,6 +109,4 @@ void EnemyGenome::mutate(float mutationChance) {
     // Aplica posible mutacion a cada atributo
     mutateAttr(m_attributes.health, "Health");
     mutateAttr(m_attributes.speed, "Speed");
-    mutateAttr(m_attributes.armor, "Armor");
-    mutateAttr(m_attributes.magicResist, "MR");
 }
