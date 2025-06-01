@@ -2,6 +2,16 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <random>
+#include <memory>
+
+class Enemy; 
+
+//Hash para usar sf::Vector2i en unordered_map
+struct Vector2iHash {
+    std::size_t operator()(const sf::Vector2i& v) const {
+        return std::hash<int>()(v.x) ^ (std::hash<int>()(v.y) << 1);
+    }
+};
 
 //Numero en la matriz
 enum class CellType { 
@@ -20,6 +30,11 @@ public:
     CellType getCell(int x, int y) const;
     bool setCell(int x, int y, CellType type);
     bool isCellWalkable (int x, int y) const;
+
+    //Buscar enemigos en un rango
+    void registerEnemy(Enemy* enemy, int gridX, int gridY);
+    void unregisterEnemy(int gridX, int gridY);
+    std::vector<Enemy*> getEnemiesInRadius(int centerX, int centerY, int radius) const;
     
     //conversiones de pos a cordenadas
     sf::Vector2f gridToWorld(int x, int y) const;
@@ -27,14 +42,18 @@ public:
 
     //areas de spawn
     const std::vector<sf::Vector2i>& getSpawnPoints() const { return m_spawnPoints; }
-    
+
+
     void render(sf::RenderTarget& target) const;
+    void unregisterTower(int gridX, int gridY);
 
     //Getters    
     unsigned getWidth() const { return m_width; }
     unsigned getHeight() const { return m_height; }
     float getCellSize() const { return m_cellSize; }
     std::mt19937& getRNG() { return m_rng; }
+
+    std::unordered_map<sf::Vector2i, std::vector<sf::Vector2i>, Vector2iHash> m_precomputedPaths;  //Rutas precalculadas desde cada spawn o de enemigo
 
 private:
     //funciones
@@ -47,4 +66,5 @@ private:
     std::vector<std::vector<CellType>> m_grid;
     mutable std::mt19937 m_rng; 
     std::vector<sf::Vector2i> m_spawnPoints; // Puntos fijos de spawn
+    std::vector<std::vector<Enemy*>> m_enemyGrid; //matriz de punteros para referencias enemigos en el grid
 };

@@ -7,6 +7,9 @@
     <ClCompile Include="C:\Users\luisc\Documents\GitHub\2daprogra\src\Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="C:\Users\luisc\Documents\GitHub\2daprogra\src\Wave.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="C:\Users\luisc\Documents\GitHub\2daprogra\src\GridSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -16,7 +19,19 @@
     <ClCompile Include="C:\Users\luisc\Documents\GitHub\2daprogra\src\Tower.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="C:\Users\luisc\Documents\GitHub\2daprogra\src\EnemyGenome.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\luisc\Documents\GitHub\2daprogra\src\GeneticManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="C:\Users\luisc\Documents\GitHub\2daprogra\src\Enemy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\luisc\Documents\GitHub\2daprogra\src\PathFinding.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\luisc\Documents\GitHub\2daprogra\src\GameStats.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

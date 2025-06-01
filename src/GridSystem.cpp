@@ -1,5 +1,7 @@
 #include "GridSystem.h"
 #include <algorithm>
+#include "Enemy.h"
+#include <iostream>
 
 GridSystem::GridSystem(unsigned width, unsigned height, float cellSize)
     : m_width(width), m_height(height), m_cellSize(cellSize), m_rng(std::random_device{}()) {
@@ -10,31 +12,95 @@ GridSystem::GridSystem(unsigned width, unsigned height, float cellSize)
 void GridSystem::initializeGrid() {
     //asigna todos los valores de la matriz a libres
     m_grid.resize(m_width, std::vector<CellType>(m_height, CellType::Empty));
+    m_enemyGrid.resize(m_width, std::vector<Enemy*>(m_height, nullptr)); //matriz de punteros a enemigos para buscar y atacar
 
     //definir donde se originan enemigos
-    m_spawnPoints = {{0, 0}, {0, 1}, {1, 0}, {1, 1}};
+    for (int col = 0; col < 2; ++col) {
+        for (int row = 0; row < 50; ++row) {
+            m_spawnPoints.push_back({ col, row });
+        }
+    }
 
     //asigna la puerta del castillo en el borde derecho
-    m_grid[m_width-1][m_height-1] = CellType::ExitPoint;
+    m_grid[49][24] = CellType::ExitPoint;
+    m_grid[49][25] = CellType::ExitPoint;
+    m_grid[49][26] = CellType::ExitPoint;
+    
 
     //asigna obstaculos
-    addObstacleCluster(10, 10, 3);
-    addObstacleCluster(30, 20, 2);
-    addObstacleCluster(15, 35, 4);
+    addObstacleCluster(15, 10, 11);
+    addObstacleCluster(15, 40, 11);
 }
 
-//funcion para crear obstaculos
-void GridSystem::addObstacleCluster(int centerX, int centerY, int radius){
-    std::uniform_int_distribution<int> dist(0, 100);
+//guarda un enemy en la matriz y un puntero a este en la matriz de punteros
+void GridSystem::registerEnemy(Enemy* enemy, int gridX, int gridY) {
+    if (gridX >= 0 && gridY >= 0 && gridX < static_cast<int>(m_width) && gridY < static_cast<int>(m_height)) {
+        m_enemyGrid[gridX][gridY] = enemy;
+        m_grid[gridX][gridY] = CellType::Enemy;
+    }
+}
 
-    for(int x = centerX - radius; x<= centerX + radius; x++) {
-        for(int y = centerY - radius; y <= centerY + radius; y++) {
-            if(x >= 0 && x < static_cast<int>(m_width) && y < static_cast<int>(m_height)) {
-                if(dist(m_rng) < 70) {
-                    m_grid[x][y] = CellType::Obstacle;
+//hace la casilla vacia al moverse o matar al enemigo
+void GridSystem::unregisterEnemy(int gridX, int gridY) {
+    if (gridX >= 0 && gridY >= 0 && gridX < static_cast<int>(m_width) && gridY < static_cast<int>(m_height)) {
+        m_enemyGrid[gridX][gridY] = nullptr;
+        m_grid[gridX][gridY] = CellType::Empty;
+    }
+}
+
+std::vector<Enemy*> GridSystem::getEnemiesInRadius(int gridX, int gridY, int radius) const {
+    std::vector<Enemy*> enemies;
+    for (int x = gridX - radius; x <= gridX + radius; ++x) {
+        for (int y = gridY - radius; y <= gridY + radius; ++y) {
+            if (x >= 0 && y >= 0 && x < 50 && y < 50) {
+                if (m_enemyGrid[x][y] != nullptr) {
+                    enemies.push_back(m_enemyGrid[x][y]);
                 }
             }
         }
+    }
+    return enemies;
+}
+
+//funcion para crear obstaculos
+void GridSystem::addObstacleCluster(int centerX, int centerY, int radius) {
+    int startX = std::max(0, centerX - radius);
+    int endX = std::min(static_cast<int>(m_width) - 1, centerX + radius);
+    int startY = std::max(0, centerY - radius);
+    int endY = std::min(static_cast<int>(m_height) - 1, centerY + radius);
+
+    // Llena todo el bloque con obstáculos
+    for (int x = startX; x <= endX; ++x) {
+        for (int y = startY; y <= endY; ++y) {
+            m_grid[x][y] = CellType::Obstacle;
+        }
+    }
+    int spacing = 4; // cada cuántas celdas se hace un camino
+
+    // Crea caminos horizontales internos (de grosor 2)
+    for (int y = startY + spacing; y <= endY - 2; y += spacing) {
+        for (int x = startX; x <= endX; ++x) {
+            m_grid[x][y] = CellType::Empty;
+            if (y + 1 <= endY)
+                m_grid[x][y + 1] = CellType::Empty;
+        }
+
+        // Abrir accesos en los bordes para este camino
+        if (startX > 0) m_grid[startX][y] = CellType::Empty;
+        if (endX < static_cast<int>(m_width) - 1) m_grid[endX][y] = CellType::Empty;
+    }
+
+    // Crea caminos verticales internos (de grosor 2)
+    for (int x = startX + spacing; x <= endX - 2; x += spacing) {
+        for (int y = startY; y <= endY; ++y) {
+            m_grid[x][y] = CellType::Empty;
+            if (x + 1 <= endX)
+                m_grid[x + 1][y] = CellType::Empty;
+        }
+
+        // Abrir accesos en los bordes para este camino
+        if (startY > 0) m_grid[x][startY] = CellType::Empty;
+        if (endY < static_cast<int>(m_height) - 1) m_grid[x][endY] = CellType::Empty;
     }
 }
 
@@ -93,6 +159,14 @@ void GridSystem::render(sf::RenderTarget& target) const {
             }
             target.draw(cell);
         }
+    }
+}
+
+void GridSystem::unregisterTower(int gridX, int gridY) {
+    if (gridX >= 0 && gridY >= 0 && gridX < static_cast<int>(m_width) && gridY < static_cast<int>(m_height)) {
+        //m_enemyGrid[gridX][gridY] = nullptr;
+        m_grid[gridX][gridY] = CellType::Empty;
+        std::cout << "Ahora se hizo vacio el campo" << std::endl;
     }
 }
 

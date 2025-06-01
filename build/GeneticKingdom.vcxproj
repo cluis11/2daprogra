@@ -399,10 +399,15 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   <ItemGroup>
     <ClCompile Include="C:\Users\luisc\Documents\GitHub\2daprogra\src\main.cpp" />
     <ClCompile Include="C:\Users\luisc\Documents\GitHub\2daprogra\src\Game.cpp" />
+    <ClCompile Include="C:\Users\luisc\Documents\GitHub\2daprogra\src\Wave.cpp" />
     <ClCompile Include="C:\Users\luisc\Documents\GitHub\2daprogra\src\GridSystem.cpp" />
     <ClCompile Include="C:\Users\luisc\Documents\GitHub\2daprogra\src\Entity.cpp" />
     <ClCompile Include="C:\Users\luisc\Documents\GitHub\2daprogra\src\Tower.cpp" />
+    <ClCompile Include="C:\Users\luisc\Documents\GitHub\2daprogra\src\EnemyGenome.cpp" />
+    <ClCompile Include="C:\Users\luisc\Documents\GitHub\2daprogra\src\GeneticManager.cpp" />
     <ClCompile Include="C:\Users\luisc\Documents\GitHub\2daprogra\src\Enemy.cpp" />
+    <ClCompile Include="C:\Users\luisc\Documents\GitHub\2daprogra\src\PathFinding.cpp" />
+    <ClCompile Include="C:\Users\luisc\Documents\GitHub\2daprogra\src\GameStats.cpp" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

@@ -23,10 +23,17 @@ find_package(SFML ${SFML_VERSION} CONFIG REQUIRED
 add_executable(GeneticKingdom
     src/main.cpp
     src/Game.cpp
+    src/Wave.cpp
     src/GridSystem.cpp
     src/Entity.cpp
     src/Tower.cpp
+    src/EnemyGenome.cpp
+    src/GeneticManager.cpp
     src/Enemy.cpp
+    src/PathFinding.cpp
+    src/GameStats.cpp
+        src/ProjectileEffect.cpp
+        src/AreaAttackEffect.cpp
 )
 
 # Copy assets to build directory
